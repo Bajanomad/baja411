@@ -15,7 +15,6 @@
       overflow-x: hidden;
       position: relative;
     }
-
     #matrix {
       position: fixed;
       top: 0;
@@ -25,8 +24,8 @@
       z-index: 0;
       pointer-events: none;
       will-change: transform;
+      transform: translateZ(0);
     }
-
     .content {
       position: relative;
       z-index: 2;
@@ -36,16 +35,20 @@
       flex-direction: column;
       align-items: center;
     }
-
     header {
       font-family: 'Orbitron', sans-serif;
       font-size: 2.5rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
       text-align: center;
       text-shadow: 0 0 8px #39ff14;
       animation: flicker 3s infinite alternate;
     }
-
+    header span {
+      font-size: 1.5rem;
+      color: #2ecc40;
+      display: block;
+      margin-top: 0.5rem;
+    }
     @keyframes flicker {
       0%, 100% {
         text-shadow: 0 0 8px #39ff14, 0 0 20px #39ff14, 0 0 30px #39ff14cc;
@@ -60,7 +63,6 @@
         opacity: 0.6;
       }
     }
-
     .back-arrow {
       position: fixed;
       top: 20px;
@@ -79,33 +81,29 @@
       z-index: 999;
       text-decoration: none;
     }
-
     .back-arrow:hover {
       transform: scale(1.1);
       border-color: #2ecc40;
       box-shadow: 0 0 16px #2ecc40cc;
     }
-
     .back-arrow img {
       width: 20px;
       height: 20px;
       filter: drop-shadow(0 0 2px #39ff14);
     }
-
     .widget-container {
       background: rgba(0, 0, 0, 0.85);
       border: 2px solid #39ff14;
       border-radius: 12px;
       padding: 1rem;
       box-shadow: 0 0 15px #39ff14aa;
-      max-width: 900px;
+      max-width: 700px;
       width: 100%;
       text-align: center;
       margin-top: 2rem;
       position: relative;
       z-index: 3;
     }
-
     iframe {
       width: 100%;
       border: 0;
@@ -114,19 +112,11 @@
       position: relative;
       z-index: 4;
     }
-
-    .windy-widget iframe {
-      height: 600px; /* <<< BEEFED UP! */
-    }
-
-    .noaa-widget iframe {
-      height: 450px;
-    }
   </style>
 </head>
 <body>
 
-  <!-- Matrix Background -->
+  <!-- Matrix Rain Background -->
   <canvas id="matrix"></canvas>
 
   <!-- Back Arrow -->
@@ -134,21 +124,14 @@
     <img src="https://img.icons8.com/ios-filled/50/39ff14/left.png" alt="Back" />
   </a>
 
-  <!-- Main Content -->
+  <!-- Content Area -->
   <div class="content">
-    <header>Todos Santos Weather - The Baja Nomad</header>
+    <header>
+      Weather
+      <span>Todos Santos</span>
+    </header>
 
-    <!-- WINDY Map -->
-    <div class="widget-container windy-widget">
-      <iframe
-        src="https://embed.windy.com/embed2.html?lat=23.446&lon=-110.261&detailLat=23.446&detailLon=-110.261&width=850&height=600&zoom=10&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=now&type=map&location=coordinates&detail=&metricWind=kt&metricTemp=%C2%B0C&radarRange=-1"
-        allowfullscreen
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade">
-      </iframe>
-    </div>
-
-    <!-- Weather Summary (Forecast7) -->
+    <!-- Forecast7 Widget -->
     <div class="widget-container">
       <a class="weatherwidget-io"
          href="https://forecast7.com/en/23d45n110d23/todos-santos/?unit=us"
@@ -161,51 +144,55 @@
       </a>
     </div>
 
-    <!-- NOAA Radar -->
-    <div class="widget-container noaa-widget">
+    <!-- Windy Widget -->
+    <div class="widget-container">
       <iframe
-        src="https://noaa.maps.arcgis.com/apps/TimeAware/index.html?appid=370288bf9e4b469cbfb8832d800838bd"
-        allowfullscreen>
+        src="https://embed.windy.com/embed2.html?lat=23.446&lon=-110.261&detailLat=23.446&detailLon=-110.261&width=650&height=450&zoom=10&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=now&type=map&location=coordinates&detail=&metricWind=kt&metricTemp=%C2%B0C&radarRange=-1"
+        height="500"
+        allowfullscreen
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
       </iframe>
     </div>
+
+    <!-- NOAA Radar Loop -->
+    <div class="widget-container">
+      <iframe
+        src="https://noaa.maps.arcgis.com/apps/TimeAware/index.html?appid=370288bf9e4b469cbfb8832d800838bd"
+        height="450">
+      </iframe>
+    </div>
+
   </div>
 
-  <!-- Matrix JavaScript -->
+  <!-- Matrix Rain Script -->
   <script>
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
-
     function resize() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
     resize();
     window.addEventListener('resize', resize);
-
     const letters = "アァイィウヴエカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
     const fontSize = 14;
     let columns = Math.floor(canvas.width / fontSize);
     let drops = Array(columns).fill(1);
-
     function draw() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
       ctx.fillStyle = "#39ff14";
       ctx.font = fontSize + "px monospace";
-
       for (let i = 0; i < drops.length; i++) {
         const text = letters[Math.floor(Math.random() * letters.length)];
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
         if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
           drops[i] = 0;
         }
-
         drops[i]++;
       }
     }
-
     setInterval(draw, 35);
   </script>
 
