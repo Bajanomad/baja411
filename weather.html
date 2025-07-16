@@ -4,17 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Todos Santos Weather - The Baja Nomad</title>
-
-  <!-- Fonts: Orbitron for headers, Share Tech Mono for body -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
-
   <style>
-    /* =============================
-       Reset and Base Styles
-       ============================= */
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-    }
+    /* Reset & Base Styles */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
       height: 100%;
       background: black;
@@ -24,23 +17,17 @@
       position: relative;
     }
 
-    /* =============================
-       Matrix Rain Canvas Styling
-       ============================= */
+    /* Matrix Rain Styling */
     #matrix {
-      position: fixed;
-      top: 0; left: 0;
+      position: fixed; top: 0; left: 0;
       width: 100%; height: 100%;
       z-index: 0;
       pointer-events: none;
     }
 
-    /* =============================
-       Main Content Container
-       ============================= */
+    /* Content Container */
     .content {
-      position: relative;
-      z-index: 1;
+      position: relative; z-index: 1;
       min-height: 100vh;
       padding: 2rem;
       display: flex;
@@ -48,50 +35,29 @@
       align-items: center;
     }
 
-    /* =============================
-       Page Header Styling + Flicker Animation
-       ============================= */
-    header {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2.5rem;
-      margin-bottom: 2rem;
+    /* Flicker Header */
+    header { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; margin-bottom: 2rem;
       text-align: center;
       text-shadow: 0 0 8px #39ff14;
       animation: flicker 3s infinite alternate;
     }
     @keyframes flicker {
-      0%, 100% {
-        text-shadow: 0 0 8px #39ff14, 0 0 20px #39ff14, 0 0 30px #39ff14cc;
-        opacity: 1;
-      }
-      50% {
-        text-shadow: 0 0 4px #2ecc40, 0 0 10px #2ecc40aa;
-        opacity: 0.8;
-      }
-      75% {
-        text-shadow: none;
-        opacity: 0.6;
-      }
+      0%,100% { text-shadow: 0 0 8px #39ff14, 0 0 20px #39ff14, 0 0 30px #39ff14cc; opacity:1; }
+      50% { text-shadow: 0 0 4px #2ecc40, 0 0 10px #2ecc40aa; opacity:0.8; }
+      75% { text-shadow: none; opacity:0.6; }
     }
 
-    /* =============================
-       Back Arrow Button Styling
-       ============================= */
+    /* Back Button */
     .back-arrow {
-      position: fixed;
-      top: 20px; left: 20px;
-      width: 40px; height: 40px;
-      background: black;
-      border: 2px solid #39ff14;
-      border-radius: 50%;
-      box-shadow: 0 0 8px #39ff14aa;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease-in-out;
-      z-index: 999;
-      text-decoration: none;
+      position: fixed; top:20px; left:20px;
+      width:40px; height:40px;
+      background:black;
+      border:2px solid #39ff14;
+      border-radius:50%;
+      box-shadow:0 0 8px #39ff14aa;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; transition: all 0.2s ease;
+      z-index:999;
     }
     .back-arrow:hover {
       transform: scale(1.1);
@@ -99,13 +65,11 @@
       box-shadow: 0 0 16px #2ecc40cc;
     }
     .back-arrow img {
-      width: 20px; height: 20px;
+      width:20px; height:20px;
       filter: drop-shadow(0 0 2px #39ff14);
     }
 
-    /* =============================
-       Widget Container Styling (both widgets)
-       ============================= */
+    /* Widget Container Styling */
     .widget-container {
       background: rgba(0,0,0,0.85);
       border: 2px solid #39ff14;
@@ -118,121 +82,84 @@
       margin-top: 2rem;
     }
 
-    /* =============================
-       iframe Styling for Windy widget
-       ============================= */
+    /* iFrame Styling */
     iframe {
       width: 100%;
-      height: 450px;
       border: 0;
       border-radius: 8px;
     }
   </style>
 </head>
-
 <body>
 
-  <!-- =============================
-       Matrix Rain Background Canvas
-       ============================= -->
+  <!-- Matrix Background -->
   <canvas id="matrix"></canvas>
 
-  <!-- =============================
-       Back Arrow Button - Links back to index.html
-       ============================= -->
+  <!-- Back Button -->
   <a href="index.html" title="Back to Main" class="back-arrow">
     <img src="https://img.icons8.com/ios-filled/50/39FF14/chevron-left.png" alt="Back" />
   </a>
 
-  <!-- =============================
-       Main Content Wrapper
-       ============================= -->
+  <!-- Main Content -->
   <div class="content">
-
-    <!-- =============================
-         Page Title Header
-         ============================= -->
     <header>Todos Santos Weather - The Baja Nomad</header>
 
-    <!-- =============================
-         Wind & Weather Map Widget (Windy.com iframe)
-         ============================= -->
+    <!-- Windy Map Widget -->
     <div class="widget-container">
-      <iframe
-        src="https://embed.windy.com/embed2.html?lat=23.446&lon=-110.261&detailLat=23.446&detailLon=-110.261&width=650&height=450&zoom=10&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=kt&metricTemp=%C2%B0C&radarRange=-1"
-        allowfullscreen
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-      ></iframe>
+      <iframe src="https://embed.windy.com/embed2.html?lat=23.446&lon=-110.261&detailLat=23.446&detailLon=-110.261&width=650&height=450&zoom=10&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=now&type=map&location=coordinates&detail=&metricWind=kt&metricTemp=%C2%B0C&radarRange=-1"
+        allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
     </div>
 
-    <!-- =============================
-         Current Weather Summary Widget (forecast7.com)
-         ============================= -->
+    <!-- Forecast7 Summary Widget -->
     <div class="widget-container">
       <a class="weatherwidget-io"
          href="https://forecast7.com/en/23d45n110d23/todos-santos/?unit=us"
-         data-label_1="TODOS SANTOS"
-         data-label_2="WEATHER"
-         data-font="Jura"
-         data-theme="dark"
-         data-textcolor="#90ff46">
-        TODOS SANTOS WEATHER
+         data-label_1="TODOS SANTOS" data-label_2="WEATHER"
+         data-font="Jura" data-theme="dark" data-textcolor="#90ff46">
+         TODOS SANTOS WEATHER
       </a>
     </div>
 
-  </div> <!-- End .content -->
+    <!-- Active Tropical Systems Widget -->
+    <div class="widget-container">
+      <iframe id="nhc" width="700" height="280" scrolling="no" frameborder="0"
+        src="https://www.nhc.noaa.gov/widgets/nhc_widget.shtml">
+      </iframe>
+    </div>
 
-  <!-- =============================
-       Matrix Rain Script
-       ============================= -->
+  </div>
+
+  <!-- Matrix Rain Script -->
   <script>
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
-
-    function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-
-    const letters = "アァイィウヴエカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+    const letters = "アァイィウヴエカキ…0123456789";
     const fontSize = 14;
     let columns = Math.floor(canvas.width / fontSize);
     let drops = Array(columns).fill(1);
-
-    function draw() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+    function draw(){
+      ctx.fillStyle="rgba(0,0,0,0.05)";
+      ctx.fillRect(0,0,canvas.width,canvas.height);
       ctx.fillStyle = "#39ff14";
       ctx.font = fontSize + "px monospace";
-
-      for (let i = 0; i < drops.length; i++) {
-        const text = letters[Math.floor(Math.random() * letters.length)];
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
-        }
-
+      for(let i=0;i<drops.length;i++){
+        let text = letters[Math.floor(Math.random()*letters.length)];
+        ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+        if(drops[i]*fontSize > canvas.height && Math.random() > .975) drops[i] = 0;
         drops[i]++;
       }
     }
-
     setInterval(draw, 35);
   </script>
 
-  <!-- =============================
-       forecast7.com Widget Loader Script
-       ============================= -->
+  <!-- Forecast7 Widget Script -->
   <script>
-    !function(d,s,id){
-      var js,fjs=d.getElementsByTagName(s)[0];
+    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];
       if(!d.getElementById(id)){
-        js=d.createElement(s);
-        js.id=id;
+        js=d.createElement(s);js.id=id;
         js.src='https://weatherwidget.io/js/widget.min.js';
         fjs.parentNode.insertBefore(js,fjs);
       }
