@@ -83,14 +83,15 @@
       filter: drop-shadow(0 0 2px #39ff14);
     }
 
-    /* ===== WEATHER CARD STYLES ===== */
+    /* ===== WEATHER CARD ===== */
     .weather-card {
       background: rgba(0, 0, 0, 0.85);
       border: 2px solid #39ff14;
       border-radius: 12px;
       box-shadow: 0 0 15px #39ff14aa;
       padding: 2rem 3rem;
-      width: 320px;
+      max-width: 400px;
+      width: 100%;
       color: #39ff14;
       font-family: 'Share Tech Mono', monospace;
       text-align: center;
@@ -99,10 +100,10 @@
       font-family: 'Orbitron', sans-serif;
       font-size: 2rem;
       margin-bottom: 1rem;
-      text-shadow: 0 0 8px #39ff14;
+      text-shadow: 0 0 6px #39ff14;
     }
     .weather-info {
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       margin-top: 0.75rem;
       text-transform: capitalize;
     }
@@ -112,41 +113,39 @@
       margin: 1rem 0;
     }
     .icon {
-      width: 80px;
-      height: 80px;
+      width: 100px;
+      height: 100px;
     }
     .error {
       color: #ff3300;
       font-weight: bold;
       margin-top: 2rem;
+      font-size: 1.1rem;
     }
   </style>
 </head>
 <body>
 
-  <!-- ===== MATRIX RAIN EFFECT CANVAS ===== -->
+  <!-- MATRIX RAIN -->
   <canvas id="matrix"></canvas>
 
-  <!-- ===== BACK ARROW BUTTON LINK ===== -->
+  <!-- BACK ARROW -->
   <a href="index.html" title="Back to Main" class="back-arrow">
     <img src="https://img.icons8.com/ios-filled/50/39ff14/left.png" alt="Back" />
   </a>
 
-  <!-- ===== MAIN PAGE CONTENT ===== -->
+  <!-- PAGE CONTENT -->
   <div class="content">
-
-    <!-- PAGE HEADER -->
     <header>Todos Santos Weather - The Baja Nomad</header>
 
-    <!-- WEATHER CARD CONTAINER -->
-    <div class="weather-card" id="weather-card">
-      <!-- Weather info injected here by JS -->
+    <div id="weather-container" class="weather-card">
+      <!-- Weather info injected here -->
+      <p>Loading weather data...</p>
     </div>
   </div>
 
-  <!-- ===== JAVASCRIPT: MATRIX RAIN & WEATHER FETCH ===== -->
   <script>
-    /* ===== MATRIX RAIN EFFECT ===== */
+    /* MATRIX RAIN EFFECT */
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -183,16 +182,10 @@
       canvas.height = window.innerHeight;
     });
 
-    /* ===== WEATHER FETCHING & DISPLAY ===== */
+    /* WEATHER FETCH & DISPLAY FOR TODOS SANTOS */
     const API_KEY = '02ad3935f8620de31849a9e252740489';
-
-    const city = {
-      name: "Todos Santos",
-      lat: 23.4453,
-      lon: -110.2656
-    };
-
-    const card = document.getElementById('weather-card');
+    const city = { name: "Todos Santos", lat: 23.4453, lon: -110.2656 };
+    const container = document.getElementById('weather-container');
 
     function kelvinToCelsius(k) {
       return (k - 273.15).toFixed(1);
@@ -201,7 +194,7 @@
       return ((k - 273.15) * 9/5 + 32).toFixed(1);
     }
 
-    async function fetchWeather(city) {
+    async function fetchWeather() {
       try {
         const res = await fetch(
           `https://api.openweathermap.org/data/2.5/weather?lat=${city.lat}&lon=${city.lon}&appid=${API_KEY}`
@@ -214,18 +207,31 @@
       }
     }
 
-    function createWeatherCard(city, data) {
+    function displayWeather(data) {
       if(data.error) {
-        return `
-          <h2>${city.name}</h2>
-          <p class="error">Failed to load weather: ${data.message}</p>
-        `;
+        container.innerHTML = `<p class="error">Failed to load weather: ${data.message}</p>`;
+        return;
       }
 
       const iconUrl = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
 
-      return `
+      container.innerHTML = `
         <h2>${city.name}</h2>
         <img class="icon" src="${iconUrl}" alt="${data.weather[0].description}" />
         <div class="temp">${kelvinToCelsius(data.main.temp)}°C / ${kelvinToFahrenheit(data.main.temp)}°F</div>
-        <div class="weather-info">${data
+        <div class="weather-info">${data.weather[0].description}</div>
+        <div class="weather-info">Humidity: ${data.main.humidity}%</div>
+        <div class="weather-info">Wind: ${data.wind.speed} m/s</div>
+      `;
+    }
+
+    async function loadWeather() {
+      container.innerHTML = '<p>Loading weather data...</p>';
+      const data = await fetchWeather();
+      displayWeather(data);
+    }
+
+    loadWeather();
+  </script>
+</body>
+</html>
