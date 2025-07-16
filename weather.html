@@ -42,31 +42,41 @@
       text-align: center;
     }
 
-    /* --- BACK BUTTON STYLING --- */
+    /* --- BACK BUTTON --- */
     .back-btn {
       position: absolute;
       top: 20px;
       left: 20px;
-      text-decoration: none;
-      color: #39ff14;
-      font-size: 1.2rem;
       background: black;
       border: 2px solid #39ff14;
-      border-radius: 8px;
-      padding: 8px 12px;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       box-shadow: 0 0 10px #39ff14aa;
       transition: all 0.3s ease;
+      cursor: pointer;
+      z-index: 2;
     }
     .back-btn:hover {
       background-color: #2ecc40;
-      color: black;
-      box-shadow: 0 0 20px #2ecc40cc;
       border-color: #2ecc40;
+      box-shadow: 0 0 20px #2ecc40cc;
+    }
+    .back-btn svg {
+      fill: #39ff14;
+      width: 20px;
+      height: 20px;
+    }
+    .back-btn:hover svg {
+      fill: black;
     }
 
-    /* --- WIDGET CONTAINER --- */
+    /* --- WIDGET SECTION --- */
     .widget-container {
-      margin-top: 3rem;
+      margin-top: 4rem;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -83,16 +93,23 @@
   </style>
 </head>
 <body>
+  <!-- 🌧️ MATRIX RAIN BACKGROUND -->
   <canvas id="matrix"></canvas>
 
-  <a class="back-btn" href="https://the-baja-nomad.vercel.app">&larr; Back to Main</a>
+  <!-- 🔙 BACK BUTTON -->
+  <a class="back-btn" href="https://the-baja-nomad.vercel.app" title="Back to Home">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M15 6l-6 6 6 6" stroke="none" stroke-width="2" fill="currentColor"/>
+    </svg>
+  </a>
 
+  <!-- 🧠 MAIN CONTENT -->
   <div class="content">
     <header>Todos Santos Weather</header>
 
     <div class="widget-container">
 
-      <!-- 🌤️ DAILY FORECAST WIDGET -->
+      <!-- 🌤️ FORECAST WIDGET (WeatherWidget.io) -->
       <a class="weatherwidget-io"
          href="https://forecast7.com/en/23d45n110d23/todos-santos/?unit=us"
          data-label_1="TODOS SANTOS"
@@ -106,14 +123,13 @@
       <!-- 🛰️ WINDY RADAR MAP -->
       <iframe
         src="https://embed.windy.com/embed2.html?lat=23.45&lon=-110.23&detailLat=23.45&detailLon=-110.23&width=100%&height=500&zoom=10&level=surface&overlay=rain&menu=&message=&marker=true&calendar=&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default"
-        loading="lazy"
-        title="Windy.com Weather Radar">
+        title="Windy Weather Radar">
       </iframe>
 
     </div>
   </div>
 
-  <!-- 🧠 MATRIX BACKGROUND -->
+  <!-- 🧪 MATRIX SCRIPT -->
   <script>
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
@@ -147,7 +163,7 @@
     });
   </script>
 
-  <!-- 📦 WEATHER WIDGET SCRIPT -->
+  <!-- ⚙️ WEATHER WIDGET SCRIPT -->
   <script>
     !function(d,s,id){
       var js,fjs=d.getElementsByTagName(s)[0];
@@ -158,6 +174,5 @@
       }
     }(document,'script','weatherwidget-io-js');
   </script>
-
 </body>
 </html>
