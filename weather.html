@@ -25,9 +25,9 @@
       font-family: 'Orbitron', sans-serif;
       font-size: 2.5rem;
       margin-bottom: 2rem;
+      text-align: center;
       text-shadow: 0 0 8px #39ff14;
       animation: flicker 2.5s infinite alternate;
-      text-align: center;
     }
     @keyframes flicker {
       0%,100% { text-shadow: 0 0 8px #39ff14, 0 0 20px #39ff14, 0 0 30px #39ff14cc; opacity: 1; }
@@ -47,6 +47,7 @@
       box-shadow: 0 0 8px #39ff14aa;
       transition: all 0.2s ease-in-out;
       z-index: 999;
+      cursor: pointer;
     }
     .back-arrow:hover {
       transform: scale(1.1);
@@ -57,56 +58,76 @@
       width: 20px; height: 20px;
       filter: drop-shadow(0 0 2px #39ff14);
     }
-    .button-container {
+    .widgets-container {
       display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      width: 300px;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+      max-width: 980px;
+      width: 100%;
     }
-    .weather-btn {
-      background: black;
-      border: 3px solid #39ff14;
-      border-radius: 8px;
-      padding: 1rem;
-      color: #39ff14;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 1.25rem;
-      text-align: center;
-      cursor: pointer;
+    .widget {
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #39ff14;
+      border-radius: 12px;
       box-shadow: 0 0 15px #39ff14aa;
-      transition: all 0.2s ease-in-out;
-      user-select: none;
-      text-decoration: none;
-      display: block;
+      padding: 1rem;
+      width: 320px;
+      text-align: center;
+      font-family: 'Share Tech Mono', monospace;
+      color: #39ff14;
     }
-    .weather-btn:hover {
-      background: #000000cc;
-      border-color: #2ecc40;
-      box-shadow: 0 0 25px #2ecc40cc;
-      color: #2ecc40;
+    .widget h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 6px #39ff14;
+    }
+    /* WeatherWidget.io widget overrides */
+    .weatherwidget-io {
+      width: 100% !important;
+      border-radius: 8px !important;
     }
   </style>
 </head>
 <body>
 
-  <!-- Back Arrow -->
   <a href="index.html" title="Back to Main" class="back-arrow">
     <img src="https://img.icons8.com/ios-filled/50/39ff14/left.png" alt="Back" />
   </a>
 
   <header>Weather - The Baja Nomad</header>
 
-  <div class="button-container">
-    <a href="https://weather.com/weather/today/l/23.6412,-110.3109" target="_blank" rel="noopener" class="weather-btn" title="La Paz Weather">
-      La Paz Weather
-    </a>
-    <a href="https://weather.com/weather/today/l/22.8905,-109.9126" target="_blank" rel="noopener" class="weather-btn" title="Los Cabos Weather">
-      Los Cabos Weather
-    </a>
-    <a href="https://weather.com/weather/today/l/23.4511,-110.2633" target="_blank" rel="noopener" class="weather-btn" title="Todos Santos Weather">
-      Todos Santos Weather
-    </a>
+  <div class="widgets-container">
+
+    <div class="widget">
+      <h2>La Paz</h2>
+      <a class="weatherwidget-io" href="https://forecast7.com/en/24d1431d72/la-paz/" data-label_1="LA PAZ" data-label_2="WEATHER" data-theme="dark" >La Paz Weather</a>
+    </div>
+
+    <div class="widget">
+      <h2>Los Cabos</h2>
+      <a class="weatherwidget-io" href="https://forecast7.com/en/22d8906d91/los-cabos/" data-label_1="LOS CABOS" data-label_2="WEATHER" data-theme="dark" >Los Cabos Weather</a>
+    </div>
+
+    <div class="widget">
+      <h2>Todos Santos</h2>
+      <a class="weatherwidget-io" href="https://forecast7.com/en/23d4529d26/todos-santos/" data-label_1="TODOS SANTOS" data-label_2="WEATHER" data-theme="dark" >Todos Santos Weather</a>
+    </div>
+
   </div>
+
+  <script>
+    !function(d,s,id){
+      var js,fjs=d.getElementsByTagName(s)[0];
+      if(!d.getElementById(id)){
+        js=d.createElement(s);
+        js.id=id;
+        js.src='https://weatherwidget.io/js/widget.min.js';
+        fjs.parentNode.insertBefore(js,fjs);
+      }
+    }(document,'script','weatherwidget-io-js');
+  </script>
 
 </body>
 </html>
