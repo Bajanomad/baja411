@@ -4,15 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>News - The Baja Nomad</title>
-
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
-
   <style>
-    /* Reset & Base */
     * {
-      margin: 0; padding: 0; box-sizing: border-box;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
+
     html, body {
       height: 100%;
       background: black;
@@ -21,34 +20,30 @@
       overflow-x: hidden;
     }
 
-    /* Matrix Canvas */
-    #matrix {
+    canvas {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0;
+      left: 0;
       z-index: 0;
-      pointer-events: none;
     }
 
-    /* Content container */
     .content {
       position: relative;
-      z-index: 2;
+      z-index: 1;
       padding: 2rem;
-      min-height: 100vh;
       max-width: 900px;
       margin: 0 auto;
     }
 
-    /* Page Header */
     header {
-      font-family: 'Orbitron', sans-serif;
       font-size: 2.5rem;
-      margin-bottom: 1.5rem;
+      font-family: 'Orbitron', sans-serif;
       text-align: center;
-      text-shadow: 0 0 8px #39ff14;
+      margin-bottom: 2rem;
       animation: flicker 3s infinite alternate;
+      text-shadow: 0 0 10px #39ff14;
     }
+
     @keyframes flicker {
       0%, 100% {
         text-shadow: 0 0 8px #39ff14, 0 0 20px #39ff14, 0 0 30px #39ff14cc;
@@ -58,13 +53,12 @@
         text-shadow: 0 0 4px #2ecc40, 0 0 10px #2ecc40aa;
         opacity: 0.8;
       }
-      75% {
+      70% {
         text-shadow: none;
         opacity: 0.6;
       }
     }
 
-    /* Back arrow */
     .back-arrow {
       position: fixed;
       top: 20px;
@@ -74,110 +68,123 @@
       background: black;
       border: 2px solid #39ff14;
       border-radius: 50%;
-      box-shadow: 0 0 8px #39ff14aa;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease-in-out;
       z-index: 999;
-      text-decoration: none;
+      box-shadow: 0 0 8px #39ff14aa;
+      transition: all 0.2s ease-in-out;
     }
+
     .back-arrow:hover {
       transform: scale(1.1);
       border-color: #2ecc40;
       box-shadow: 0 0 16px #2ecc40cc;
     }
+
     .back-arrow img {
       width: 20px;
       height: 20px;
       filter: drop-shadow(0 0 2px #39ff14);
     }
 
-    /* News Feed Container */
-    .news-feed {
-      background: rgba(0,0,0,0.85);
+    .news-item {
+      background: rgba(0, 0, 0, 0.8);
       border: 2px solid #39ff14;
-      border-radius: 12px;
+      border-radius: 8px;
       padding: 1rem;
+      margin-bottom: 1.5rem;
       box-shadow: 0 0 15px #39ff14aa;
-      color: #90ff46;
-      font-size: 1rem;
-      line-height: 1.5;
-      max-height: 80vh;
-      overflow-y: auto;
     }
 
-    /* Links style inside news feed */
-    .news-feed a {
-      color: #39ff14;
-      text-decoration: none;
+    .news-item h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: #90ff46;
     }
-    .news-feed a:hover {
+
+    .news-item p {
+      font-size: 1rem;
+      color: #cccccc;
+    }
+
+    .news-item a {
+      display: inline-block;
+      margin-top: 0.5rem;
+      color: #39ff14;
       text-decoration: underline;
-      color: #2ecc40;
     }
   </style>
 </head>
 <body>
-
-  <!-- MATRIX BACKGROUND -->
+  <!-- Matrix Background -->
   <canvas id="matrix"></canvas>
 
-  <!-- BACK ARROW -->
-  <a href="index.html" class="back-arrow" title="Back to Main">
+  <!-- Back Arrow -->
+  <a href="index.html" title="Back to Main" class="back-arrow">
     <img src="https://img.icons8.com/ios-filled/50/39ff14/left.png" alt="Back" />
   </a>
 
-  <!-- MAIN CONTENT -->
+  <!-- Main Content -->
   <div class="content">
-    <header>Local News</header>
-
-    <!-- PLACEHOLDER FOR RSS FEED -->
-    <div class="news-feed" id="news-feed">
-      Loading news...
+    <header>Gringo Gazette News</header>
+    <div id="news-container">
+      <p>Loading news...</p>
     </div>
   </div>
 
-  <!-- MATRIX RAIN SCRIPT -->
+  <!-- Matrix Rain Script -->
   <script>
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
-
-    function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
 
     const letters = "アァイィウヴエカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
     const fontSize = 14;
-    let columns = Math.floor(canvas.width / fontSize);
-    let drops = Array(columns).fill(1);
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = Array(columns).fill(1);
 
-    function draw() {
+    function drawMatrix() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
       ctx.fillStyle = "#39ff14";
       ctx.font = fontSize + "px monospace";
-
-      for(let i = 0; i < drops.length; i++) {
+      for (let i = 0; i < drops.length; i++) {
         const text = letters[Math.floor(Math.random() * letters.length)];
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-        if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
           drops[i] = 0;
         }
-
         drops[i]++;
       }
     }
-    setInterval(draw, 35);
 
-    // Placeholder for fetching RSS feed later (optional)
+    setInterval(drawMatrix, 35);
   </script>
 
+  <!-- Fetch News -->
+  <script>
+    fetch("https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.gringogazette.com%2Ffeed")
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById("news-container");
+        container.innerHTML = ""; // Clear the loading text
+        data.items.slice(0, 5).forEach(item => {
+          const article = document.createElement("div");
+          article.classList.add("news-item");
+          article.innerHTML = `
+            <h3>${item.title}</h3>
+            <p>${item.description.split(" ").slice(0, 30).join(" ")}...</p>
+            <a href="${item.link}" target="_blank">Read more</a>
+          `;
+          container.appendChild(article);
+        });
+      })
+      .catch(err => {
+        document.getElementById("news-container").innerHTML = "<p>Failed to load news.</p>";
+        console.error("RSS Fetch Error:", err);
+      });
+  </script>
 </body>
 </html>
