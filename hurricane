@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Baja Hurricane Tracker</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <style>
+    body { margin:0; font-family:sans-serif; background:#111; color:#eee; }
+    #map { width:100%; height:80vh; }
+    .widget { padding:10px; margin:10px; background:#222; border-radius:4px; }
+    .widget h2 { margin-top:0; }
+  </style>
+</head>
+<body>
+
+  <div class="widget">
+    <h2>🌪️ Tropical Weather Outlook (Pacific)</h2>
+    <iframe src="https://www.nhc.noaa.gov/widgets/nhc_widget.shtml"
+      width="100%" height="300" frameborder="0" scrolling="no"></iframe>
+  </div>
+
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([24.1, -110.3], 5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OSM contributors'
+    }).addTo(map);
+
+    // NOAA Tropical MapServer layers
+    const baseURL = 'https://mapservices.weather.noaa.gov/tropical/rest/services/tropical/NHC_tropical_weather/MapServer';
+    const layers = {
+      "2-day Outlook": 0,
+      "7-day Outlook": 1,
+      "Forecast Track": 3,
+      "Forecast Cone": 4,
+      "Past Track": 5,
+      "Wind Radii": 7,
+      "Forecast Wind Radii": 8
+    };
+
+    Object.entries(layers).forEach(([name, idx]) => {
+      L.tileLayer.wms(`${baseURL}/wmsserver`, {
+        layers: idx,
+        format: 'image/png',
+        transparent: true,
+        attribution: 'NOAA/NHC'
+      }).addTo(map).bindPopup(name);
+    });
+
+    // Optional: GeoJSON feed of active storms summary
+    fetch('https://www.nhc.noaa.gov/gis/forecast/active_storms.geojson')
+      .then(res => res.json())
+      .then(js => L.geoJSON(js, {
+        style: { color:'magenta', weight:2 },
+        onEachFeature: (f, l) => l.bindPopup(f.properties.name)
+      }).addTo(map));
+
+  </script>
+
+  <footer class="widget">
+    <h2>🛰️ Satellite & Radar</h2>
+    <p>Satellite imagery available through NOAA's NESDIS labs. Local radar tiles for La Paz/Cabo to be added via NWS OGC.</p>
+  </footer>
+
+</body>
+</html>
