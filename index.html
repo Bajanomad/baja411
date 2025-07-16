@@ -1,215 +1,137 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Baja Nomad</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }html, body {
-  height: 100%;
-  background: black;
-  font-family: 'Share Tech Mono', monospace;
-  color: #39ff14;
-  overflow-x: hidden;
-}
-
-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 0;
-}
-
-.content {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 2rem;
-  min-height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-}
-
-header {
-  font-size: 3rem;
-  font-family: 'Orbitron', sans-serif;
-  margin-bottom: 2rem;
-  text-shadow: 0 0 8px #39ff14;
-  text-align: center;
-  width: 100%;
-}
-
-iframe {
-  width: 90%;
-  max-width: 900px;
-  height: 600px;
-  border: none;
-  border-radius: 10px;
-  margin-bottom: 2rem;
-  box-shadow: 0 0 20px #39ff14aa;
-}
-
-.button-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  margin-top: 1rem;
-  width: 100%;
-  max-width: 600px;
-}
-
-.review-btn {
-  background: #39ff14;
-  color: #000;
-  border: none;
-  padding: 1rem;
-  font-size: 1rem;
-  font-family: 'Orbitron', sans-serif;
-  cursor: pointer;
-  border-radius: 50%;
-  box-shadow: 0 0 15px #39ff14cc;
-  transition: background 0.3s ease;
-  height: 100px;
-  width: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.review-btn:hover {
-  background: #2ecc40;
-  box-shadow: 0 0 25px #2ecc40cc;
-}
-
-.review-btn i {
-  font-size: 2rem;
-}
-
-.useful-links {
-  margin-top: 3rem;
-  width: 100%;
-  max-width: 900px;
-  text-align: center;
-}
-
-.useful-links h2 {
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
-  text-shadow: 0 0 6px #39ff14;
-}
-
-.useful-links ul {
-  list-style: none;
-  padding: 0;
-}
-
-.useful-links li {
-  margin: 0.5rem 0;
-  font-size: 1.1rem;
-}
-
-.useful-links a {
-  color: #39ff14;
-  text-decoration: none;
-}
-
-.useful-links a:hover {
-  text-decoration: underline;
-}
-
-.contact-info {
-  margin-top: 2rem;
-  font-size: 1rem;
-}
-
-  </style>
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Baja Nomad</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0; padding: 0;
+  }
+  html, body {
+    height: 100%;
+    background: black;
+    font-family: 'Share Tech Mono', monospace;
+    color: #39ff14;
+    overflow-x: hidden;
+  }
+  canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
+  .content {
+    position: relative;
+    z-index: 1;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.6);
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  header {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 8px #39ff14;
+    text-align: center;
+    width: 100%;
+  }
+  iframe {
+    width: 90%;
+    max-width: 900px;
+    height: 600px;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    box-shadow: 0 0 20px #39ff14aa;
+  }
+  .button-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-bottom: 3rem;
+    width: 90%;
+    max-width: 900px;
+  }
+  .icon-button {
+    background: #39ff14;
+    border: none;
+    border-radius: 20px;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 5rem;
+    cursor: pointer;
+    box-shadow: 0 0 15px #39ff14cc;
+    transition: background 0.3s ease;
+    user-select: none;
+  }
+  .icon-button:hover {
+    background: #2ecc40;
+    box-shadow: 0 0 25px #2ecc40cc;
+  }
+</style>
 </head>
 <body>
   <canvas id="matrix"></canvas>
   <div class="content">
     <header>The Baja Nomad</header>
-    <iframe src="https://calendar.google.com/calendar/embed?src=thebajanomad%40gmail.com&ctz=UTC" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe><div class="button-container">
-  <button class="review-btn" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScRioIJdZa-N53VBqu7lwsGQlPv_Mumufis3UEwq0-Oj7d1fg/viewform?usp=sharing', '_blank')">
-    <i class="fas fa-home"></i>
-  </button>
-  <button class="review-btn" onclick="window.open('https://your_public_reviews_link_here', '_blank')">
-    <i class="fas fa-comment-dots"></i>
-  </button>
-  <button class="review-btn" onclick="window.open('https://www.eebmike.com', '_blank')">
-    <i class="fas fa-cloud-sun"></i>
-  </button>
-  <button class="review-btn" onclick="window.open('https://gringogazette.com', '_blank')">
-    <i class="fas fa-newspaper"></i>
-  </button>
-  <button class="review-btn" onclick="window.open('https://www.ioverlander.com', '_blank')">
-    <i class="fas fa-road"></i>
-  </button>
-  <button class="review-btn" onclick="window.open('https://www.facebook.com/share/1DZrpqihNX/', '_blank')">
-    <i class="fab fa-facebook"></i>
-  </button>
-  <button class="review-btn" onclick="window.open('mailto:thebajanomad@gmail.com', '_blank')">
-    <i class="fas fa-envelope"></i>
-  </button>
-  <button class="review-btn" onclick="window.open('https://www.xe.com/currencyconverter/', '_blank')">
-    <i class="fas fa-dollar-sign"></i>
-  </button>
-</div>
-
-<div class="useful-links">
-  <h2>Useful Links for Baja Travelers</h2>
-  <ul>
-    <li>🗺 <a href="https://www.ioverlander.com" target="_blank">Campsites & Roads</a></li>
-    <li>🌪 <a href="https://www.eebmike.com" target="_blank">Hurricane Tracking</a></li>
-    <li>📘 <a href="https://www.facebook.com/share/1DZrpqihNX/" target="_blank">Facebook</a></li>
-  </ul>
-  <div class="contact-info">
-    ✉️ Email: <a href="mailto:thebajanomad@gmail.com">thebajanomad@gmail.com</a>
+    <iframe src="https://calendar.google.com/calendar/embed?src=thebajanomad%40gmail.com&ctz=UTC" scrolling="no" aria-label="Calendar"></iframe>
+    <div class="button-container">
+      <button class="icon-button" onclick="window.open('#houseSitting', '_blank')" aria-label="House Sitting">🏠</button>
+      <button class="icon-button" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScRioIJdZa-N53VBqu7lwsGQlPv_Mumufis3UEwq0-Oj7d1fg/viewform?usp=sharing', '_blank')" aria-label="Drop a Review">📝</button>
+      <button class="icon-button" onclick="window.open('#readReviews', '_blank')" aria-label="Read Reviews">💬</button>
+      <button class="icon-button" onclick="window.open('https://www.eebmike.com', '_blank')" aria-label="Hurricane Tracking">🌪️</button>
+      <button class="icon-button" onclick="window.open('https://gringogazette.com', '_blank')" aria-label="Local News">📰</button>
+      <button class="icon-button" onclick="window.open('https://www.ioverlander.com', '_blank')" aria-label="Campsites & Roads">🗺️</button>
+      <button class="icon-button" onclick="window.open('mailto:thebajanomad@gmail.com')" aria-label="Email">✉️</button>
+      <button class="icon-button" onclick="window.open('https://www.facebook.com/share/1DZrpqihNX/', '_blank')" aria-label="Facebook">📘</button>
+    </div>
   </div>
-</div>
+<script>
+  const canvas = document.getElementById("matrix");
+  const ctx = canvas.getContext("2d");
 
-  </div>  <script>
-    const canvas = document.getElementById("matrix");
-    const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 
-    canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth;
+  const letters = "アァイィウヴエカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
+  const fontSize = 14;
+  const columns = Math.floor(canvas.width / fontSize);
+  const drops = Array(columns).fill(1);
 
-    const letters = "アァイィウヴエカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
-    const fontSize = 14;
-    const columns = canvas.width / fontSize;
-    const drops = Array.from({ length: columns }).fill(1);
+  function draw() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    function draw() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#39ff14";
+    ctx.font = fontSize + "px monospace";
 
-      ctx.fillStyle = "#39ff14";
-      ctx.font = fontSize + "px monospace";
+    for (let i = 0; i < drops.length; i++) {
+      const text = letters.charAt(Math.floor(Math.random() * letters.length));
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
-      for (let i = 0; i < drops.length; i++) {
-        const text = letters[Math.floor(Math.random() * letters.length)];
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
-        }
-
-        drops[i]++;
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
       }
+      drops[i]++;
     }
+  }
 
-    setInterval(draw, 35);
+  setInterval(draw, 35);
 
-    window.addEventListener("resize", () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
-  </script></body>
+  window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+</script>
+</body>
 </html>
