@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>House Sitting - The Baja Nomad</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      height: 100%;
+      background: black;
+      font-family: 'Share Tech Mono', monospace;
+      color: #39ff14;
+      overflow-x: hidden;
+    }
+    .content {
+      padding: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    header {
+      font-size: 2.5rem;
+      font-family: 'Orbitron', sans-serif;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 8px #39ff14;
+      text-align: center;
+      white-space: nowrap;
+      animation: neonFlicker 2.5s infinite alternate;
+    }
+    p.description {
+      font-size: 1.25rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      text-align: center;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      color: #2ecc40cc;
+    }
+    iframe.calendar {
+      display: block;
+      margin: 0 auto;
+      border: none;
+      width: 100%;
+      height: 700px;
+      box-shadow: 0 0 20px #39ff14aa;
+      border-radius: 8px;
+      background: black;
+    }
+
+    @keyframes neonFlicker {
+      0%, 100% {
+        text-shadow: 0 0 8px #39ff14, 0 0 20px #39ff14, 0 0 30px #39ff14cc;
+        opacity: 1;
+      }
+      50% {
+        text-shadow: 0 0 4px #2ecc40, 0 0 10px #2ecc40aa;
+        opacity: 0.8;
+      }
+      70% {
+        text-shadow: none;
+        opacity: 0.6;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="content">
+    <header>Welcome to The Baja Nomad House Sitting</header>
+    <p class="description">
+      This is your go-to spot for booking reliable, trustworthy house sitting services while you’re away. Check availability below.
+    </p>
+    <iframe
+      class="calendar"
+      src="https://calendar.google.com/calendar/embed?src=thebajanomad%40gmail.com&ctz=UTC"
+      frameborder="0"
+      scrolling="no"
+      allowfullscreen
+      title="House Sitting Calendar"
+    ></iframe>
+  </div>
+</body>
+</html>
