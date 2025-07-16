@@ -37,45 +37,40 @@ canvas {
 }
 
 header {
-  font-size: 2.5rem;
+  font-size: 3rem;
   font-family: 'Orbitron', sans-serif;
   margin-bottom: 2rem;
   text-shadow: 0 0 8px #39ff14;
   text-align: center;
-  white-space: nowrap;
+  width: 100%;
 }
 
 .button-grid {
   display: grid;
   grid-template-columns: repeat(2, 120px);
-  grid-gap: 1.5rem;
+  gap: 1.5rem;
   justify-content: center;
   align-items: center;
-  margin-top: 1rem;
 }
 
-.icon-btn {
+.icon-button {
   width: 120px;
   height: 120px;
-  border-radius: 50%;
   background: #39ff14;
   border: none;
-  box-shadow: 0 0 15px #39ff14cc;
+  border-radius: 50%;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: black;
+  box-shadow: 0 0 15px #39ff14cc;
+  transition: transform 0.2s, box-shadow 0.3s ease;
   cursor: pointer;
-  transition: background 0.3s ease;
 }
 
-.icon-btn img {
-  width: 50%;
-  height: 50%;
-  object-fit: contain;
-}
-
-.icon-btn:hover {
-  background: #2ecc40;
+.icon-button:hover {
+  transform: scale(1.1);
   box-shadow: 0 0 25px #2ecc40cc;
 }
 
@@ -86,30 +81,14 @@ header {
   <div class="content">
     <header>The Baja Nomad</header>
     <div class="button-grid">
-      <button class="icon-btn" onclick="window.open('https://calendar.google.com/calendar/embed?src=thebajanomad%40gmail.com&ctz=UTC', '_blank')">
-        <img src="https://img.icons8.com/ios-filled/100/000000/home.png" alt="House Sitting">
-      </button>
-      <button class="icon-btn" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScRioIJdZa-N53VBqu7lwsGQlPv_Mumufis3UEwq0-Oj7d1fg/viewform?usp=sharing', '_blank')">
-        <img src="https://img.icons8.com/ios-filled/100/000000/topic.png" alt="Reviews">
-      </button>
-      <button class="icon-btn" onclick="window.open('https://weather.com/weather/today/l/23.17,-109.7?par=google', '_blank')">
-        <img src="https://img.icons8.com/ios-filled/100/000000/partly-cloudy-day.png" alt="Weather">
-      </button>
-      <button class="icon-btn" onclick="window.open('https://www.eebmike.com', '_blank')">
-        <img src="https://img.icons8.com/ios-filled/100/000000/hurricane.png" alt="Hurricane">
-      </button>
-      <button class="icon-btn" onclick="window.open('https://www.gringogazette.com', '_blank')">
-        <img src="https://img.icons8.com/ios-filled/100/000000/news.png" alt="News">
-      </button>
-      <button class="icon-btn" onclick="window.open('https://www.ioverlander.com', '_blank')">
-        <img src="https://img.icons8.com/ios-filled/100/000000/car.png" alt="Traffic">
-      </button>
-      <button class="icon-btn" onclick="window.open('https://www.facebook.com/share/1DZrpqihNX/', '_blank')">
-        <img src="https://img.icons8.com/ios-filled/100/000000/facebook-new.png" alt="Facebook">
-      </button>
-      <button class="icon-btn" onclick="window.open('mailto:thebajanomad@gmail.com')">
-        <img src="https://img.icons8.com/ios-filled/100/000000/new-post.png" alt="Email">
-      </button>
+      <button class="icon-button" onclick="window.open('https://calendar.google.com/calendar/embed?src=thebajanomad%40gmail.com&ctz=UTC', '_blank')">🏠</button>
+      <button class="icon-button" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScRioIJdZa-N53VBqu7lwsGQlPv_Mumufis3UEwq0-Oj7d1fg/viewform?usp=sharing', '_blank')">💬</button>
+      <button class="icon-button" onclick="window.open('https://weather.com/weather/today', '_blank')">🌦️</button>
+      <button class="icon-button" onclick="window.open('https://www.eebmike.com', '_blank')">🌪️</button>
+      <button class="icon-button" onclick="window.open('https://www.gringogazette.com', '_blank')">📰</button>
+      <button class="icon-button" onclick="window.open('https://www.google.com/maps', '_blank')">🚗</button>
+      <button class="icon-button" onclick="window.open('https://www.facebook.com/share/1DZrpqihNX/', '_blank')">📘</button>
+      <button class="icon-button" onclick="window.open('mailto:thebajanomad@gmail.com', '_blank')">📧</button>
     </div>
   </div>  <script>
     const canvas = document.getElementById("matrix");
