@@ -33,7 +33,7 @@
       justify-content: flex-start;
       padding: 2rem;
       min-height: 100%;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0,0,0,0.6);
     }
     header {
       font-size: 2.5rem;
@@ -45,36 +45,38 @@
     }
     .button-grid {
       display: grid;
-      grid-template-columns: repeat(2, 120px);
+      grid-template-columns: repeat(2, 140px);
       grid-gap: 2rem;
       justify-content: center;
       align-items: center;
       margin-top: 1rem;
     }
     .icon-btn {
-      width: 120px;
-      height: 120px;
+      width: 140px;
+      height: 140px;
       border-radius: 50%;
-      background: black;
-      border: 4px solid #39ff14;
-      box-shadow: 0 0 15px #39ff14cc, 0 0 30px #39ff14aa;
+      background: #39ff14;
+      border: none;
+      box-shadow: 0 0 20px #39ff14cc;
       display: flex;
       justify-content: center;
       align-items: center;
       cursor: pointer;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
     }
     .icon-btn img {
-      width: 60%;
-      height: 60%;
+      width: 65%;
+      height: 65%;
       object-fit: contain;
-      pointer-events: none;
-      user-select: none;
+      background: black;
+      border-radius: 50%;
+      padding: 10%;
+      box-shadow: 0 0 10px #0f0 inset;
     }
     .icon-btn:hover {
-      border-color: #2ecc40;
-      box-shadow: 0 0 25px #2ecc40cc, 0 0 40px #2ecc40aa;
-      background: black;
+      background: #2ecc40;
+      box-shadow: 0 0 30px #2ecc40cc;
+      transform: scale(1.1);
     }
   </style>
 </head>
@@ -84,43 +86,42 @@
     <header>The Baja Nomad</header>
     <div class="button-grid">
       <button class="icon-btn" onclick="window.open('https://calendar.google.com/calendar/embed?src=thebajanomad%40gmail.com&ctz=UTC', '_blank')" title="House Sitting">
-        <img src="https://img.icons8.com/ios-filled/100/39ff14/home.png" alt="House Sitting" />
+        <img src="https://img.icons8.com/ios-filled/100/000000/home.png" alt="House Sitting" />
       </button>
       <button class="icon-btn" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScRioIJdZa-N53VBqu7lwsGQlPv_Mumufis3UEwq0-Oj7d1fg/viewform?usp=sharing', '_blank')" title="Reviews">
-        <img src="https://img.icons8.com/ios-filled/100/39ff14/comments.png" alt="Reviews" />
+        <img src="https://img.icons8.com/ios-filled/100/000000/topic.png" alt="Reviews" />
       </button>
       <button class="icon-btn" onclick="window.open('https://weather.com/weather/today/l/23.17,-109.7?par=google', '_blank')" title="Weather">
-        <img src="https://img.icons8.com/ios-filled/100/39ff14/partly-cloudy-day.png" alt="Weather" />
+        <img src="https://img.icons8.com/ios-filled/100/000000/partly-cloudy-day.png" alt="Weather" />
       </button>
       <button class="icon-btn" onclick="window.open('https://www.eebmike.com', '_blank')" title="Hurricane">
-        <img src="https://img.icons8.com/ios-filled/100/39ff14/tornado.png" alt="Hurricane" />
+        <img src="https://img.icons8.com/ios-filled/100/000000/tornado.png" alt="Hurricane" />
       </button>
       <button class="icon-btn" onclick="window.open('https://www.gringogazette.com', '_blank')" title="News">
         <img src="https://img.icons8.com/ios-filled/100/39ff14/newspaper.png" alt="News" />
       </button>
       <button class="icon-btn" onclick="window.open('https://www.ioverlander.com', '_blank')" title="Traffic">
-        <img src="https://img.icons8.com/ios-filled/100/39ff14/car.png" alt="Traffic" />
+        <img src="https://img.icons8.com/ios-filled/100/000000/car.png" alt="Traffic" />
       </button>
       <button class="icon-btn" onclick="window.open('https://www.facebook.com/share/1DZrpqihNX/', '_blank')" title="Facebook">
-        <img src="https://img.icons8.com/ios-filled/100/39ff14/facebook-new.png" alt="Facebook" />
+        <img src="https://img.icons8.com/ios-filled/100/000000/facebook-new.png" alt="Facebook" />
       </button>
       <button class="icon-btn" onclick="window.open('mailto:thebajanomad@gmail.com')" title="Email">
-        <img src="https://img.icons8.com/ios-filled/100/39ff14/new-post.png" alt="Email" />
+        <img src="https://img.icons8.com/ios-filled/100/000000/new-post.png" alt="Email" />
       </button>
     </div>
   </div>
-
   <script>
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
 
     canvas.height = window.innerHeight;
     canvas.width = window.innerWidth;
 
     const letters = "アァイィウヴエカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
     const fontSize = 14;
-    const columns = Math.floor(canvas.width / fontSize);
-    const drops = Array(columns).fill(1);
+    const columns = canvas.width / fontSize;
+    const drops = Array.from({ length: columns }).fill(1);
 
     function draw() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
@@ -143,7 +144,7 @@
 
     setInterval(draw, 35);
 
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     });
