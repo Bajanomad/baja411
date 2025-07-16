@@ -84,24 +84,34 @@
       box-shadow: 0 0 20px #2ecc40cc;
     }
 
-    .home-icon {
+    /* Back arrow */
+    .back-arrow {
       position: fixed;
       top: 20px;
       left: 20px;
-      width: 50px;
-      height: 50px;
+      width: 40px;
+      height: 40px;
       z-index: 999;
       background: black;
       border: 2px solid #39ff14;
       border-radius: 50%;
-      padding: 5px;
-      box-shadow: 0 0 10px #39ff14aa;
-      transition: transform 0.2s ease-in-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 8px #39ff14aa;
+      transition: all 0.2s ease-in-out;
     }
 
-    .home-icon:hover {
+    .back-arrow:hover {
       transform: scale(1.1);
-      box-shadow: 0 0 20px #2ecc40cc;
+      box-shadow: 0 0 16px #2ecc40cc;
+      border-color: #2ecc40;
+    }
+
+    .back-arrow img {
+      width: 20px;
+      height: 20px;
+      filter: drop-shadow(0 0 2px #39ff14);
     }
 
     @keyframes flicker {
@@ -122,9 +132,9 @@
 </head>
 <body>
 
-  <!-- Return Home Icon -->
-  <a href="home.html" title="Return Home" class="home-icon">
-    <img src="https://img.icons8.com/ios-filled/100/39ff14/home.png" alt="Home" />
+  <!-- Back Arrow -->
+  <a href="index.html" title="Back to Main" class="back-arrow">
+    <img src="https://img.icons8.com/ios-filled/50/39ff14/left.png" alt="Back" />
   </a>
 
   <div class="content">
