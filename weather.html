@@ -20,6 +20,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      min-height: 100vh;
     }
     header {
       font-family: 'Orbitron', sans-serif;
@@ -48,6 +49,7 @@
       transition: all 0.2s ease-in-out;
       z-index: 999;
       cursor: pointer;
+      text-decoration: none;
     }
     .back-arrow:hover {
       transform: scale(1.1);
@@ -58,7 +60,7 @@
       width: 20px; height: 20px;
       filter: drop-shadow(0 0 2px #39ff14);
     }
-    .widgets-container {
+    .weather-container {
       display: flex;
       flex-wrap: wrap;
       gap: 2rem;
@@ -66,27 +68,41 @@
       max-width: 980px;
       width: 100%;
     }
-    .widget {
-      background: rgba(0, 0, 0, 0.8);
+    .weather-card {
+      background: rgba(0, 0, 0, 0.85);
       border: 2px solid #39ff14;
       border-radius: 12px;
       box-shadow: 0 0 15px #39ff14aa;
-      padding: 1rem;
-      width: 320px;
-      text-align: center;
-      font-family: 'Share Tech Mono', monospace;
+      padding: 1rem 2rem;
+      width: 280px;
       color: #39ff14;
+      font-family: 'Share Tech Mono', monospace;
+      text-align: center;
     }
-    .widget h2 {
+    .weather-card h2 {
       font-family: 'Orbitron', sans-serif;
       font-size: 1.5rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
       text-shadow: 0 0 6px #39ff14;
     }
-    /* WeatherWidget.io widget overrides */
-    .weatherwidget-io {
-      width: 100% !important;
-      border-radius: 8px !important;
+    .weather-info {
+      font-size: 1rem;
+      margin-top: 0.5rem;
+      text-transform: capitalize;
+    }
+    .temp {
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 0.5rem 0;
+    }
+    .icon {
+      width: 60px;
+      height: 60px;
+    }
+    .error {
+      color: #ff3300;
+      font-weight: bold;
+      margin-top: 2rem;
     }
   </style>
 </head>
@@ -98,35 +114,76 @@
 
   <header>Weather - The Baja Nomad</header>
 
-  <div class="widgets-container">
-
-    <div class="widget">
-      <h2>La Paz</h2>
-      <a class="weatherwidget-io" href="https://forecast7.com/en/24d1431d72/la-paz/" data-label_1="LA PAZ" data-label_2="WEATHER" data-theme="dark" >La Paz Weather</a>
-    </div>
-
-    <div class="widget">
-      <h2>Los Cabos</h2>
-      <a class="weatherwidget-io" href="https://forecast7.com/en/22d8906d91/los-cabos/" data-label_1="LOS CABOS" data-label_2="WEATHER" data-theme="dark" >Los Cabos Weather</a>
-    </div>
-
-    <div class="widget">
-      <h2>Todos Santos</h2>
-      <a class="weatherwidget-io" href="https://forecast7.com/en/23d4529d26/todos-santos/" data-label_1="TODOS SANTOS" data-label_2="WEATHER" data-theme="dark" >Todos Santos Weather</a>
-    </div>
-
+  <div class="weather-container" id="weather-container">
+    <!-- Weather cards injected here -->
   </div>
 
   <script>
-    !function(d,s,id){
-      var js,fjs=d.getElementsByTagName(s)[0];
-      if(!d.getElementById(id)){
-        js=d.createElement(s);
-        js.id=id;
-        js.src='https://weatherwidget.io/js/widget.min.js';
-        fjs.parentNode.insertBefore(js,fjs);
+    const API_KEY = '02ad3935f8620de31849a9e252740489';
+
+    const cities = [
+      { name: "La Paz", lat: 24.1426, lon: -110.3128 },
+      { name: "Los Cabos", lat: 22.8905, lon: -109.9167 },
+      { name: "Todos Santos", lat: 23.4453, lon: -110.2656 }
+    ];
+
+    const container = document.getElementById('weather-container');
+
+    function kelvinToCelsius(k) {
+      return (k - 273.15).toFixed(1);
+    }
+    function kelvinToFahrenheit(k) {
+      return ((k - 273.15) * 9/5 + 32).toFixed(1);
+    }
+
+    async function fetchWeather(city) {
+      try {
+        const res = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?lat=${city.lat}&lon=${city.lon}&appid=${API_KEY}`
+        );
+        if(!res.ok) throw new Error('Network response not ok');
+        const data = await res.json();
+        return data;
+      } catch (e) {
+        return { error: true, message: e.message };
       }
-    }(document,'script','weatherwidget-io-js');
+    }
+
+    function createWeatherCard(city, data) {
+      if(data.error) {
+        return `
+          <div class="weather-card">
+            <h2>${city.name}</h2>
+            <p class="error">Failed to load weather: ${data.message}</p>
+          </div>
+        `;
+      }
+
+      const iconUrl = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+
+      return `
+        <div class="weather-card">
+          <h2>${city.name}</h2>
+          <img class="icon" src="${iconUrl}" alt="${data.weather[0].description}" />
+          <div class="temp">${kelvinToCelsius(data.main.temp)}°C / ${kelvinToFahrenheit(data.main.temp)}°F</div>
+          <div class="weather-info">${data.weather[0].description}</div>
+          <div class="weather-info">Humidity: ${data.main.humidity}%</div>
+          <div class="weather-info">Wind: ${data.wind.speed} m/s</div>
+        </div>
+      `;
+    }
+
+    async function loadWeather() {
+      container.innerHTML = '<p>Loading weather data...</p>';
+      let cardsHTML = '';
+      for(const city of cities) {
+        const data = await fetchWeather(city);
+        cardsHTML += createWeatherCard(city, data);
+      }
+      container.innerHTML = cardsHTML;
+    }
+
+    loadWeather();
   </script>
 
 </body>
