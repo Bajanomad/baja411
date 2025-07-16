@@ -3,12 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Local News - The Baja Nomad</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
-
+  <title>Todos Santos Weather</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Share+Tech+Mono&family=Jura&display=swap" rel="stylesheet" />
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
     html, body {
       height: 100%;
       background: black;
@@ -16,131 +18,124 @@
       color: #39ff14;
       overflow-x: hidden;
     }
-
-    #matrix {
+    canvas {
       position: fixed;
       top: 0;
       left: 0;
       z-index: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
     }
-
     .content {
       position: relative;
-      z-index: 2;
-      min-height: 100vh;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       padding: 2rem;
-      background: rgba(0, 0, 0, 0.8);
-      box-shadow: 0 0 20px #39ff14aa;
+      background: rgba(0, 0, 0, 0.7);
+      min-height: 100vh;
     }
-
     header {
+      font-size: 2rem;
       font-family: 'Orbitron', sans-serif;
-      font-size: 2.5rem;
       margin-bottom: 1rem;
-      text-align: center;
       text-shadow: 0 0 8px #39ff14;
-      animation: flicker 3s infinite alternate;
-    }
-
-    @keyframes flicker {
-      0%, 100% { text-shadow: 0 0 8px #39ff14, 0 0 20px #39ff14cc; opacity: 1; }
-      50% { text-shadow: 0 0 4px #2ecc40aa; opacity: 0.8; }
-      70% { text-shadow: none; opacity: 0.6; }
-    }
-
-    .rss-section {
-      margin-top: 2rem;
-    }
-
-    .rss-title {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      text-shadow: 0 0 8px #2ecc40;
       text-align: center;
     }
 
-    .rss-feed {
-      background: black;
-      border: 2px solid #39ff14;
-      border-radius: 10px;
-      padding: 1rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 0 15px #39ff14aa;
-    }
-
-    .back-arrow {
-      position: fixed;
+    /* --- BACK BUTTON --- */
+    .back-btn {
+      position: absolute;
       top: 20px;
       left: 20px;
-      width: 40px;
-      height: 40px;
       background: black;
       border: 2px solid #39ff14;
       border-radius: 50%;
-      box-shadow: 0 0 8px #39ff14aa;
+      width: 40px;
+      height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 0 10px #39ff14aa;
+      transition: all 0.3s ease;
       cursor: pointer;
-      transition: all 0.2s ease-in-out;
-      z-index: 999;
-      text-decoration: none;
+      z-index: 2;
     }
-
-    .back-arrow:hover {
-      transform: scale(1.1);
+    .back-btn:hover {
+      background-color: #2ecc40;
       border-color: #2ecc40;
-      box-shadow: 0 0 16px #2ecc40cc;
+      box-shadow: 0 0 20px #2ecc40cc;
     }
-
-    .back-arrow img {
+    .back-btn svg {
+      fill: #39ff14;
       width: 20px;
       height: 20px;
-      filter: drop-shadow(0 0 2px #39ff14);
+    }
+    .back-btn:hover svg {
+      fill: black;
+    }
+
+    /* --- WIDGET SECTION --- */
+    .widget-container {
+      margin-top: 4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    iframe {
+      border: none;
+      width: 100%;
+      height: 500px;
     }
   </style>
 </head>
 <body>
-  <!-- Matrix Rain -->
+  <!-- 🌧️ MATRIX RAIN BACKGROUND -->
   <canvas id="matrix"></canvas>
 
-  <!-- Back Button -->
-  <a href="index.html" title="Back to Main" class="back-arrow">
-    <img src="https://img.icons8.com/ios-filled/50/39ff14/left.png" alt="Back" />
+  <!-- 🔙 BACK BUTTON -->
+  <a class="back-btn" href="https://the-baja-nomad.vercel.app" title="Back to Home">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M15 6l-6 6 6 6" stroke="none" stroke-width="2" fill="currentColor"/>
+    </svg>
   </a>
 
+  <!-- 🧠 MAIN CONTENT -->
   <div class="content">
-    <header>Local News</header>
+    <header>Todos Santos Weather</header>
 
-    <!-- Gringo Gazette Feed -->
-    <div class="rss-section">
-      <div class="rss-title">📰 Gringo Gazette</div>
-      <div class="rss-feed" id="feed1"></div>
-    </div>
+    <div class="widget-container">
 
-    <!-- Placeholder Feed 1 -->
-    <div class="rss-section">
-      <div class="rss-title">📰 Cabo Local Source (placeholder)</div>
-      <div class="rss-feed" id="feed2">[Feed loading or replace this manually later]</div>
-    </div>
+      <!-- 🌤️ FORECAST WIDGET (WeatherWidget.io) -->
+      <a class="weatherwidget-io"
+         href="https://forecast7.com/en/23d45n110d23/todos-santos/?unit=us"
+         data-label_1="TODOS SANTOS"
+         data-label_2="WEATHER"
+         data-font="Jura"
+         data-theme="dark"
+         data-textcolor="#90ff46">
+        TODOS SANTOS WEATHER
+      </a>
 
-    <!-- Placeholder Feed 2 -->
-    <div class="rss-section">
-      <div class="rss-title">📰 La Paz Local Source (placeholder)</div>
-      <div class="rss-feed" id="feed3">[Feed loading or replace this manually later]</div>
+      <!-- 🛰️ WINDY RADAR MAP -->
+      <iframe
+        src="https://embed.windy.com/embed2.html?lat=23.45&lon=-110.23&detailLat=23.45&detailLon=-110.23&width=100%&height=500&zoom=10&level=surface&overlay=rain&menu=&message=&marker=true&calendar=&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default"
+        title="Windy Weather Radar">
+      </iframe>
+
     </div>
   </div>
 
-  <!-- Matrix Script -->
+  <!-- 🧪 MATRIX SCRIPT -->
   <script>
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    const letters = "アァイィウヴエカキクケコサシスセソ0123456789";
+    canvas.width = window.innerWidth;
+    const letters = "アァイィウヴエカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
     const fontSize = 14;
     const columns = Math.floor(canvas.width / fontSize);
     const drops = Array(columns).fill(1);
@@ -150,10 +145,13 @@
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "#39ff14";
       ctx.font = fontSize + "px monospace";
+
       for (let i = 0; i < drops.length; i++) {
         const text = letters[Math.floor(Math.random() * letters.length)];
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
         drops[i]++;
       }
     }
@@ -165,34 +163,16 @@
     });
   </script>
 
-  <!-- Feed Loading Script (Gringo Gazette only for now) -->
+  <!-- ⚙️ WEATHER WIDGET SCRIPT -->
   <script>
-    async function loadFeed(containerId, feedUrl) {
-      try {
-        const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`);
-        const data = await res.json();
-        const container = document.getElementById(containerId);
-        if (data.items && data.items.length > 0) {
-          container.innerHTML = data.items.map(item =>
-            `<div style="margin-bottom: 1rem;">
-              <a href="${item.link}" target="_blank" style="color: #90ff46; text-decoration: none;">
-                <strong>${item.title}</strong>
-              </a><br/>
-              <small>${new Date(item.pubDate).toLocaleDateString()}</small>
-            </div>`
-          ).join('');
-        } else {
-          container.innerHTML = "No articles found.";
-        }
-      } catch (err) {
-        document.getElementById(containerId).innerText = "Error loading feed.";
+    !function(d,s,id){
+      var js,fjs=d.getElementsByTagName(s)[0];
+      if(!d.getElementById(id)){
+        js=d.createElement(s); js.id=id;
+        js.src='https://weatherwidget.io/js/widget.min.js';
+        fjs.parentNode.insertBefore(js,fjs);
       }
-    }
-
-    loadFeed("feed1", "https://www.gringogazette.com/feed");
-    // Future:
-    // loadFeed("feed2", "https://another.local.source/rss");
-    // loadFeed("feed3", "https://yet.another/source.rss");
+    }(document,'script','weatherwidget-io-js');
   </script>
 </body>
 </html>
