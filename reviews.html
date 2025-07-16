@@ -18,16 +18,14 @@
       font-family: 'Share Tech Mono', monospace;
       color: #39ff14;
       overflow-x: hidden;
-      overflow-y: auto;
+      padding: 2rem;
     }
 
     .content {
-      padding: 2rem;
-      max-width: 900px;
+      max-width: 800px;
       margin: 0 auto;
     }
 
-    /* Title glow effect */
     header {
       font-size: 2.5rem;
       font-family: 'Orbitron', sans-serif;
@@ -37,29 +35,53 @@
       animation: flicker 2.5s infinite alternate;
     }
 
-    /* Subtitle under header */
     p.description {
-      font-size: 1.25rem;
-      line-height: 1.6;
+      font-size: 1.2rem;
       margin-bottom: 2rem;
       text-align: center;
-      max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
       color: #2ecc40cc;
     }
 
-    /* Google Form embed frame */
-    iframe.review-form {
-      display: block;
-      margin: 0 auto 2rem;
-      border: none;
-      width: 100%;
-      min-height: 900px;
-      max-width: 100%;
-      box-shadow: 0 0 20px #39ff14aa;
-      border-radius: 8px;
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    input, textarea, select {
+      padding: 0.75rem;
       background: black;
+      border: 2px solid #39ff14;
+      color: #39ff14;
+      font-size: 1rem;
+      border-radius: 4px;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #2ecc40;
+      box-shadow: 0 0 10px #2ecc40aa;
+    }
+
+    button {
+      background: #39ff14;
+      color: black;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      text-transform: uppercase;
+      box-shadow: 0 0 10px #39ff14bb;
+      transition: all 0.2s ease-in-out;
+    }
+
+    button:hover {
+      background: #2ecc40;
+      box-shadow: 0 0 20px #2ecc40cc;
     }
 
     @keyframes flicker {
@@ -76,24 +98,51 @@
         opacity: 0.6;
       }
     }
+
+    /* Bot trap */
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
   <div class="content">
-    <header>Reviews</header>
-    <p class="description">
-      Drop your thoughts—compliments, complaints, or pure chaos. We read it all.
-    </p>
+    <header>Leave a Review</header>
+    <p class="description">Tell it like it is. We love the praise, but we can take a punch too.</p>
 
-    <!-- 👇 Embedded Google Form with no extra bullshit -->
-    <iframe
-      class="review-form"
-      src="https://docs.google.com/forms/d/e/1FAIpQLScRioIJdZa-N53VBqu7lwsGQlPv_Mumufis3UEwq0-Oj7d1fg/viewform?embedded=true"
-      title="Submit Your Review"
-      loading="lazy"
-    >
-      Loading…
-    </iframe>
+    <form action="https://formsubmit.io/send/thebajanomad@gmail.com" method="POST">
+      <!-- Anti-bot field -->
+      <input name="_formsubmit_id" type="text" class="hidden" />
+
+      <!-- Redirect URL after submission (optional) -->
+      <input type="hidden" name="_redirect" value="https://yourusername.github.io/your-repo-name/thanks.html" />
+
+      <!-- Name -->
+      <label for="name">Name</label>
+      <input type="text" name="name" id="name" placeholder="Your name..." required />
+
+      <!-- Email -->
+      <label for="email">Email</label>
+      <input type="email" name="email" id="email" placeholder="you@example.com" required />
+
+      <!-- Rating -->
+      <label for="rating">Rating</label>
+      <select name="rating" id="rating" required>
+        <option value="">Select one</option>
+        <option>⭐️⭐️⭐️⭐️⭐️ - Flawless</option>
+        <option>⭐️⭐️⭐️⭐️ - Damn good</option>
+        <option>⭐️⭐️⭐️ - Solid</option>
+        <option>⭐️⭐️ - Meh</option>
+        <option>⭐️ - Total dumpster fire</option>
+      </select>
+
+      <!-- Message -->
+      <label for="message">Message</label>
+      <textarea name="message" id="message" rows="5" placeholder="Let it rip..." required></textarea>
+
+      <!-- Submit -->
+      <button type="submit">Submit Review</button>
+    </form>
   </div>
 </body>
 </html>
