@@ -66,20 +66,17 @@
       white-space: nowrap;
     }
 
+    /* Updated button grid */
     .button-grid {
       display: grid;
       grid-template-columns: repeat(2, 120px);
+      grid-auto-rows: 120px;
       grid-gap: 2rem;
       justify-content: center;
       align-items: center;
       margin-top: 1rem;
-    }
-
-    @media (max-width: 500px) {
-      .button-grid {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        justify-items: center;
-      }
+      overflow-x: auto; /* horizontal scroll if too narrow */
+      -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
     }
 
     .icon-btn {
