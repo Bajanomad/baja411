@@ -98,11 +98,6 @@
         opacity: 0.6;
       }
     }
-
-    /* Bot trap */
-    .hidden {
-      display: none;
-    }
   </style>
 </head>
 <body>
@@ -110,20 +105,14 @@
     <header>Leave a Review</header>
     <p class="description">Tell it like it is. We love the praise, but we can take a punch too.</p>
 
-    <form action="https://formsubmit.io/send/thebajanomad@gmail.com" method="POST">
-      <!-- Anti-bot field -->
-      <input name="_formsubmit_id" type="text" class="hidden" />
-
-      <!-- Redirect URL after submission (optional) -->
-      <input type="hidden" name="_redirect" value="https://yourusername.github.io/your-repo-name/thanks.html" />
-
+    <form action="https://formspree.io/f/xanbypng" method="POST">
       <!-- Name -->
       <label for="name">Name</label>
       <input type="text" name="name" id="name" placeholder="Your name..." required />
 
       <!-- Email -->
       <label for="email">Email</label>
-      <input type="email" name="email" id="email" placeholder="you@example.com" required />
+      <input type="email" name="_replyto" id="email" placeholder="you@example.com" required />
 
       <!-- Rating -->
       <label for="rating">Rating</label>
