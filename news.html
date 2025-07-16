@@ -7,14 +7,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
     * { margin:0; padding:0; box-sizing: border-box; }
+
     html, body {
       height: 100%;
       background: black;
       font-family: 'Share Tech Mono', monospace;
       color: #39ff14;
-      overflow-x: hidden;
+      overflow: hidden;
       position: relative;
-      padding: 2rem;
+      padding: 0;
     }
 
     #matrix {
@@ -29,14 +30,10 @@
     .content {
       position: relative;
       z-index: 2;
-      max-width: 900px;
-      margin: 0 auto;
-      background: rgba(0,0,0,0.95); /* Darkened to reduce background bleed */
-      border: 2px solid #39ff14;
-      border-radius: 12px;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.95);
       padding: 2rem;
-      box-shadow: 0 0 15px #39ff14aa;
-      min-height: 80vh;
       overflow-y: auto;
     }
 
@@ -150,131 +147,127 @@
 </head>
 <body>
 
-<canvas id="matrix"></canvas>
+  <canvas id="matrix"></canvas>
 
-<a href="index.html" title="Back to Main" class="back-arrow">
-  <img src="https://img.icons8.com/ios-filled/50/39ff14/left.png" alt="Back" />
-</a>
+  <a href="index.html" title="Back to Main" class="back-arrow">
+    <img src="https://img.icons8.com/ios-filled/50/39ff14/left.png" alt="Back" />
+  </a>
 
-<div class="content">
-  <header>Local News</header>
-  <div id="news-container"></div>
-</div>
+  <div class="content">
+    <header>Local News</header>
+    <div id="news-container"></div>
+  </div>
 
-<script>
-  // Matrix background
-  const canvas = document.getElementById('matrix');
-  const ctx = canvas.getContext('2d');
+  <script>
+    // Matrix background
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
 
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
 
-  const letters = "アァイィウヴエカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
-  const fontSize = 14;
-  let columns = Math.floor(canvas.width / fontSize);
-  let drops = Array(columns).fill(1);
+    const letters = "アァイィウヴエカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
+    const fontSize = 14;
+    let columns = Math.floor(canvas.width / fontSize);
+    let drops = Array(columns).fill(1);
 
-  function draw() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#39ff14";
-    ctx.font = fontSize + "px monospace";
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#39ff14";
+      ctx.font = fontSize + "px monospace";
 
-    for (let i = 0; i < drops.length; i++) {
-      const text = letters[Math.floor(Math.random() * letters.length)];
-      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
-      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-        drops[i] = 0;
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
       }
-      drops[i]++;
     }
-  }
 
-  setInterval(draw, 35);
+    setInterval(draw, 35);
 
-  // News feeds
-  const feeds = [
-    {
-      name: "Gringo Gazette",
-      url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.gringogazette.com%2Ffeed"
-    },
-    {
-      name: "The Cabo Sun",
-      url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fthecabosun.com%2Ffeed"
-    },
-    {
-      name: "La Paz Times",
-      url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Flapaztimes.com%2Ffeed"
-    },
-    {
-      name: "Baja Insider",
-      url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fbajainsider.com%2Ffeed"
+    // News feeds - Baja Insider removed
+    const feeds = [
+      {
+        name: "Gringo Gazette",
+        url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.gringogazette.com%2Ffeed"
+      },
+      {
+        name: "The Cabo Sun",
+        url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fthecabosun.com%2Ffeed"
+      },
+      {
+        name: "La Paz Times",
+        url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Flapaztimes.com%2Ffeed"
+      }
+    ];
+
+    const container = document.getElementById('news-container');
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
     }
-  ];
 
-  const container = document.getElementById('news-container');
+    feeds.forEach(feed => {
+      fetch(feed.url)
+        .then(response => response.json())
+        .then(data => {
+          if (!data || !data.items || !data.items.length) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'feed';
+            errorDiv.innerHTML = `<h2>${feed.name}</h2><p style="color:#f00;">No articles found or feed blocked.</p>`;
+            container.appendChild(errorDiv);
+            return;
+          }
 
-  function formatDate(dateStr) {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-  }
+          const feedDiv = document.createElement('div');
+          feedDiv.className = 'feed';
 
-  feeds.forEach(feed => {
-    fetch(feed.url)
-      .then(response => response.json())
-      .then(data => {
-        if (!data || !data.items || !data.items.length) {
+          const title = document.createElement('h2');
+          title.textContent = feed.name;
+          feedDiv.appendChild(title);
+
+          const list = document.createElement('ul');
+          list.className = 'articles';
+
+          data.items.slice(0, 8).forEach(item => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = item.link;
+            a.target = '_blank';
+            a.rel = 'noopener noreferrer';
+            a.textContent = item.title;
+            li.appendChild(a);
+
+            const dateSpan = document.createElement('div');
+            dateSpan.className = 'pubDate';
+            dateSpan.textContent = formatDate(item.pubDate);
+            li.appendChild(dateSpan);
+
+            list.appendChild(li);
+          });
+
+          feedDiv.appendChild(list);
+          container.appendChild(feedDiv);
+        })
+        .catch(err => {
+          console.error(`Failed to load ${feed.name} feed:`, err);
           const errorDiv = document.createElement('div');
           errorDiv.className = 'feed';
-          errorDiv.innerHTML = `<h2>${feed.name}</h2><p style="color:#f00;">No articles found or feed blocked.</p>`;
+          errorDiv.innerHTML = `<h2>${feed.name}</h2><p style="color:#f00;">Failed to load feed.</p>`;
           container.appendChild(errorDiv);
-          return;
-        }
-
-        const feedDiv = document.createElement('div');
-        feedDiv.className = 'feed';
-
-        const title = document.createElement('h2');
-        title.textContent = feed.name;
-        feedDiv.appendChild(title);
-
-        const list = document.createElement('ul');
-        list.className = 'articles';
-
-        data.items.slice(0, 8).forEach(item => {
-          const li = document.createElement('li');
-          const a = document.createElement('a');
-          a.href = item.link;
-          a.target = '_blank';
-          a.rel = 'noopener noreferrer';
-          a.textContent = item.title;
-          li.appendChild(a);
-
-          const dateSpan = document.createElement('div');
-          dateSpan.className = 'pubDate';
-          dateSpan.textContent = formatDate(item.pubDate);
-          li.appendChild(dateSpan);
-
-          list.appendChild(li);
         });
-
-        feedDiv.appendChild(list);
-        container.appendChild(feedDiv);
-      })
-      .catch(err => {
-        console.error(`Failed to load ${feed.name} feed:`, err);
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'feed';
-        errorDiv.innerHTML = `<h2>${feed.name}</h2><p style="color:#f00;">Failed to load feed.</p>`;
-        container.appendChild(errorDiv);
-      });
-  });
-</script>
+    });
+  </script>
 
 </body>
 </html>
