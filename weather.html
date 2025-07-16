@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Weather - The Baja Nomad</title>
+  <title>Todos Santos Weather - The Baja Nomad</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
     /* ===== GLOBAL STYLES ===== */
@@ -83,51 +83,37 @@
       filter: drop-shadow(0 0 2px #39ff14);
     }
 
-    /* ===== WEATHER CARDS CONTAINER ===== */
-    .weather-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2rem;
-      justify-content: center;
-      max-width: 980px;
-      width: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      border-radius: 12px;
-      padding: 1rem 2rem;
-      box-shadow: 0 0 15px #39ff14aa;
-    }
-
     /* ===== WEATHER CARD STYLES ===== */
     .weather-card {
       background: rgba(0, 0, 0, 0.85);
       border: 2px solid #39ff14;
       border-radius: 12px;
       box-shadow: 0 0 15px #39ff14aa;
-      padding: 1rem 2rem;
-      width: 280px;
+      padding: 2rem 3rem;
+      width: 320px;
       color: #39ff14;
       font-family: 'Share Tech Mono', monospace;
       text-align: center;
     }
     .weather-card h2 {
       font-family: 'Orbitron', sans-serif;
-      font-size: 1.5rem;
-      margin-bottom: 0.75rem;
-      text-shadow: 0 0 6px #39ff14;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 8px #39ff14;
     }
     .weather-info {
-      font-size: 1rem;
-      margin-top: 0.5rem;
+      font-size: 1.1rem;
+      margin-top: 0.75rem;
       text-transform: capitalize;
     }
     .temp {
-      font-size: 2rem;
+      font-size: 3rem;
       font-weight: bold;
-      margin: 0.5rem 0;
+      margin: 1rem 0;
     }
     .icon {
-      width: 60px;
-      height: 60px;
+      width: 80px;
+      height: 80px;
     }
     .error {
       color: #ff3300;
@@ -148,12 +134,13 @@
 
   <!-- ===== MAIN PAGE CONTENT ===== -->
   <div class="content">
-    <!-- PAGE HEADER -->
-    <header>Weather - The Baja Nomad</header>
 
-    <!-- WEATHER CARDS CONTAINER -->
-    <div class="weather-container" id="weather-container">
-      <!-- Weather cards injected here by JS -->
+    <!-- PAGE HEADER -->
+    <header>Todos Santos Weather - The Baja Nomad</header>
+
+    <!-- WEATHER CARD CONTAINER -->
+    <div class="weather-card" id="weather-card">
+      <!-- Weather info injected here by JS -->
     </div>
   </div>
 
@@ -199,13 +186,13 @@
     /* ===== WEATHER FETCHING & DISPLAY ===== */
     const API_KEY = '02ad3935f8620de31849a9e252740489';
 
-    const cities = [
-      { name: "La Paz", lat: 24.1426, lon: -110.3128 },
-      { name: "Los Cabos", lat: 22.8905, lon: -109.9167 },
-      { name: "Todos Santos", lat: 23.4453, lon: -110.2656 }
-    ];
+    const city = {
+      name: "Todos Santos",
+      lat: 23.4453,
+      lon: -110.2656
+    };
 
-    const container = document.getElementById('weather-container');
+    const card = document.getElementById('weather-card');
 
     function kelvinToCelsius(k) {
       return (k - 273.15).toFixed(1);
@@ -230,38 +217,15 @@
     function createWeatherCard(city, data) {
       if(data.error) {
         return `
-          <div class="weather-card">
-            <h2>${city.name}</h2>
-            <p class="error">Failed to load weather: ${data.message}</p>
-          </div>
+          <h2>${city.name}</h2>
+          <p class="error">Failed to load weather: ${data.message}</p>
         `;
       }
 
       const iconUrl = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
 
       return `
-        <div class="weather-card">
-          <h2>${city.name}</h2>
-          <img class="icon" src="${iconUrl}" alt="${data.weather[0].description}" />
-          <div class="temp">${kelvinToCelsius(data.main.temp)}°C / ${kelvinToFahrenheit(data.main.temp)}°F</div>
-          <div class="weather-info">${data.weather[0].description}</div>
-          <div class="weather-info">Humidity: ${data.main.humidity}%</div>
-          <div class="weather-info">Wind: ${data.wind.speed} m/s</div>
-        </div>
-      `;
-    }
-
-    async function loadWeather() {
-      container.innerHTML = '<p>Loading weather data...</p>';
-      let cardsHTML = '';
-      for(const city of cities) {
-        const data = await fetchWeather(city);
-        cardsHTML += createWeatherCard(city, data);
-      }
-      container.innerHTML = cardsHTML;
-    }
-
-    loadWeather();
-  </script>
-</body>
-</html>
+        <h2>${city.name}</h2>
+        <img class="icon" src="${iconUrl}" alt="${data.weather[0].description}" />
+        <div class="temp">${kelvinToCelsius(data.main.temp)}°C / ${kelvinToFahrenheit(data.main.temp)}°F</div>
+        <div class="weather-info">${data
