@@ -209,40 +209,42 @@
     });
   </script>
 
-<div id="visitor-counter" class="visitor-counter">420 Visitors</div>
+<div id="visitor-counter" class="visitor-counter">420 VISITORS</div>
 
 <style>
   .visitor-counter {
     margin-top: 40px;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+    font-weight: bold;
     text-align: center;
     color: #39ff14;
     font-family: 'Share Tech Mono', monospace;
-    text-shadow: 0 0 5px #39ff14;
+    text-shadow: 0 0 6px #39ff14;
     transition: all 0.3s ease;
     cursor: pointer;
+    letter-spacing: 1px;
   }
 
   .visitor-counter:hover {
     color: red;
-    text-shadow: 0 0 10px crimson;
+    text-shadow: 0 0 12px crimson;
   }
 </style>
 
 <script>
   const counter = document.getElementById("visitor-counter");
-  const originalText = "420 Visitors";
+  const originalText = "420 VISITORS";
 
   counter.addEventListener("mouseenter", () => {
     counter.textContent = "ACCESS DENIED";
     counter.style.color = "red";
-    counter.style.textShadow = "0 0 10px crimson";
+    counter.style.textShadow = "0 0 12px crimson";
 
     setTimeout(() => {
       counter.textContent = originalText;
       counter.style.color = "#39ff14";
-      counter.style.textShadow = "0 0 5px #39ff14";
-    }, 1500);
+      counter.style.textShadow = "0 0 6px #39ff14";
+    }, 3000); // 3 second delay
   });
 </script>
   
