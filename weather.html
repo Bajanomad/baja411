@@ -43,12 +43,6 @@
       text-shadow: 0 0 8px #39ff14;
       animation: flicker 3s infinite alternate;
     }
-    header span {
-      font-size: 1.5rem;
-      color: #2ecc40;
-      display: block;
-      margin-top: 0.5rem;
-    }
     @keyframes flicker {
       0%, 100% {
         text-shadow: 0 0 8px #39ff14, 0 0 20px #39ff14, 0 0 30px #39ff14cc;
@@ -91,26 +85,36 @@
       height: 20px;
       filter: drop-shadow(0 0 2px #39ff14);
     }
-    .widget-container {
-      background: rgba(0, 0, 0, 0.85);
+    .neon-widget-wrapper {
+      background: rgba(0, 0, 0, 0.6);
       border: 2px solid #39ff14;
+      box-shadow: 0 0 10px #39ff14aa, 0 0 20px #39ff14aa;
       border-radius: 12px;
       padding: 1rem;
-      box-shadow: 0 0 15px #39ff14aa;
-      max-width: 700px;
-      width: 100%;
-      text-align: center;
       margin-top: 2rem;
-      position: relative;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
       z-index: 3;
     }
-    iframe {
+    iframe.forecast {
       width: 100%;
+      height: 170px;
       border: 0;
       border-radius: 8px;
       background-color: black;
-      position: relative;
-      z-index: 4;
+    }
+    iframe.map {
+      width: 100%;
+      height: 450px;
+      border: 0;
+      border-radius: 8px;
+      background-color: black;
+    }
+    @media (max-width: 768px) {
+      iframe.map {
+        height: 320px;
+      }
     }
   </style>
 </head>
@@ -126,31 +130,26 @@
 
   <!-- Content Area -->
   <div class="content">
-  
+    <header>Local Weather</header>
 
-    <!-- Forecast7 Widget -->
-    <div class="widget-container">
-      <a class="weatherwidget-io"
-         href="https://forecast7.com/en/23d45n110d23/todos-santos/?unit=us"
-         data-label_1="TODOS SANTOS"
-         data-label_2="WEATHER"
-         data-font="Jura"
-         data-theme="dark"
-         data-textcolor="#90ff46">
-         TODOS SANTOS WEATHER
-      </a>
-    </div>
-
-    <!-- Windy Widget -->
-    <div class="widget-container">
+    <!-- Forecast Widget (7 Day) -->
+    <div class="neon-widget-wrapper">
       <iframe
-        src="https://embed.windy.com/embed2.html?lat=23.446&lon=-110.261&detailLat=23.446&detailLon=-110.261&width=650&height=450&zoom=10&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=now&type=map&location=coordinates&detail=&metricWind=kt&metricTemp=%C2%B0C&radarRange=-1"
-        height="500"
-        allowfullscreen
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade">
+        class="forecast"
+        src="https://embed.windy.com/embed2.html?lat=23.446&lon=-110.223&detailLat=23.446&detailLon=-110.223&width=100%&height=170&zoom=8&level=surface&overlay=wind&menu=&message=false&marker=false&calendar=7&pressure=false&type=forecast&location=coordinates&detail=true&metricWind=default&metricTemp=default&radarRange=-1">
       </iframe>
     </div>
+
+    <!-- Wind Map Widget -->
+    <div class="neon-widget-wrapper">
+      <iframe
+        class="map"
+        src="https://embed.windy.com/embed2.html?lat=23.446&lon=-110.261&detailLat=23.446&detailLon=-110.261&width=100%&height=450&zoom=10&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=now&type=map&location=coordinates&detail=&metricWind=kt&metricTemp=%C2%B0C&radarRange=-1"
+        allowfullscreen
+        loading="lazy">
+      </iframe>
+    </div>
+  </div>
 
   <!-- Matrix Rain Script -->
   <script>
@@ -181,19 +180,6 @@
       }
     }
     setInterval(draw, 35);
-  </script>
-
-  <!-- Forecast7 Script -->
-  <script>
-    !function(d,s,id){
-      var js,fjs=d.getElementsByTagName(s)[0];
-      if(!d.getElementById(id)){
-        js=d.createElement(s);
-        js.id=id;
-        js.src='https://weatherwidget.io/js/widget.min.js';
-        fjs.parentNode.insertBefore(js,fjs);
-      }
-    }(document,'script','weatherwidget-io-js');
   </script>
 
 </body>
