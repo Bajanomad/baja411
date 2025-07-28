@@ -127,7 +127,29 @@
   <!-- Content Area -->
   <div class="content">
   
+<div class="neon-widget-wrapper">
+  <div data-windywidget="forecast" data-location="23.446,-110.223" data-detail="true" data-spotname="Todos Santos Forecast" style="width: 100%; height: 500px;"></div>
+</div>
+<script async data-cfasync="false" src="https://windy.app/widgets-code/forecast/windy_forecast.js"></script>
 
+<style>
+  .neon-widget-wrapper {
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid #39ff14;
+    box-shadow: 0 0 10px #39ff14aa, 0 0 20px #39ff14aa;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-top: 2rem;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  /* Optional: darken Windy's background if iframe allows it */
+  .neon-widget-wrapper iframe {
+    filter: brightness(0.85) contrast(1.2) saturate(1.1);
+  }
+</style>
     
     </div>
 
