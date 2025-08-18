@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Discussions - The Baja Nomad</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+
+  <!-- Styles -->
+  <style>
+    * { margin:0; padding:0; box-sizing: border-box; }
+    html, body { height: 100%; background: black; font-family: 'Share Tech Mono', monospace; color: #39ff14; overflow-x: hidden; }
+
+    canvas { position: fixed; top: 0; left: 0; z-index: 0; pointer-events: none; }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      min-height: 100%;
+      background: rgba(0,0,0,0.6);
+    }
+
+    header {
+      font-size: 2.5rem;
+      font-family: 'Orbitron', sans-serif;
+      margin-bottom: 2rem;
+      text-align: center;
+      white-space: nowrap;
+      text-shadow: 0 0 8px #39ff14, 0 0 20px #39ff14, 0 0 30px #39ff14cc;
+    }
+
+    .iframe-container {
+      width: 100%;
+      max-width: 900px;
+      height: 600px;
+      margin-bottom: 2rem;
+      border: 3px solid #39ff14;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 15px #2ecc40aa;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Placeholder for chat */
+    .chat-container {
+      width: 100%;
+      max-width: 900px;
+      height: 300px;
+      border: 3px solid #39ff14;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #2ecc40aa;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+
+  <div class="content">
+    <header>Discussions</header>
+
+    <!-- Forum Embed -->
+    <div class="iframe-container">
+      <iframe src="https://groups.google.com/u/1/g/the-baja-nomad" title="Baja Nomad Forum"></iframe>
+    </div>
+
+    <!-- Chatroom placeholder -->
+    <div class="chat-container">
+      <!-- Replace this iframe src with your chat URL later -->
+      <iframe src="" title="Chat Room"></iframe>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    const fontSize = 14;
+    const letters = "アァイィウヴエカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
+    let columns, drops;
+
+    function setupCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      columns = Math.floor(canvas.width / fontSize);
+      drops = Array(columns).fill(1);
+    }
+
+    setupCanvas();
+
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#39ff14";
+      ctx.font = fontSize + "px monospace";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        drops[i] = drops[i] * fontSize > canvas.height && Math.random() > 0.975 ? 0 : drops[i] + 0.15;
+      }
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+    window.addEventListener('resize', setupCanvas);
+  </script>
+</body>
+</html>
