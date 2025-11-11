@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RE/MAX Digital Business Card</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -29,10 +30,17 @@
         .card h1, .card p {
             margin: 10px 0;
         }
+        .social-icons {
+            margin-top: 15px;
+        }
         .social-icons a {
-            margin: 0 10px;
+            font-size: 32px;
+            color: #E1306C;
             text-decoration: none;
-            color: #333;
+            transition: transform 0.2s ease;
+        }
+        .social-icons a:hover {
+            transform: scale(1.2);
         }
     </style>
 </head>
@@ -41,9 +49,11 @@
         <img src="https://remaxcaborealestate.com/images/brand/remax_cabosanctuary.svg" alt="RE/MAX Logo">
         <h1>Kenneth Gehlhoff</h1>
         <p>Phone: +52 612 231 1639</p>
-        <p>Email: kenny@email.com</p>
+        <p>Email: boss@email.com</p>
         <div class="social-icons">
-            <a href="https://www.instagram.com/baja_kennyrealestate?igsh=MWcxdXRqc3U3bXZv" target="_blank">Instagram</a>
+            <a href="https://www.instagram.com/baja_kennyrealestate?igsh=MWcxdXRqc3U3bXZv" target="_blank" aria-label="Instagram">
+                <i class="fab fa-instagram"></i>
+            </a>
         </div>
     </div>
 </body>
