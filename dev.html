@@ -12,57 +12,84 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            padding: 20px;
         }
         .card {
             background: #ffffff;
-            padding: 25px 20px;
-            border-radius: 12px;
-            max-width: 400px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 35px 30px;
+            border-radius: 14px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
         }
         .logo {
             display: block;
-            margin: 0 auto 20px auto;
-            max-width: 120px;
+            margin: 0 auto 25px auto;
+            max-width: 150px;
+            width: 100%;
+            height: auto;
         }
         .profile-pic {
-            width: 70px;
-            height: 70px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
             object-fit: cover;
             float: right;
-            margin-top: -80px;
+            margin-top: -100px;
             border: 2px solid #fff;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         h1 {
             margin: 0;
-            font-size: 22px;
+            font-size: 26px;
             color: #003DA5;
         }
         .title {
             color: #666;
-            font-size: 16px;
-            margin-bottom: 10px;
+            font-size: 18px;
+            margin-bottom: 16px;
         }
         .contact-item {
             display: flex;
             align-items: center;
-            margin: 12px 0;
-            color: #003DA5;
+            margin: 16px 0;
             text-decoration: none;
             font-weight: bold;
+            color: #666;
+            font-size: 17px;
+            word-break: break-word;
         }
         .contact-item i {
-            margin-right: 12px;
-            font-size: 20px;
+            margin-right: 14px;
+            font-size: 22px;
             color: #003DA5;
             transition: color 0.2s ease;
         }
-        .contact-item:hover i,
-        .contact-item:hover {
+        .contact-item:hover i {
             color: #E11B22;
+        }
+        @media (max-width: 500px) {
+            .card {
+                padding: 25px 20px;
+            }
+            .profile-pic {
+                width: 70px;
+                height: 70px;
+                margin-top: -80px;
+            }
+            h1 {
+                font-size: 22px;
+            }
+            .title {
+                font-size: 16px;
+            }
+            .contact-item {
+                font-size: 16px;
+            }
+            .contact-item i {
+                font-size: 20px;
+            }
         }
     </style>
 </head>
