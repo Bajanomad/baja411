@@ -1,134 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kenneth Gehlhoff | RE/MAX Cerritos</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-      background: linear-gradient(to bottom, #c6c6c6, #ffffff); /* visible gradient */
-    }
-
-    .card {
-      background: #ffffff;
-      padding: 35px 30px;
-      border-radius: 14px;
-      width: 100%;
-      max-width: 480px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-
-      /* Vertical nudge to compensate for browser UI pushing it down */
-      position: relative;
-      top: -20px; 
-    }
-
-    .logo {
-      display: block;
-      margin: 0 auto 25px auto;
-      max-width: 150px;
-      width: 100%;
-      height: auto;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 26px;
-      color: #003DA5;
-    }
-
-    .title {
-      color: #666;
-      font-size: 18px;
-      margin-bottom: 16px;
-    }
-
-    .contact-item {
-      display: flex;
-      align-items: center;
-      margin: 16px 0;
-      text-decoration: none;
-      font-weight: bold;
-      color: #666;
-      font-size: 17px;
-      word-break: break-word;
-    }
-
-    .contact-item img {
-      width: 40px;
-      height: 40px;
-      margin-right: 14px;
-      border-radius: 50%;
-      transition: transform 0.2s ease-in-out;
-    }
-
-    .contact-item:hover img {
-      transform: scale(1.1);
-    }
-
-    @media (max-width: 500px) {
-      .card { padding: 25px 20px; top: -10px; }
-      h1 { font-size: 22px; }
-      .title { font-size: 16px; }
-      .contact-item { font-size: 16px; }
-      .contact-item img {
-        width: 36px;
-        height: 36px;
-        margin-right: 12px;
-      }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kenneth Gehlhoff | RE/MAX Cerritos</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background: linear-gradient(to bottom, #c6c6c6, #ffffff);
+}
+.card {
+  background: #ffffff;
+  padding: 35px 30px;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  position: relative;
+  top: -32px; /* moved up a bit more */
+}
+.logo {
+  display: block;
+  margin: 0 auto 25px auto;
+  max-width: 150px;
+  width: 100%;
+  height: auto;
+}
+h1 {
+  margin: 0;
+  font-size: 26px;
+  color: #003DA5;
+}
+.title {
+  color: #666;
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+.contact-item {
+  display: flex;
+  align-items: center;
+  margin: 16px 0;
+  text-decoration: none;
+  font-weight: bold;
+  color: #666;
+  font-size: 17px;
+  word-break: break-word;
+}
+.contact-item img {
+  width: 40px;
+  height: 40px;
+  margin-right: 14px;
+  border-radius: 50%;
+  transition: transform 0.2s ease-in-out;
+}
+.contact-item:hover img {
+  transform: scale(1.1);
+}
+@media (max-width: 500px) {
+  .card { padding: 25px 20px; top: -18px; }
+  h1 { font-size: 22px; }
+  .title { font-size: 16px; }
+  .contact-item { font-size: 16px; }
+  .contact-item img { width: 36px; height: 36px; margin-right: 12px; }
+}
+</style>
 </head>
 
 <body>
-  <div class="card">
+<div class="card">
 
-    <!-- REMAX LOGO -->
-    <img src="https://remaxcaborealestate.com/images/brand/remax_cabosanctuary.svg"
-         alt="RE/MAX Logo"
-         class="logo" />
+<img src="https://remaxcaborealestate.com/images/brand/remax_cabosanctuary.svg" alt="RE/MAX Logo" class="logo" />
 
-    <h1>Kenneth Gehlhoff</h1>
-    <div class="title">REALTOR<br>RE/MAX Cerritos</div>
+<h1>Kenneth Gehlhoff</h1>
+<div class="title">REALTOR<br>RE/MAX Cerritos</div>
 
-    <!-- PHONE -->
-    <a href="tel:+526122311639" class="contact-item">
-      <img src="https://cdn-icons-png.flaticon.com/512/455/455705.png" alt="Phone Icon">
-      +52 612-231-1639
-    </a>
+<a href="tel:+526122311639" class="contact-item">
+  <img src="https://cdn-icons-png.flaticon.com/512/455/455705.png" alt="Phone Icon"> +52 612-231-1639
+</a>
 
-    <!-- EMAIL -->
-    <a href="mailto:Kenny@remaxcaborealestate.com" class="contact-item">
-      <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Email Icon">
-      Kenny@remaxcaborealestate.com
-    </a>
+<a href="mailto:Kenny@remaxcaborealestate.com" class="contact-item">
+  <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Email Icon"> Kenny@remaxcaborealestate.com
+</a>
 
-    <!-- WHATSAPP -->
-    <a href="https://wa.me/526122311639" class="contact-item" target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/124/124034.png" alt="WhatsApp Icon">
-      Chat via WhatsApp
-    </a>
+<a href="https://wa.me/526122311639" class="contact-item" target="_blank">
+  <img src="https://cdn-icons-png.flaticon.com/512/124/124034.png" alt="WhatsApp Icon"> Chat via WhatsApp
+</a>
 
-    <!-- INSTAGRAM -->
-    <a href="https://www.instagram.com/baja_kennyrealestate" class="contact-item" target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram Icon">
-      Instagram Profile
-    </a>
+<a href="https://www.instagram.com/baja_kennyrealestate" class="contact-item" target="_blank">
+  <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram Icon"> Instagram Profile
+</a>
 
-    <!-- VIEW LISTINGS (REMAX DIRECT PROFILE) -->
-    <a href="https://global.remax.com/en/agents/mexico/san-jose-del-cabo/kenneth-gehlhoff/1001122140"
-       class="contact-item"
-       target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/1946/1946433.png" alt="Listings Icon">
-      View My Listings
-    </a>
+<a href="https://global.remax.com/en/agents/mexico/san-jose-del-cabo/kenneth-gehlhoff/1001122140" class="contact-item" target="_blank">
+  <img src="https://cdn-icons-png.flaticon.com/512/1946/1946433.png" alt="Listings Icon"> View My Listings
+</a>
 
-  </div>
+</div>
 </body>
 </html>
