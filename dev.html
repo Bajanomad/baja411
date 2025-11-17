@@ -13,7 +13,7 @@
       align-items: center;
       min-height: 100vh;
       padding: 20px;
-      background: linear-gradient(to bottom, #f0f0f0, #ffffff); /* subtle gray gradient */
+      background: linear-gradient(to bottom, #f0f0f0, #ffffff); /* gray gradient */
     }
 
     .card {
@@ -22,7 +22,7 @@
       border-radius: 14px;
       width: 100%;
       max-width: 480px;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
     }
 
     .logo {
@@ -69,18 +69,10 @@
     }
 
     @media (max-width: 500px) {
-      .card {
-        padding: 25px 20px;
-      }
-      h1 {
-        font-size: 22px;
-      }
-      .title {
-        font-size: 16px;
-      }
-      .contact-item {
-        font-size: 16px;
-      }
+      .card { padding: 25px 20px; }
+      h1 { font-size: 22px; }
+      .title { font-size: 16px; }
+      .contact-item { font-size: 16px; }
       .contact-item img {
         width: 36px;
         height: 36px;
@@ -89,41 +81,46 @@
     }
   </style>
 </head>
+
 <body>
   <div class="card">
 
-    <img src="https://remaxcaborealestate.com/images/brand/remax_cabosanctuary.svg" 
-         alt="RE/MAX Logo" 
+    <img src="https://remaxcaborealestate.com/images/brand/remax_cabosanctuary.svg"
+         alt="RE/MAX Logo"
          class="logo" />
 
     <h1>Kenneth Gehlhoff</h1>
-    <div class="title">REALTOR<br />RE/MAX Cerritos</div>
+    <div class="title">REALTOR<br>RE/MAX Cerritos</div>
 
+    <!-- PHONE -->
     <a href="tel:+526122311639" class="contact-item">
-      <img src="https://cdn-icons-png.flaticon.com/512/455/455705.png" alt="Phone Icon" />
+      <img src="https://cdn-icons-png.flaticon.com/512/455/455705.png" alt="Phone Icon">
       +52 612-231-1639
     </a>
 
+    <!-- EMAIL -->
     <a href="mailto:Kenny@remaxcaborealestate.com" class="contact-item">
-      <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Email Icon" />
+      <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Email Icon">
       Kenny@remaxcaborealestate.com
     </a>
 
+    <!-- WHATSAPP -->
     <a href="https://wa.me/526122311639" class="contact-item" target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/124/124034.png" alt="WhatsApp Icon" />
+      <img src="https://cdn-icons-png.flaticon.com/512/124/124034.png" alt="WhatsApp Icon">
       Chat via WhatsApp
     </a>
 
+    <!-- INSTAGRAM -->
     <a href="https://www.instagram.com/baja_kennyrealestate" class="contact-item" target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram Icon" />
+      <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram Icon">
       Instagram Profile
     </a>
 
-    <!-- UPDATED LISTINGS BUTTON -->
+    <!-- UPDATED LISTINGS BUTTON — THIS IS THE CORRECT REMAX PROFILE -->
     <a href="https://global.remax.com/en/agents/mexico/san-jose-del-cabo/kenneth-gehlhoff/1001122140"
-       class="contact-item" 
+       class="contact-item"
        target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/1946/1946433.png" alt="Listings Icon" />
+      <img src="https://cdn-icons-png.flaticon.com/512/1946/1946433.png" alt="Listings Icon">
       View My Listings
     </a>
 
