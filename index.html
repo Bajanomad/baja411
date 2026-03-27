@@ -10,35 +10,26 @@
 
   <!-- Open Graph for Social Sharing -->
   <meta property="og:title" content="The Baja Nomad" />
-  <meta property="og:description" content="Welcome to the Baja Nomad, your one stop shop for local news and weather. You can also see my schedule if you would like ro book me for house sitting or gardening." />
+  <meta property="og:description" content="Your one stop shop for local Baja news, weather, and hurricane tracking." />
   <meta property="og:image" content="social-preview.png" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://yourdomain.com" />
+  <meta property="og:url" content="https://the-baja-nomad.vercel.app" />
 
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; background: black; font-family: 'Share Tech Mono', monospace; color: #39ff14; overflow-x: hidden; }
-    canvas { position: fixed; top: 0; left: 0; z-index: 0; }
-    .content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 2rem; min-height: 100%; background: rgba(0,0,0,0.6); }
-    @keyframes neonFlicker {
-      0%,100% { text-shadow: 0 0 8px #39ff14,0 0 20px #39ff14,0 0 30px #39ff14cc; opacity:1; }
-      50% { text-shadow:0 0 4px #2ecc40,0 0 10px #2ecc40aa; opacity:0.8; }
-      70% { text-shadow:none; opacity:0.6; }
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2.5rem;
+      justify-content: center;
+      align-items: center;
+      margin-top: 2rem;
+      width: 90vw;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
     }
-    header { font-size:2.5rem; font-family:'Orbitron', sans-serif; margin-bottom:2rem; animation:neonFlicker 2.5s infinite alternate; text-align:center; white-space:nowrap; }
-    .button-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:2.5rem; justify-content:center; align-items:center; margin-top:2rem; width:90vw; max-width:400px; margin-left:auto; margin-right:auto; }
-    .icon-btn { width:100%; max-width:160px; aspect-ratio:1/1; border-radius:50%; background:black; border:3px solid #39ff14; box-shadow:0 0 8px #39ff14aa,0 0 15px #39ff14cc; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:all 0.2s ease; }
-    .icon-btn img { width:60%; height:60%; object-fit:contain; pointer-events:none; user-select:none; }
-    @keyframes glitch {
-      0%{transform:translate(0); filter:none;}
-      20%{transform:translate(-2px,2px); filter:drop-shadow(2px 0 #39ff14) drop-shadow(-2px 0 #2ecc40);}
-      40%{transform:translate(2px,-2px); filter:drop-shadow(-2px 0 #39ff14) drop-shadow(2px 0 #2ecc40);}
-      60%{transform:translate(-1px,1px); filter:drop-shadow(1px 0 #2ecc40) drop-shadow(-1px 0 #39ff14);}
-      80%,100%{transform:translate(0); filter:none;}
-    }
-    .icon-btn:hover { animation:glitch 0.4s infinite; border-color:#2ecc40; box-shadow:0 0 25px #2ecc40cc,0 0 40px #2ecc40aa; }
-    .icon-btn:active { transform:scale(0.95); box-shadow:0 0 10px #2ecc40aa,0 0 20px #2ecc40aa; }
   </style>
 </head>
 
@@ -75,47 +66,7 @@
       </button>
     </div>
   </div>
-  
-  <script>
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
-    const fontSize = 14;
-    let drops = [];
 
-    function setupCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      const columns = Math.floor(canvas.width / fontSize);
-      drops = Array(columns).fill(1);
-    }
-
-    setupCanvas();
-
-    const letters = "アァイィウヴエカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
-
-    function draw() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#39ff14";
-      ctx.font = fontSize + "px monospace";
-
-      for (let i = 0; i < drops.length; i++) {
-        const text = letters[Math.floor(Math.random() * letters.length)];
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
-        }
-
-        drops[i]++;
-      }
-    }
-
-    setInterval(draw, 35);
-
-    window.addEventListener('resize', () => {
-      setupCanvas();
-    });
-  </script>
+  <script src="matrix.js"></script>
 </body>
 </html>
