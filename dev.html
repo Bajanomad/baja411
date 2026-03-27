@@ -47,64 +47,20 @@
       height: min(38vw, 160px);
     }
 
-    /* Small phones portrait */
-    @media (max-width: 380px) {
-      header { font-size: 1.6rem; }
-      .button-grid { gap: 1.2rem; }
-    }
-
-    /* Phone landscape */
-    @media (max-height: 500px) and (orientation: landscape) {
-      header { font-size: 1.4rem; margin-bottom: 0.75rem; }
-      .button-grid {
-        grid-template-columns: repeat(4, 1fr);
-        max-width: 100%;
-        width: 95vw;
-        gap: 1rem;
-        margin-top: 0.5rem;
-      }
-      .icon-btn {
-        width: min(18vw, 90px);
-        height: min(18vw, 90px);
-      }
-    }
-
-    /* Tablet portrait */
-    @media (min-width: 600px) and (orientation: portrait) {
+    /* Landscape — any device */
+    @media (orientation: landscape) {
       .button-grid {
         grid-template-columns: repeat(4, 1fr);
         max-width: 700px;
-        gap: 2rem;
+        gap: 1.5rem;
       }
       .icon-btn {
-        width: min(20vw, 150px);
-        height: min(20vw, 150px);
+        width: min(18vw, 140px);
+        height: min(18vw, 140px);
       }
-    }
-
-    /* Tablet landscape */
-    @media (min-width: 800px) and (orientation: landscape) {
-      .button-grid {
-        grid-template-columns: repeat(4, 1fr);
-        max-width: 800px;
-        gap: 2.5rem;
-      }
-      .icon-btn {
-        width: 160px;
-        height: 160px;
-      }
-    }
-
-    /* Desktop */
-    @media (min-width: 1024px) {
-      .button-grid {
-        grid-template-columns: repeat(4, 1fr);
-        max-width: 900px;
-        gap: 3rem;
-      }
-      .icon-btn {
-        width: 180px;
-        height: 180px;
+      header {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
       }
     }
   </style>
