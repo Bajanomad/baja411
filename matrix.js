@@ -19,7 +19,7 @@
     for (let i = 0; i < drops.length; i++) {
       ctx.fillText(letters[Math.floor(Math.random() * letters.length)], i * fontSize, drops[i] * fontSize);
       if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-      drops[i]++;
+      drops[i] += 0.5;
     }
     requestAnimationFrame(draw);
   }
