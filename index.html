@@ -8,12 +8,23 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
 
-  <!-- Open Graph for Social Sharing -->
+  <!-- Primary Meta -->
+  <meta name="description" content="Baja news, weather, and hurricane tracking. Based in La Paz, BCS." />
+  <meta name="keywords" content="Baja, weather, news, hurricane" />
+  <meta name="author" content="The Baja Nomad" />
+
+  <!-- Open Graph -->
   <meta property="og:title" content="The Baja Nomad" />
-  <meta property="og:description" content="Your one stop shop for local Baja news, weather, and hurricane tracking." />
-  <meta property="og:image" content="social-preview.png" />
+  <meta property="og:description" content="Baja news, weather, and hurricane tracking. Based in La Paz, BCS." />
+  <meta property="og:image" content="https://the-baja-nomad.vercel.app/social-preview.png" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://the-baja-nomad.vercel.app" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="The Baja Nomad" />
+  <meta name="twitter:description" content="Baja news, weather, and hurricane tracking." />
+  <meta name="twitter:image" content="https://the-baja-nomad.vercel.app/social-preview.png" />
 
   <link rel="stylesheet" href="styles.css" />
 
@@ -21,14 +32,36 @@
     .button-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 2.5rem;
-      justify-content: center;
+      gap: 2rem;
+      justify-items: center;
       align-items: center;
       margin-top: 2rem;
       width: 90vw;
-      max-width: 400px;
+      max-width: 420px;
       margin-left: auto;
       margin-right: auto;
+    }
+
+    .icon-btn {
+      width: min(38vw, 160px);
+      height: min(38vw, 160px);
+    }
+
+    /* Landscape — any device */
+    @media (orientation: landscape) {
+      .button-grid {
+        grid-template-columns: repeat(4, 1fr);
+        max-width: 700px;
+        gap: 1.5rem;
+      }
+      .icon-btn {
+        width: min(18vw, 140px);
+        height: min(18vw, 140px);
+      }
+      header {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+      }
     }
   </style>
 </head>
