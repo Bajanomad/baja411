@@ -1,118 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- META & TITLE -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>News - The Baja Nomad</title>
 
-  <!-- FAVICON -->
-  <link rel="icon" type="image/png" href="favicon.png" />
+  <!-- Primary Meta -->
+  <meta name="description" content="Local news for Baja California Sur from the Gringo Gazette, Cabo Sun, and La Paz Times." />
+  <meta name="keywords" content="Baja, news, La Paz, Cabo" />
+  <meta name="author" content="The Baja Nomad" />
 
-  <!-- FONTS -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="News - The Baja Nomad" />
+  <meta property="og:description" content="Local news for Baja California Sur from the Gringo Gazette, Cabo Sun, and La Paz Times." />
+  <meta property="og:image" content="https://the-baja-nomad.vercel.app/social-preview.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://the-baja-nomad.vercel.app/news.html" />
 
-  <!-- STYLES -->
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="News - The Baja Nomad" />
+  <meta name="twitter:description" content="Local news for Baja California Sur from the Gringo Gazette, Cabo Sun, and La Paz Times." />
+  <meta name="twitter:image" content="https://the-baja-nomad.vercel.app/social-preview.png" />
+
+  <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+  <link rel="stylesheet" href="styles.css" />
+
   <style>
-    /* RESET & BASE */
-    * { margin:0; padding:0; box-sizing: border-box; }
-    html, body {
-      height: 100%;
-      background: black;
-      font-family: 'Share Tech Mono', monospace;
-      color: #39ff14;
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* MATRIX CANVAS */
-    #matrix {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    /* MAIN CONTENT CONTAINER */
     .content {
-      position: relative;
-      z-index: 2;
+      overflow-y: auto;
       width: 100vw;
       height: 100vh;
-      background: rgba(0, 0, 0, 0.6); /* Fade matrix rain */
-      padding: 2rem;
-      overflow-y: auto;
     }
 
-    /* HEADER WITH FLICKER */
-    header {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2.5rem;
-      margin-bottom: 1.5rem;
-      text-align: center;
-      text-shadow: 0 0 8px #39ff14;
-      animation: flicker 3s infinite alternate;
-      user-select: none;
-    }
-
-    /* FLICKER ANIMATION */
-    @keyframes flicker {
-      0%, 100% {
-        text-shadow: 0 0 8px #39ff14, 0 0 20px #39ff14, 0 0 30px #39ff14cc;
-        opacity: 1;
-      }
-      50% {
-        text-shadow: 0 0 4px #2ecc40, 0 0 10px #2ecc40aa;
-        opacity: 0.8;
-      }
-      75% {
-        text-shadow: none;
-        opacity: 0.6;
-      }
-    }
-
-    /* BACK ARROW BUTTON */
-    .back-arrow {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      width: 40px;
-      height: 40px;
-      background: black;
-      border: 2px solid #39ff14;
-      border-radius: 50%;
-      box-shadow: 0 0 8px #39ff14aa;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease-in-out;
-      z-index: 999;
-      text-decoration: none;
-    }
-
-    .back-arrow:hover {
-      transform: scale(1.1);
-      border-color: #2ecc40;
-      box-shadow: 0 0 16px #2ecc40cc;
-    }
-
-    .back-arrow img {
-      width: 20px;
-      height: 20px;
-      filter: drop-shadow(0 0 2px #39ff14);
-      user-select: none;
-      pointer-events: none;
-    }
-
-    /* NEWS FEED CONTAINER */
     .feed {
       margin-bottom: 2.5rem;
       padding: 1rem;
       background: rgba(0, 0, 0, 0.6);
       border-radius: 10px;
       box-shadow: 0 0 6px #2ecc4080;
+      width: 100%;
+      max-width: 800px;
     }
 
     .feed h2 {
@@ -121,10 +49,8 @@
       margin-bottom: 0.75rem;
       border-bottom: 1px solid #39ff14;
       padding-bottom: 0.25rem;
-      user-select: none;
     }
 
-    /* ARTICLE LIST */
     .articles {
       list-style: none;
       max-height: 300px;
@@ -143,7 +69,6 @@
       font-weight: bold;
       text-decoration: none;
       font-size: 1rem;
-      user-select: text;
     }
 
     .articles li a:hover {
@@ -154,79 +79,41 @@
     .articles li .pubDate {
       font-size: 0.8rem;
       color: #2ecc40aa;
-      user-select: text;
+    }
+
+    @media (orientation: landscape) {
+      header { font-size: 1.8rem; margin-bottom: 1rem; }
     }
   </style>
 </head>
+
 <body>
-  <!-- MATRIX RAIN CANVAS -->
   <canvas id="matrix"></canvas>
 
-  <!-- BACK ARROW BUTTON -->
   <a href="index.html" title="Back to Main" class="back-arrow">
     <img src="https://img.icons8.com/ios-filled/50/39ff14/left.png" alt="Back to Main" />
   </a>
 
-  <!-- MAIN CONTENT -->
   <div class="content">
     <header>Local News</header>
     <div id="news-container"></div>
   </div>
 
-  <!-- SCRIPTS -->
+  <script src="matrix.js"></script>
+
   <script>
-    /* ==== MATRIX RAIN SCRIPT ==== */
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const letters = "アァイィウヴエカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
-    const fontSize = 14;
-    let columns = Math.floor(canvas.width / fontSize);
-    let drops = Array(columns).fill(1);
-
-    window.addEventListener('resize', () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      columns = Math.floor(canvas.width / fontSize);
-      drops = Array(columns).fill(1);
-    });
-
-    function drawMatrixRain() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#39ff14";
-      ctx.font = fontSize + "px monospace";
-
-      for (let i = 0; i < drops.length; i++) {
-        const char = letters[Math.floor(Math.random() * letters.length)];
-        ctx.fillText(char, i * fontSize, drops[i] * fontSize);
-
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
-        }
-        drops[i] += 0.15; // slowed down here from 1 to 0.3
-      }
-
-      requestAnimationFrame(drawMatrixRain);
-    }
-
-    drawMatrixRain();
-
-    /* ==== NEWS FEEDS LOADER SCRIPT ==== */
     const feeds = [
-      {
-        name: "Gringo Gazette",
-        url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.gringogazette.com%2Ffeed"
-      },
       {
         name: "The Cabo Sun",
         url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fthecabosun.com%2Ffeed"
       },
       {
+        name: "Gringo Gazette",
+        url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.gringogazette.com%2Ffeed"
+      },
+      {
         name: "La Paz Times",
-        url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Flapaztimes.com%2Ffeed"
+        url: "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Flapaztimes.com%2Ffeed%3Flang%3Den"
       }
     ];
 
