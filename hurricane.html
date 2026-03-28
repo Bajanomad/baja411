@@ -3,74 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hurricane Watch- The Baja Nomad</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <title>Hurricane Watch - The Baja Nomad</title>
+
+  <!-- Primary Meta -->
+  <meta name="description" content="Live hurricane and storm tracking for Baja California Sur and the Eastern Pacific." />
+  <meta name="keywords" content="Baja, hurricane, storm, tracking" />
+  <meta name="author" content="The Baja Nomad" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Hurricane Watch - The Baja Nomad" />
+  <meta property="og:description" content="Live hurricane and storm tracking for Baja California Sur and the Eastern Pacific." />
+  <meta property="og:image" content="https://the-baja-nomad.vercel.app/social-preview.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://the-baja-nomad.vercel.app/hurricane.html" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Hurricane Watch - The Baja Nomad" />
+  <meta name="twitter:description" content="Live hurricane and storm tracking for Baja California Sur and the Eastern Pacific." />
+  <meta name="twitter:image" content="https://the-baja-nomad.vercel.app/social-preview.png" />
+
+  <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+  <link rel="stylesheet" href="styles.css" />
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html, body {
-      height: 100%;
-      background: black;
-      font-family: 'Share Tech Mono', monospace;
-      color: #39ff14;
-      overflow: hidden;
-    }
-
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 0;
-    }
-
-    .back-arrow {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      width: 40px;
-      height: 40px;
-      z-index: 999;
-      background: black;
-      border: 2px solid #39ff14;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 8px #39ff14aa;
-      transition: all 0.2s ease-in-out;
-      text-decoration: none;
-    }
-
-    .back-arrow:hover {
-      transform: scale(1.1);
-      border-color: #2ecc40;
-      box-shadow: 0 0 16px #2ecc40cc;
-    }
-
-    .back-arrow img {
-      width: 20px;
-      height: 20px;
-      filter: drop-shadow(0 0 2px #39ff14);
-    }
-
     .content {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
       overflow-y: auto;
-      z-index: 1;
-      background: rgba(0, 0, 0, 0.75);
-      padding: 5rem 2rem 2rem 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      padding-top: 5rem;
     }
 
     .image-list img {
@@ -80,14 +39,12 @@
       box-shadow: 0 0 10px #39ff14aa;
     }
 
-    h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 3rem;
-      margin-bottom: 2rem;
-      text-shadow: 0 0 12px #39ff14cc;
+    @media (orientation: landscape) {
+      header { font-size: 1.8rem; margin-bottom: 1rem; }
     }
   </style>
 </head>
+
 <body>
   <canvas id="matrix"></canvas>
 
@@ -96,51 +53,20 @@
   </a>
 
   <div class="content">
-    <h3>Hurricane Tracker</h3>
-    <br> <br>
+    <header>Hurricane Tracker</header>
+
     <div class="image-list">
-      <img src="https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/mex/13/GOES19-MEX-13-1000x1000.gif" alt="Hurricane Image 1" />
-      <img src="https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/eep/13/GOES19-EEP-13-900x540.gif" alt="Hurricane Image 2" />
-      <img src="https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/mex/GEOCOLOR/GOES19-MEX-GEOCOLOR-1000x1000.gif" alt="Hurricane Image 3" />
-      <img src="https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/eep/GEOCOLOR/GOES19-EEP-GEOCOLOR-900x540.gif" alt="Hurricane Image 4" />
-      <img src="https://www.nhc.noaa.gov/archive/xgtwo/epac/latest/two_pac_7d0.png" alt="Hurricane Image 5" />
-      <img src="https://www.ospo.noaa.gov/data/sst/contour/gulfcalf.c.gif" alt="Hurricane Image 6" />
-      <img src="https://www.nhc.noaa.gov/tafb_latest/pacsfc24_latestBW.gif" alt="Hurricane Image 7" />
-      <img src="https://www.nhc.noaa.gov/tafb_latest/pacsea_latestBW.gif" alt="Hurricane Image 8" />
+      <img src="https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/mex/13/GOES19-MEX-13-1000x1000.gif" alt="Mexico Sector Band 13" />
+      <img src="https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/eep/13/GOES19-EEP-13-900x540.gif" alt="East Pacific Band 13" />
+      <img src="https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/mex/GEOCOLOR/GOES19-MEX-GEOCOLOR-1000x1000.gif" alt="Mexico GeoColor" />
+      <img src="https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/eep/GEOCOLOR/GOES19-EEP-GEOCOLOR-900x540.gif" alt="East Pacific GeoColor" />
+      <img src="https://www.nhc.noaa.gov/archive/xgtwo/epac/latest/two_pac_7d0.png" alt="7 Day Pacific Outlook" />
+      <img src="https://www.ospo.noaa.gov/data/sst/contour/gulfcalf.c.gif" alt="Gulf of California SST" />
+      <img src="https://www.nhc.noaa.gov/tafb_latest/pacsfc24_latestBW.gif" alt="Pacific Surface Analysis 24hr" />
+      <img src="https://www.nhc.noaa.gov/tafb_latest/pacsea_latestBW.gif" alt="Pacific Surface Analysis" />
     </div>
   </div>
 
-  <script>
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
-
-    canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth;
-
-    const letters = "アァイィウヴエカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
-    const fontSize = 14;
-    const columns = Math.floor(canvas.width / fontSize);
-    const drops = Array(columns).fill(1);
-
-    function draw() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.fillStyle = "#39ff14";
-      ctx.font = fontSize + "px monospace";
-
-      for (let i = 0; i < drops.length; i++) {
-        const text = letters[Math.floor(Math.random() * letters.length)];
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-        if (drops[i] * fontSize > canvas.height || Math.random() > 0.975) {
-          drops[i] = 0;
-        }
-        drops[i]++;
-      }
-    }
-
-    setInterval(draw, 33);
-  </script>
+  <script src="matrix.js"></script>
 </body>
 </html>
