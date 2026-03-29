@@ -1,4 +1,87 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floor Plan</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+        svg {
+            background: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        text {
+            font-size: 14px;
+            fill: #333;
+        }
+        .dimension {
+            font-size: 12px;
+            fill: #666;
+        }
+    </style>
+</head>
+<body>
+    <svg width="1000" height="750" viewBox="0 0 1000 750">
+        <!-- Grid background -->
+        <defs>
+            <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e8e8e8" stroke-width="0.5"/>
+            </pattern>
+        </defs>
+        <rect width="1000" height="750" fill="url(#grid)" />
+        
+        <!-- Outer walls -->
+        <rect x="50" y="50" width="900" height="600" fill="none" stroke="black" stroke-width="3"/>
+        
+        <!-- Inner step (horizontal wall at 420px from top) -->
+        <line x1="50" y1="420" x2="650" y2="420" stroke="black" stroke-width="3"/>
+        
+        <!-- Inner vertical divider -->
+        <line x1="650" y1="420" x2="650" y2="650" stroke="black" stroke-width="3"/>
+        
+        <!-- Right side notch walls -->
+        <line x1="650" y1="420" x2="750" y2="420" stroke="black" stroke-width="3"/>
+        <line x1="750" y1="420" x2="750" y2="480" stroke="black" stroke-width="3"/>
+        <line x1="750" y1="480" x2="820" y2="480" stroke="black" stroke-width="3"/>
+        <line x1="820" y1="480" x2="820" y2="650" stroke="black" stroke-width="3"/>
+        
+        <!-- Left room wall (16' x 16') -->
+        <line x1="50" y1="50" x2="350" y2="50" stroke="black" stroke-width="3"/>
+        <line x1="350" y1="50" x2="350" y2="420" stroke="black" stroke-width="3"/>
+        
+        <!-- Door on back wall of left room (3' wide, 5' from left, 8' from right) -->
+        <line x1="50" y1="420" x2="150" y2="420" stroke="black" stroke-width="3"/>
+        <!-- Gap for door -->
+        <line x1="200" y1="420" x2="350" y2="420" stroke="black" stroke-width="3"/>
+        
+        <!-- Closet wall (7' deep) -->
+        <line x1="350" y1="420" x2="350" y2="560" stroke="black" stroke-width="3"/>
+        
+        <!-- Door on right wall of closet (3' wide, 12' from front) -->
+        <line x1="350" y1="420" x2="350" y2="480" stroke="black" stroke-width="3"/>
+        <!-- Gap for door -->
+        <line x1="350" y1="530" x2="350" y2="560" stroke="black" stroke-width="3"/>
+        
+        <!-- Dimensions -->
+        <text x="500" y="670" class="dimension">40'</text>
+        <text x="30" y="350" class="dimension">30'</text>
+        
+        <!-- Room labels -->
+        <text x="150" y="250" font-size="16" font-weight="bold">Bedroom 1</text>
+        <text x="600" y="250" font-size="16" font-weight="bold">Living Area</text>
+        <text x="700" y="550" font-size="14">Kitchen</text>
+    </svg>
+</body>
+</html>
 <html>
 <head>
   <title>3D House</title>
