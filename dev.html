@@ -1,78 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>House Sitting - The Baja Nomad</title>
-
-  <!-- Primary Meta -->
-  <meta name="description" content="Book the Baja Nomad for house sitting in La Paz, BCS." />
-  <meta name="keywords" content="Baja, house sitting, La Paz" />
-  <meta name="author" content="The Baja Nomad" />
-
-  <!-- Open Graph -->
-  <meta property="og:title" content="House Sitting - The Baja Nomad" />
-  <meta property="og:description" content="Book the Baja Nomad for house sitting in La Paz, BCS." />
-  <meta property="og:image" content="https://the-baja-nomad.vercel.app/social-preview.png" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://the-baja-nomad.vercel.app/home.html" />
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="House Sitting - The Baja Nomad" />
-  <meta name="twitter:description" content="Book the Baja Nomad for house sitting in La Paz, BCS." />
-  <meta name="twitter:image" content="https://the-baja-nomad.vercel.app/social-preview.png" />
-
-  <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
-  <link rel="stylesheet" href="styles.css" />
-
+  <title>3D Floor Plan</title>
   <style>
-    .content { overflow-y: auto; }
-
-    p.description {
-      font-size: 1.25rem;
-      line-height: 1.6;
-      text-align: center;
-      color: #2ecc40cc;
-      margin-bottom: 2rem;
-    }
-
-    iframe.calendar {
-      width: 100%;
-      height: 700px;
-      border: none;
-      border-radius: 8px;
-      box-shadow: 0 0 20px #39ff14aa;
-      background: black;
-      max-width: 900px;
-    }
-
-    @media (orientation: landscape) {
-      header { font-size: 1.8rem; margin-bottom: 0.5rem; }
-      iframe.calendar { height: 400px; }
-    }
+    body { margin: 0; }
   </style>
 </head>
-
 <body>
-  <canvas id="matrix"></canvas>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.158/build/three.module.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.158/examples/jsm/controls/OrbitControls.js';
 
-  <a href="index.html" title="Back to Main" class="back-arrow">
-    <img src="https://img.icons8.com/ios-filled/50/39ff14/left.png" alt="Back" />
-  </a>
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xf5f5f5);
 
-  <div class="content">
-    <header>Welcome</header>
-    <p class="description">
-      This is where you can check my schedule if you need to book me for house sitting.
-    </p>
-    <iframe
-      class="calendar"
-      src="https://calendar.google.com/calendar/embed?src=thebajanomad%40gmail.com&ctz=UTC"
-      title="House Sitting Calendar"
-    ></iframe>
-  </div>
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+camera.position.set(60, 60, 60);
 
-  <script src="matrix.js"></script>
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+
+// light
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(50, 50, 50);
+scene.add(light);
+
+// material
+const wallMat = new THREE.MeshStandardMaterial({ color: 0x444444 });
+
+// helper to create walls
+function wall(x, z, w, d, h=10) {
+  const geo = new THREE.BoxGeometry(w, h, d);
+  const mesh = new THREE.Mesh(geo, wallMat);
+  mesh.position.set(x + w/2, h/2, z + d/2);
+  scene.add(mesh);
+}
+
+// 🔲 FLOOR
+const floor = new THREE.Mesh(
+  new THREE.PlaneGeometry(40, 30),
+  new THREE.MeshStandardMaterial({ color: 0xdddddd })
+);
+floor.rotation.x = -Math.PI/2;
+scene.add(floor);
+
+// 🔥 YOUR WALLS (based on your layout)
+
+// OUTER WALLS
+wall(0, 0, 40, 0.5);          // top
+wall(0, 29.5, 40, 0.5);       // bottom
+wall(0, 0, 0.5, 30);          // left
+wall(39.5, 0, 0.5, 30);       // right
+
+// LEFT MASTER TOP WALL (5' + 3' gap + 8')
+wall(0, 14, 5, 0.5);
+wall(8, 14, 8, 0.5);
+
+// CENTER WALL (12 + 3 gap + 1)
+wall(16, 0, 0.5, 12);
+wall(16, 15, 0.5, 1);
+
+// TOP RIGHT WALL (6 + 3 gap + 1 from corner)
+wall(26 - 10, 14, 6, 0.5);  // 6' section
+wall(25, 14, 1, 0.5);       // 1' near corner
+
+// animate
+function animate() {
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+animate();
+
+</script>
 </body>
 </html>
