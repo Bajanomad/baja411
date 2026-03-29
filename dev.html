@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>3D Floor Plan</title>
+  <title>3D House</title>
   <style>
     body { margin: 0; overflow: hidden; }
   </style>
 </head>
 <body>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.158/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.158/examples/js/controls/OrbitControls.js"></script>
+<script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
 
 <script>
 
+// scene
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xf0f0f0);
 
@@ -28,21 +29,20 @@ document.body.appendChild(renderer.domElement);
 // controls
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-// lighting (THIS WAS MISSING)
-const ambient = new THREE.AmbientLight(0xffffff, 0.6);
-scene.add(ambient);
+// lights
+scene.add(new THREE.AmbientLight(0xffffff, 0.7));
 
 const light = new THREE.DirectionalLight(0xffffff, 0.8);
-light.position.set(50, 50, 50);
+light.position.set(50,50,50);
 scene.add(light);
 
 // material
-const wallMat = new THREE.MeshStandardMaterial({ color: 0x444444 });
+const mat = new THREE.MeshStandardMaterial({ color: 0x444444 });
 
-// wall helper
-function wall(x, z, w, d, h = 10) {
+// helper
+function wall(x, z, w, d, h=10) {
   const geo = new THREE.BoxGeometry(w, h, d);
-  const mesh = new THREE.Mesh(geo, wallMat);
+  const mesh = new THREE.Mesh(geo, mat);
   mesh.position.set(x + w/2, h/2, z + d/2);
   scene.add(mesh);
 }
@@ -52,43 +52,42 @@ const floor = new THREE.Mesh(
   new THREE.PlaneGeometry(40, 30),
   new THREE.MeshStandardMaterial({ color: 0xdddddd })
 );
-floor.rotation.x = -Math.PI / 2;
+floor.rotation.x = -Math.PI/2;
 scene.add(floor);
 
-// --- YOUR WALLS ---
+// OUTER WALLS
+wall(0,0,40,0.5);
+wall(0,29.5,40,0.5);
+wall(0,0,0.5,30);
+wall(39.5,0,0.5,30);
 
-// outer
-wall(0, 0, 40, 0.5);
-wall(0, 29.5, 40, 0.5);
-wall(0, 0, 0.5, 30);
-wall(39.5, 0, 0.5, 30);
+// MASTER WALL (5 + gap + 8)
+wall(0,14,5,0.5);
+wall(8,14,8,0.5);
 
-// master wall (5 + gap + 8)
-wall(0, 14, 5, 0.5);
-wall(8, 14, 8, 0.5);
+// CENTER WALL (12 + gap + 1)
+wall(16,0,0.5,12);
+wall(16,15,0.5,1);
 
-// center wall (12 + gap + 1)
-wall(16, 0, 0.5, 12);
-wall(16, 15, 0.5, 1);
+// RIGHT WALL (1 from corner, gap, then 6)
+wall(25,14,1,0.5);
+wall(19,14,6,0.5);
 
-// right wall (corner → 1 → gap → 6)
-wall(25, 14, 1, 0.5);
-wall(19, 14, 6, 0.5);
-
-// render loop
-function animate() {
+// loop
+function animate(){
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
 }
 animate();
 
-// resize fix
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
+// resize
+window.addEventListener('resize', ()=>{
+  camera.aspect = window.innerWidth/window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
 </script>
+
 </body>
 </html>
