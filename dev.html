@@ -1,175 +1,444 @@
-<!DOCTYPE html><!DOCTYPE html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Floor Plan</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background: #f5f5f5;
-            font-family: Arial, sans-serif;
-        }
-        svg {
-            background: white;
-            border: 1px solid #ccc;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        text {
-            font-size: 14px;
-            fill: #333;
-        }
-        .dimension {
-            font-size: 12px;
-            fill: #666;
-        }
-    </style>
-</head>
-<body>
-    <svg width="1000" height="750" viewBox="0 0 1000 750">
-        <!-- Grid background -->
-        <defs>
-            <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e8e8e8" stroke-width="0.5"/>
-            </pattern>
-        </defs>
-        <rect width="1000" height="750" fill="url(#grid)" />
-        
-        <!-- Outer walls -->
-        <rect x="50" y="50" width="900" height="600" fill="none" stroke="black" stroke-width="3"/>
-        
-        <!-- Inner step (horizontal wall at 420px from top) -->
-        <line x1="50" y1="420" x2="650" y2="420" stroke="black" stroke-width="3"/>
-        
-        <!-- Inner vertical divider -->
-        <line x1="650" y1="420" x2="650" y2="650" stroke="black" stroke-width="3"/>
-        
-        <!-- Right side notch walls -->
-        <line x1="650" y1="420" x2="750" y2="420" stroke="black" stroke-width="3"/>
-        <line x1="750" y1="420" x2="750" y2="480" stroke="black" stroke-width="3"/>
-        <line x1="750" y1="480" x2="820" y2="480" stroke="black" stroke-width="3"/>
-        <line x1="820" y1="480" x2="820" y2="650" stroke="black" stroke-width="3"/>
-        
-        <!-- Left room wall (16' x 16') -->
-        <line x1="50" y1="50" x2="350" y2="50" stroke="black" stroke-width="3"/>
-        <line x1="350" y1="50" x2="350" y2="420" stroke="black" stroke-width="3"/>
-        
-        <!-- Door on back wall of left room (3' wide, 5' from left, 8' from right) -->
-        <line x1="50" y1="420" x2="150" y2="420" stroke="black" stroke-width="3"/>
-        <!-- Gap for door -->
-        <line x1="200" y1="420" x2="350" y2="420" stroke="black" stroke-width="3"/>
-        
-        <!-- Closet wall (7' deep) -->
-        <line x1="350" y1="420" x2="350" y2="560" stroke="black" stroke-width="3"/>
-        
-        <!-- Door on right wall of closet (3' wide, 12' from front) -->
-        <line x1="350" y1="420" x2="350" y2="480" stroke="black" stroke-width="3"/>
-        <!-- Gap for door -->
-        <line x1="350" y1="530" x2="350" y2="560" stroke="black" stroke-width="3"/>
-        
-        <!-- Dimensions -->
-        <text x="500" y="670" class="dimension">40'</text>
-        <text x="30" y="350" class="dimension">30'</text>
-        
-        <!-- Room labels -->
-        <text x="150" y="250" font-size="16" font-weight="bold">Bedroom 1</text>
-        <text x="600" y="250" font-size="16" font-weight="bold">Living Area</text>
-        <text x="700" y="550" font-size="14">Kitchen</text>
-    </svg>
-</body>
-</html>
-<html>
-<head>
-  <title>3D House</title>
-  <style>
-    body { margin: 0; overflow: hidden; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Thesis Portfolio Projections — Analyst Validated — Apr 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0e14;
+    --panel: #0f141c;
+    --grid: #1c2330;
+    --text: #c5d1de;
+    --dim: #6b7a8f;
+    --accent: #4cc9f0;
+    --green: #4ade80;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --thesis: #a78bfa;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+    padding: 24px;
+    min-height: 100vh;
+  }
+  .header {
+    border: 1px solid var(--grid);
+    background: var(--panel);
+    padding: 18px 22px;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    margin: 0 0 6px 0;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--accent);
+  }
+  .header .sub {
+    color: var(--dim);
+    font-size: 12px;
+    letter-spacing: 0.3px;
+  }
+  .header .stamp {
+    color: var(--green);
+    font-size: 11px;
+    margin-top: 8px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+    gap: 18px;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--grid);
+    padding: 16px;
+  }
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .ticker {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+  .name {
+    color: var(--dim);
+    font-size: 11px;
+    margin-left: 8px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+  }
+  .meta {
+    display: flex;
+    gap: 14px;
+    font-size: 11px;
+    color: var(--dim);
+  }
+  .meta span strong { color: var(--text); }
+  .chart-wrap { height: 280px; position: relative; }
+  .scenarios {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 11px;
+  }
+  .scenario {
+    border: 1px solid var(--grid);
+    padding: 6px 8px;
+  }
+  .scenario .label { color: var(--dim); font-size: 10px; letter-spacing: 0.3px; }
+  .scenario .value { font-size: 13px; margin-top: 2px; font-weight: 600; }
+  .bull .value { color: var(--green); }
+  .base .value { color: var(--amber); }
+  .bear .value { color: var(--red); }
+  .note {
+    margin-top: 10px;
+    font-size: 10px;
+    color: var(--dim);
+    line-height: 1.5;
+    border-top: 1px dashed var(--grid);
+    padding-top: 8px;
+  }
+  .note strong { color: var(--text); }
+  .footer {
+    margin-top: 24px;
+    padding: 14px 18px;
+    border: 1px solid var(--grid);
+    background: var(--panel);
+    font-size: 11px;
+    color: var(--dim);
+    line-height: 1.7;
+  }
+  .footer strong { color: var(--accent); }
+</style>
 </head>
 <body>
 
-<script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
-<script src="https://unpkg.com/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
+<div class="header">
+  <h1>THESIS PORTFOLIO // 3-YEAR PROJECTIONS // ANALYST VALIDATED</h1>
+  <div class="sub">RKLB · IRDM · IONQ · TSM · NVDA · NEE</div>
+  <div class="stamp">Baseline: Apr 20, 2026 close · Sources: Public.com, MarketBeat, Benzinga, StockAnalysis, TipRanks, Investing.com (12-mo analyst consensus)</div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<div class="footer">
+  <strong>READ THIS.</strong> Year 1 endpoints are anchored to real 12-month analyst consensus targets pulled from multiple sources. Years 2 and 3 extend the thesis using three scenarios: <strong>BULL</strong> assumes accelerating orbital infra demand and thesis tailwinds compound. <strong>BASE</strong> assumes steady execution at analyst trajectory. <strong>BEAR</strong> assumes sector rotation, capex cuts, or geopolitical shock. Solid line = actuals. Dashed lines = projections. Red dot = current price. <br><br>
+  <strong>IRDM flag:</strong> Analyst consensus is BELOW current price. Street thinks the 141% bounce is overdone. Consider this a yellow light, not a green one.
+</div>
 
 <script>
+// =====================================================================
+// BASELINE DATA - verified Apr 20-21, 2026
+// Current prices and 12-month analyst consensus targets
+// =====================================================================
 
-// scene
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xf0f0f0);
+const tickers = [
+  {
+    symbol: "RKLB",
+    name: "Rocket Lab",
+    current: 87.48,
+    consensus12mo: 90.00,    // median of 88 / 96.67 / 84.62 / 79.42 / 81.62
+    consensusLow: 68.00,
+    consensusHigh: 120.00,
+    rating: "Buy / Strong Buy",
+    analystCount: 20,
+    // Historical anchor points (approx monthly closes from thesis session)
+    historical: [
+      { date: "2024-01", price: 4.50 },
+      { date: "2024-07", price: 4.80 },
+      { date: "2025-01", price: 18.00 },
+      { date: "2025-07", price: 28.00 },
+      { date: "2026-01", price: 46.00 },
+      { date: "2026-03", price: 57.00 },
+      { date: "2026-04", price: 87.48 }
+    ],
+    // 3-year scenarios (end of year)
+    bull:  [87.48, 120.00, 165.00, 210.00],   // high analyst + thesis compounding
+    base:  [87.48, 90.00, 115.00, 140.00],    // consensus median + modest extension
+    bear:  [87.48, 68.00, 62.00, 70.00],      // analyst low + sector rotation
+    note:  "Stifel $105, Roth $100, B of A $120 street high. Mynaric acquisition closed. SpaceX IPO filing is a tailwind. Neutron rocket the 2027 inflection."
+  },
+  {
+    symbol: "IRDM",
+    name: "Iridium",
+    current: 41.74,
+    consensus12mo: 27.60,    // Hold rating, analysts see downside
+    consensusLow: 16.00,
+    consensusHigh: 40.00,
+    rating: "Hold",
+    analystCount: 10,
+    historical: [
+      { date: "2024-01", price: 28.00 },
+      { date: "2024-07", price: 29.50 },
+      { date: "2025-01", price: 25.00 },
+      { date: "2025-07", price: 22.00 },
+      { date: "2025-12", price: 17.00 },    // bottom
+      { date: "2026-03", price: 26.00 },
+      { date: "2026-04", price: 41.74 }
+    ],
+    bull:  [41.74, 48.00, 58.00, 72.00],     // thesis-driven re-rate (satellite comms demand)
+    base:  [41.74, 32.00, 35.00, 40.00],     // mean revert toward analyst target
+    bear:  [41.74, 22.00, 20.00, 24.00],     // analyst low, sector hype unwind
+    note:  "⚠ Analyst consensus $27.60 is BELOW current $41.74. Street thinks the bounce is overdone. Barclays raised to $36 (Apr 8). Hold rating dominant."
+  },
+  {
+    symbol: "IONQ",
+    name: "IonQ",
+    current: 47.55,
+    consensus12mo: 67.67,    // avg of 65 / 69.27 / 69.45 / 75.17
+    consensusLow: 35.00,
+    consensusHigh: 100.00,
+    rating: "Strong Buy",
+    analystCount: 15,
+    historical: [
+      { date: "2024-01", price: 10.50 },
+      { date: "2024-07", price: 7.80 },
+      { date: "2025-01", price: 42.00 },
+      { date: "2025-07", price: 30.00 },
+      { date: "2025-12", price: 44.87 },
+      { date: "2026-03", price: 28.00 },
+      { date: "2026-04", price: 47.55 }
+    ],
+    bull:  [47.55, 100.00, 145.00, 190.00],  // Jefferies $100 high target extended
+    base:  [47.55, 68.00, 90.00, 115.00],    // consensus + quantum buildout
+    bear:  [47.55, 35.00, 32.00, 38.00],     // cash burn concerns materialize
+    note:  "Northland initiated Outperform $55 (Apr 20). Jefferies $100 street high. 202% revenue growth 2025. $3.5B pro-forma cash. SkyWater acquisition pending."
+  },
+  {
+    symbol: "TSM",
+    name: "Taiwan Semi",
+    current: 366.29,
+    consensus12mo: 400.00,   // avg of 374 / 384 / 401 / 458
+    consensusLow: 210.00,
+    consensusHigh: 600.00,
+    rating: "Strong Buy",
+    analystCount: 18,
+    historical: [
+      { date: "2024-01", price: 110.00 },
+      { date: "2024-07", price: 170.00 },
+      { date: "2025-01", price: 205.00 },
+      { date: "2025-07", price: 235.00 },
+      { date: "2026-01", price: 310.00 },
+      { date: "2026-03", price: 340.00 },
+      { date: "2026-04", price: 366.29 }
+    ],
+    bull:  [366.29, 475.00, 570.00, 650.00],  // AI chip chokepoint thesis
+    base:  [366.29, 400.00, 450.00, 505.00],  // consensus + steady AI demand
+    bear:  [366.29, 280.00, 260.00, 290.00],  // Taiwan geopolitical shock
+    note:  "Foundry monopoly for Nvidia, AMD, Apple. Revenue +31.6% in 2025. 52-wk range $145-$390. Geopolitical risk is the only real bear case."
+  },
+  {
+    symbol: "NVDA",
+    name: "Nvidia",
+    current: 202.06,
+    consensus12mo: 270.00,   // avg of 264.54 / 267.55 / 273.57 / 275.25 / 268.61
+    consensusLow: 100.00,
+    consensusHigh: 380.00,
+    rating: "Strong Buy",
+    analystCount: 43,
+    historical: [
+      { date: "2024-01", price: 62.00 },
+      { date: "2024-07", price: 108.00 },
+      { date: "2025-01", price: 135.00 },
+      { date: "2025-07", price: 160.00 },
+      { date: "2026-01", price: 178.00 },
+      { date: "2026-03", price: 168.00 },
+      { date: "2026-04", price: 202.06 }
+    ],
+    bull:  [202.06, 320.00, 420.00, 510.00],  // AI capex keeps compounding
+    base:  [202.06, 270.00, 340.00, 400.00],  // consensus + steady growth
+    bear:  [202.06, 150.00, 130.00, 145.00],  // AI capex pullback / margin compression
+    note:  "59 Buy / 4 Hold / 1 Sell. $4.9T market cap. Excluded from your buy list but on the watch because the supply chain dynamics matter."
+  },
+  {
+    symbol: "NEE",
+    name: "NextEra Energy",
+    current: 91.58,
+    consensus12mo: 95.57,    // avg of 93.38 / 95.18 / 95.57 / 97.21
+    consensusLow: 55.00,
+    consensusHigh: 111.00,
+    rating: "Buy / Moderate Buy",
+    analystCount: 22,
+    historical: [
+      { date: "2024-01", price: 60.00 },
+      { date: "2024-07", price: 72.00 },
+      { date: "2025-01", price: 71.00 },
+      { date: "2025-07", price: 75.00 },
+      { date: "2026-01", price: 86.00 },
+      { date: "2026-03", price: 93.00 },
+      { date: "2026-04", price: 91.58 }
+    ],
+    bull:  [91.58, 111.00, 135.00, 160.00],   // AI data center power demand thesis
+    base:  [91.58, 95.57, 105.00, 115.00],    // consensus + modest growth
+    bear:  [91.58, 75.00, 70.00, 78.00],      // rate environment + renewable policy shift
+    note:  "Morgan Stanley $107 Overweight. Largest US renewable operator. Flat YTD but AI data center power demand is the thesis-aligned catalyst."
+  }
+];
 
-// camera
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
-camera.position.set(60, 60, 60);
+// =====================================================================
+// CHART BUILDER
+// =====================================================================
 
-// renderer
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+const grid = document.getElementById("grid");
 
-// controls
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
+tickers.forEach((t, idx) => {
+  const card = document.createElement("div");
+  card.className = "card";
 
-// lights
-scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+  const gain = ((t.consensus12mo - t.current) / t.current * 100).toFixed(1);
+  const gainColor = gain >= 0 ? "var(--green)" : "var(--red)";
 
-const light = new THREE.DirectionalLight(0xffffff, 0.8);
-light.position.set(50,50,50);
-scene.add(light);
+  card.innerHTML = `
+    <div class="card-head">
+      <div>
+        <span class="ticker">${t.symbol}</span>
+        <span class="name">${t.name}</span>
+      </div>
+      <div class="meta">
+        <span><strong>$${t.current.toFixed(2)}</strong> now</span>
+        <span>Target <strong style="color:${gainColor}">$${t.consensus12mo.toFixed(2)} (${gain >= 0 ? "+" : ""}${gain}%)</strong></span>
+        <span>${t.analystCount} analysts · ${t.rating}</span>
+      </div>
+    </div>
+    <div class="chart-wrap"><canvas id="chart-${idx}"></canvas></div>
+    <div class="scenarios">
+      <div class="scenario bull"><div class="label">BULL 2029</div><div class="value">$${t.bull[3].toFixed(0)}</div></div>
+      <div class="scenario base"><div class="label">BASE 2029</div><div class="value">$${t.base[3].toFixed(0)}</div></div>
+      <div class="scenario bear"><div class="label">BEAR 2029</div><div class="value">$${t.bear[3].toFixed(0)}</div></div>
+    </div>
+    <div class="note"><strong>Note.</strong> ${t.note}</div>
+  `;
+  grid.appendChild(card);
 
-// material
-const mat = new THREE.MeshStandardMaterial({ color: 0x444444 });
+  // Build the chart
+  const histLabels = t.historical.map(h => h.date);
+  const histPrices = t.historical.map(h => h.price);
+  const projLabels = ["2026-04", "2027", "2028", "2029"];
+  const allLabels = [...histLabels.slice(0, -1), ...projLabels];
 
-// helper
-function wall(x, z, w, d, h=10) {
-  const geo = new THREE.BoxGeometry(w, h, d);
-  const mesh = new THREE.Mesh(geo, mat);
-  mesh.position.set(x + w/2, h/2, z + d/2);
-  scene.add(mesh);
-}
+  // Pad arrays so lines align on timeline
+  const histSeries = [...histPrices, ...Array(projLabels.length - 1).fill(null)];
+  const pad = Array(histLabels.length - 1).fill(null);
+  const bullSeries = [...pad, ...t.bull];
+  const baseSeries = [...pad, ...t.base];
+  const bearSeries = [...pad, ...t.bear];
 
-// floor
-const floor = new THREE.Mesh(
-  new THREE.PlaneGeometry(40, 30),
-  new THREE.MeshStandardMaterial({ color: 0xdddddd })
-);
-floor.rotation.x = -Math.PI/2;
-scene.add(floor);
-
-// OUTER WALLS
-wall(0,0,40,0.5);
-wall(0,29.5,40,0.5);
-wall(0,0,0.5,30);
-wall(39.5,0,0.5,30);
-
-// MASTER WALL (5 + gap + 8)
-wall(0,14,5,0.5);
-wall(8,14,8,0.5);
-
-// CENTER WALL (12 + gap + 1)
-wall(16,0,0.5,12);
-wall(16,15,0.5,1);
-
-// RIGHT WALL (1 from corner, gap, then 6)
-wall(25,14,1,0.5);
-wall(19,14,6,0.5);
-
-// loop
-function animate(){
-  requestAnimationFrame(animate);
-  renderer.render(scene, camera);
-}
-animate();
-
-// resize
-window.addEventListener('resize', ()=>{
-  camera.aspect = window.innerWidth/window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  const ctx = document.getElementById(`chart-${idx}`).getContext("2d");
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: allLabels,
+      datasets: [
+        {
+          label: "Actual",
+          data: histSeries,
+          borderColor: "#c5d1de",
+          backgroundColor: "transparent",
+          borderWidth: 2,
+          pointRadius: (c) => c.dataIndex === histLabels.length - 1 ? 5 : 2,
+          pointBackgroundColor: (c) => c.dataIndex === histLabels.length - 1 ? "#f87171" : "#c5d1de",
+          tension: 0.25
+        },
+        {
+          label: "Bull",
+          data: bullSeries,
+          borderColor: "#4ade80",
+          backgroundColor: "rgba(74, 222, 128, 0.05)",
+          borderWidth: 1.5,
+          borderDash: [6, 4],
+          pointRadius: 3,
+          pointBackgroundColor: "#4ade80",
+          tension: 0.2,
+          fill: false
+        },
+        {
+          label: "Base",
+          data: baseSeries,
+          borderColor: "#fbbf24",
+          backgroundColor: "transparent",
+          borderWidth: 1.5,
+          borderDash: [6, 4],
+          pointRadius: 3,
+          pointBackgroundColor: "#fbbf24",
+          tension: 0.2
+        },
+        {
+          label: "Bear",
+          data: bearSeries,
+          borderColor: "#f87171",
+          backgroundColor: "transparent",
+          borderWidth: 1.5,
+          borderDash: [6, 4],
+          pointRadius: 3,
+          pointBackgroundColor: "#f87171",
+          tension: 0.2
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: {
+            color: "#c5d1de",
+            font: { family: "monospace", size: 10 },
+            boxWidth: 20,
+            padding: 10
+          }
+        },
+        tooltip: {
+          backgroundColor: "#0f141c",
+          borderColor: "#1c2330",
+          borderWidth: 1,
+          titleColor: "#4cc9f0",
+          bodyColor: "#c5d1de",
+          titleFont: { family: "monospace", size: 11 },
+          bodyFont: { family: "monospace", size: 11 },
+          callbacks: {
+            label: (c) => c.raw === null ? null : `${c.dataset.label}: $${c.raw.toFixed(2)}`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: "#1c2330", drawTicks: false },
+          ticks: {
+            color: "#6b7a8f",
+            font: { family: "monospace", size: 10 },
+            maxRotation: 0
+          }
+        },
+        y: {
+          grid: { color: "#1c2330", drawTicks: false },
+          ticks: {
+            color: "#6b7a8f",
+            font: { family: "monospace", size: 10 },
+            callback: (v) => "$" + v
+          }
+        }
+      }
+    }
+  });
 });
-
 </script>
 
 </body>
