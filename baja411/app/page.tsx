@@ -4,9 +4,23 @@ import FeatureCard from "@/components/FeatureCard";
 import HeroCanvas from "@/components/HeroCanvas";
 import WaveDivider from "@/components/WaveDivider";
 import ScrollReveal from "@/components/ScrollReveal";
+import ParallaxImage from "@/components/ParallaxImage";
 
 export const metadata: Metadata = {
   title: "Baja 411 — Your Guide to Life in Baja",
+};
+
+// Unsplash photos chosen for Baja California Sur vibes
+const PHOTOS = {
+  // Turquoise bay / Sea of Cortez
+  ocean:
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1800&q=80&fit=crop&crop=center",
+  // Cardon cactus / Baja desert at golden hour
+  desert:
+    "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1800&q=80&fit=crop&crop=center",
+  // Coastal town at sunset
+  town:
+    "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=1800&q=80&fit=crop&crop=center",
 };
 
 const features = [
@@ -96,10 +110,8 @@ export default function HomePage() {
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="hero-gradient relative min-h-screen flex items-center overflow-hidden">
-        {/* Animated beach canvas */}
         <HeroCanvas />
 
-        {/* Subtle dot texture */}
         <div
           className="absolute inset-0 opacity-[0.025] pointer-events-none"
           style={{
@@ -109,7 +121,7 @@ export default function HomePage() {
           }}
         />
 
-        {/* Sunset horizon line */}
+        {/* Sunset horizon shimmer */}
         <div
           className="horizon-glow absolute left-0 right-0 pointer-events-none"
           style={{
@@ -120,7 +132,6 @@ export default function HomePage() {
           }}
         />
 
-        {/* Hero content */}
         <div className="relative z-10 max-w-7xl mx-auto px-5 pt-28 pb-24 w-full">
           <div className="max-w-3xl">
             <span className="label-tag mb-5 block">
@@ -158,14 +169,13 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Wave transition into content */}
         <div className="absolute bottom-0 left-0 right-0 z-10">
           <WaveDivider fill="#FAFAF7" />
         </div>
       </section>
 
       {/* ── Feature Grid ─────────────────────────────────────────────── */}
-      <section className="bg-sand pt-4 pb-20 px-5">
+      <section className="bg-sand pt-4 pb-16 px-5">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12 reveal">
             <span className="label-tag mb-3 block">Everything you need</span>
@@ -181,7 +191,7 @@ export default function HomePage() {
             {features.map((feature, i) => (
               <div
                 key={feature.href}
-                className={`reveal reveal-delay-${Math.min(i % 4 + 1, 4)}`}
+                className={`reveal reveal-delay-${Math.min((i % 4) + 1, 4)}`}
               >
                 <FeatureCard {...feature} />
               </div>
@@ -190,9 +200,30 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Parallax 1: Sea of Cortez ─────────────────────────────────── */}
+      <ParallaxImage
+        src={PHOTOS.ocean}
+        alt="Turquoise waters of the Sea of Cortez, Baja California Sur"
+        height="520px"
+        strength={0.3}
+        overlay="linear-gradient(180deg, rgba(6,13,24,0.35) 0%, rgba(13,48,64,0.2) 50%, rgba(6,13,24,0.5) 100%)"
+      >
+        <div className="text-center px-5 reveal">
+          <p
+            className="font-extrabold text-white leading-tight drop-shadow-lg"
+            style={{ fontSize: "clamp(1.8rem, 5vw, 3.5rem)" }}
+          >
+            The Sea of Cortez.
+          </p>
+          <p className="text-white/75 mt-3 text-lg drop-shadow">
+            Jacques Cousteau called it{" "}
+            <em>&ldquo;the world&apos;s aquarium.&rdquo;</em>
+          </p>
+        </div>
+      </ParallaxImage>
+
       {/* ── Pillars ──────────────────────────────────────────────────── */}
       <section className="bg-white py-20 px-5 relative overflow-hidden">
-        {/* Decorative orbs */}
         <div
           className="absolute -top-32 -left-32 w-96 h-96 rounded-full pointer-events-none"
           style={{
@@ -228,6 +259,51 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Parallax 2: Baja Desert ───────────────────────────────────── */}
+      <ParallaxImage
+        src={PHOTOS.desert}
+        alt="Cardon cactus desert landscape of Baja California Sur at golden hour"
+        height="460px"
+        strength={0.28}
+        overlay="linear-gradient(180deg, rgba(6,13,24,0.2) 0%, rgba(15,26,20,0.45) 100%)"
+      >
+        <div className="text-center px-5 reveal">
+          <p
+            className="font-extrabold text-white leading-tight drop-shadow-lg"
+            style={{ fontSize: "clamp(1.8rem, 5vw, 3.5rem)" }}
+          >
+            Desert meets ocean.
+          </p>
+          <p className="text-white/70 mt-3 text-lg drop-shadow">
+            Nowhere else on earth quite like it.
+          </p>
+        </div>
+      </ParallaxImage>
+
+      {/* ── Parallax 3: Coastal town ──────────────────────────────────── */}
+      <ParallaxImage
+        src={PHOTOS.town}
+        alt="Colorful coastal town along the Baja California corridor at sunset"
+        height="400px"
+        strength={0.25}
+        overlay="linear-gradient(180deg, rgba(6,13,24,0.15) 0%, rgba(6,13,24,0.55) 100%)"
+      >
+        <div className="text-center px-5 reveal">
+          <p
+            className="font-extrabold text-white leading-tight drop-shadow-lg"
+            style={{ fontSize: "clamp(1.6rem, 4vw, 3rem)" }}
+          >
+            Your community awaits.
+          </p>
+          <Link
+            href="#join"
+            className="mt-5 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/15 backdrop-blur-sm border border-white/30 text-white font-semibold text-sm hover:bg-white/25 transition-colors"
+          >
+            Join Baja 411 — Free
+          </Link>
+        </div>
+      </ParallaxImage>
+
       {/* Wave into CTA */}
       <WaveDivider fill="#060d18" />
 
@@ -236,7 +312,6 @@ export default function HomePage() {
         id="join"
         className="bg-night py-20 px-5 text-center relative overflow-hidden"
       >
-        {/* Subtle wave texture */}
         <div
           className="absolute inset-0 opacity-10 pointer-events-none"
           style={{
