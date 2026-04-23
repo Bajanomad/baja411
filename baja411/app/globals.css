@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+:root {
+  --background: #FAFAF7;
+  --foreground: #1A1A1A;
+  --nav-height: 64px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-jade: #2A7A5A;
+  --color-jade-light: #3D9970;
+  --color-jade-dim: rgba(42, 122, 90, 0.12);
+  --color-sunset: #E8956D;
+  --color-sunset-dim: rgba(232, 149, 109, 0.12);
+  --color-sand: #FAFAF7;
+  --color-night: #0F1A14;
+  --color-muted: #6B7280;
+  --color-border: rgba(0, 0, 0, 0.08);
+  --font-sans: var(--font-jakarta);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes mesh-drift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.hero-gradient {
+  background: linear-gradient(
+    135deg,
+    #0F1A14 0%,
+    #0d2b1f 25%,
+    #0a1f1a 50%,
+    #111827 75%,
+    #0F1A14 100%
+  );
+  background-size: 300% 300%;
+  animation: mesh-drift 14s ease infinite;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.label-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-sunset);
+}
