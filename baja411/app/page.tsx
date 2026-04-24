@@ -277,7 +277,7 @@ export default function HomePage() {
             No Bad Days.
           </p>
           <p className="text-white/75 mt-3 text-lg drop-shadow">
-            Golden hour on the Sea of Cortez.
+  
           </p>
         </div>
       </ParallaxImage>
