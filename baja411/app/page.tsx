@@ -44,7 +44,7 @@ const features = [
     icon: "🗺️",
     title: "Interactive Map",
     description: "Crowdsourced pins for boondocking, beaches, water fills, mechanics, and more.",
-    badge: "Month 2",
+    live: true,
   },
   {
     href: "/classifieds",
