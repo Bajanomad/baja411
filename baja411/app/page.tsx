@@ -22,9 +22,12 @@ const PHOTOS = {
   // Coastal town at sunset
   town:
     "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=1800&q=80&fit=crop&crop=center",
+  // Mexican tianguis / swap meet market stalls
+  market:
+    "https://images.unsplash.com/photo-fqJK6QbDIQk?w=1800&q=80&fit=crop&crop=center",
 };
 
-const features = [
+const liveFeatures = [
   {
     href: "/weather",
     icon: "🌤️",
@@ -46,6 +49,9 @@ const features = [
     description: "Crowdsourced pins for boondocking, beaches, water fills, mechanics, and more.",
     live: true,
   },
+];
+
+const comingFeatures = [
   {
     href: "/classifieds",
     icon: "🛒",
@@ -176,7 +182,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Feature Grid ─────────────────────────────────────────────── */}
+      {/* ── Feature Grid (Live) ──────────────────────────────────────── */}
       <section className="bg-sand pt-4 pb-16 px-5">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12 reveal">
@@ -189,11 +195,58 @@ export default function HomePage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {features.map((feature, i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {liveFeatures.map((feature, i) => (
               <div
                 key={feature.href}
-                className={`reveal reveal-delay-${Math.min((i % 4) + 1, 4)}`}
+                className={`reveal reveal-delay-${i + 1}`}
+              >
+                <FeatureCard {...feature} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Parallax: Tianguis / Market ──────────────────────────────── */}
+      <ParallaxImage
+        src={PHOTOS.market}
+        alt="Colorful Mexican tianguis market stalls with awnings, Baja California"
+        height="480px"
+        strength={0.28}
+        overlay="linear-gradient(180deg, rgba(6,13,24,0.25) 0%, rgba(120,50,10,0.38) 55%, rgba(6,13,24,0.55) 100%)"
+      >
+        <div className="text-center px-5 reveal">
+          <p
+            className="font-extrabold text-white leading-tight drop-shadow-lg"
+            style={{ fontSize: "clamp(1.8rem, 5vw, 3.5rem)" }}
+          >
+            Buy. Sell. Trade.
+          </p>
+          <p className="text-white/75 mt-3 text-lg drop-shadow">
+            The Baja marketplace — classifieds, directories, and local lore.
+          </p>
+        </div>
+      </ParallaxImage>
+
+      {/* ── Feature Grid (Coming Soon) ───────────────────────────────── */}
+      <section className="bg-sand pt-12 pb-16 px-5">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10 reveal">
+            <span className="label-tag mb-3 block">Coming soon</span>
+            <h2
+              className="font-bold text-foreground"
+              style={{ fontSize: "clamp(1.6rem, 4vw, 2.5rem)" }}
+            >
+              More Baja, coming your way.
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {comingFeatures.map((feature, i) => (
+              <div
+                key={feature.href}
+                className={`reveal reveal-delay-${i + 1}`}
               >
                 <FeatureCard {...feature} />
               </div>
