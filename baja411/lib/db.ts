@@ -5,7 +5,7 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-function createPrismaClient(): PrismaClient {
+function makeClient(): PrismaClient {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {
     throw new Error("DATABASE_URL environment variable is not set.");
@@ -14,7 +14,12 @@ function createPrismaClient(): PrismaClient {
   return new PrismaClient({ adapter });
 }
 
-export const db: PrismaClient =
-  globalForPrisma.prisma ?? createPrismaClient();
-
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
+// Proxy so the module can be imported without DATABASE_URL at build time.
+// The error is deferred until the first actual database call.
+export const db: PrismaClient = new Proxy({} as PrismaClient, {
+  get(_, prop: string | symbol) {
+    const client =
+      globalForPrisma.prisma ?? (globalForPrisma.prisma = makeClient());
+    return (client as unknown as Record<string | symbol, unknown>)[prop];
+  },
+});
