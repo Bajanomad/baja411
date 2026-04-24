@@ -7,89 +7,124 @@ interface Article {
   title: string;
   link: string;
   pubDate: string;
-  description: string;
-  source: string;
 }
 
-interface Feed {
+interface FeedResult {
   label: string;
-  url: string;
+  icon: string;
+  color: string;
+  articles: Article[];
+  error: boolean;
 }
-
-const FEEDS: Feed[] = [
-  {
-    label: "Mexico News Daily",
-    url: "https://mexiconewsdaily.com/feed/",
-  },
-  {
-    label: "Gringo Gazette",
-    url: "https://www.gringogazette.com/feed/",
-  },
-  {
-    label: "The Baja Nomad",
-    url: "https://www.thebajanomad.com/feed/",
-  },
-];
 
 function formatDate(raw: string) {
+  if (!raw) return "";
   try {
     return new Date(raw).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
-      year: "numeric",
     });
   } catch {
-    return raw;
+    return "";
   }
 }
 
-function stripHtml(html: string) {
-  return html.replace(/<[^>]*>/g, "").slice(0, 160).trim();
+function FeedWidget({ label, icon, color, articles, error }: FeedResult) {
+  return (
+    <div
+      className="bg-white rounded-2xl border border-black/[0.07] shadow-sm flex flex-col overflow-hidden"
+      style={{ borderTop: `3px solid ${color}` }}
+    >
+      {/* Header */}
+      <div className="px-6 pt-5 pb-4 flex items-center gap-3 border-b border-black/[0.05]">
+        <span className="text-2xl leading-none">{icon}</span>
+        <h2 className="font-bold text-foreground text-base flex-1 leading-tight">
+          {label}
+        </h2>
+        {!error && (
+          <span
+            className="flex items-center gap-1.5 text-[0.6rem] font-bold uppercase tracking-wider"
+            style={{ color }}
+          >
+            <span
+              className="w-1.5 h-1.5 rounded-full animate-pulse"
+              style={{ backgroundColor: color }}
+            />
+            Live
+          </span>
+        )}
+      </div>
+
+      {/* Article list */}
+      <div className="overflow-y-auto" style={{ maxHeight: "400px" }}>
+        {error && (
+          <div className="px-6 py-10 text-center">
+            <p className="text-muted text-sm">Feed unavailable right now.</p>
+          </div>
+        )}
+
+        {!error && articles.length === 0 && (
+          <div className="px-6 py-10 text-center">
+            <p className="text-muted text-sm">No articles found.</p>
+          </div>
+        )}
+
+        {!error && articles.length > 0 && (
+          <ul className="divide-y divide-black/[0.05]">
+            {articles.map((article, i) => (
+              <li key={`${article.link}-${i}`}>
+                <a
+                  href={article.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group block px-6 py-4 hover:bg-black/[0.02] transition-colors"
+                >
+                  <p className="text-sm font-medium text-foreground leading-snug group-hover:text-jade transition-colors">
+                    {article.title}
+                  </p>
+                  {article.pubDate && (
+                    <span className="mt-1 text-xs text-muted block">
+                      {formatDate(article.pubDate)}
+                    </span>
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
 }
 
-async function fetchFeed(feed: Feed): Promise<Article[]> {
-  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}&count=5`;
-  const res = await fetch(apiUrl, { next: { revalidate: 900 } });
-  if (!res.ok) return [];
-  const data = await res.json();
-  if (data.status !== "ok" || !Array.isArray(data.items)) return [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return data.items.map((item: any) => ({
-    title: item.title ?? "",
-    link: item.link ?? "",
-    pubDate: item.pubDate ?? "",
-    description: item.description ? stripHtml(item.description) : "",
-    source: feed.label,
-  }));
+function SkeletonWidget() {
+  return (
+    <div className="bg-white rounded-2xl border border-black/[0.07] shadow-sm flex flex-col overflow-hidden border-t-[3px] border-t-black/10">
+      <div className="px-6 pt-5 pb-4 flex items-center gap-3 border-b border-black/[0.05]">
+        <div className="w-8 h-8 bg-black/[0.06] rounded-full animate-pulse" />
+        <div className="h-4 bg-black/[0.06] rounded-full w-32 animate-pulse" />
+      </div>
+      <div className="px-6 py-8 space-y-5">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="space-y-2">
+            <div className="h-3 bg-black/[0.06] rounded-full w-full animate-pulse" />
+            <div className="h-3 bg-black/[0.06] rounded-full w-4/5 animate-pulse" />
+            <div className="h-2.5 bg-black/[0.04] rounded-full w-12 animate-pulse" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export default function NewsPage() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [feeds, setFeeds] = useState<FeedResult[] | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
-    Promise.all(FEEDS.map(fetchFeed))
-      .then((results) => {
-        if (cancelled) return;
-        const all = results
-          .flat()
-          .filter((a) => a.title && a.link)
-          .sort(
-            (a, b) =>
-              new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
-          );
-        setArticles(all);
-        setLoading(false);
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setError(true);
-          setLoading(false);
-        }
-      });
-    return () => { cancelled = true; };
+    fetch("/api/news")
+      .then((r) => r.json())
+      .then(setFeeds)
+      .catch(() => setFeeds([]));
   }, []);
 
   return (
@@ -104,65 +139,20 @@ export default function NewsPage() {
       />
 
       <div className="bg-sand pb-16 px-5">
-        <div className="max-w-4xl mx-auto">
-
-          {loading && (
-            <div className="text-center py-20">
-              <div className="inline-block w-8 h-8 border-2 border-jade border-t-transparent rounded-full animate-spin mb-4" />
-              <p className="text-muted text-sm">Loading latest headlines…</p>
-            </div>
-          )}
-
-          {error && !loading && (
-            <div className="text-center py-20">
-              <p className="text-muted text-sm">
-                Couldn&apos;t load news right now — check back shortly.
-              </p>
-            </div>
-          )}
-
-          {!loading && !error && articles.length === 0 && (
-            <div className="text-center py-20">
-              <p className="text-muted text-sm">No articles found at this time.</p>
-            </div>
-          )}
-
-          {!loading && articles.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
-              {articles.map((article, i) => (
-                <a
-                  key={`${article.link}-${i}`}
-                  href={article.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group bg-white rounded-2xl border border-border shadow-sm p-6 hover:-translate-y-1 hover:shadow-md transition-all duration-200 flex flex-col"
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="label-tag text-[10px]">{article.source}</span>
-                    {article.pubDate && (
-                      <span className="text-xs text-muted">
-                        {formatDate(article.pubDate)}
-                      </span>
-                    )}
-                  </div>
-                  <h2 className="font-semibold text-foreground text-sm leading-snug mb-2 group-hover:text-jade transition-colors">
-                    {article.title}
-                  </h2>
-                  {article.description && (
-                    <p className="text-xs text-muted leading-relaxed line-clamp-3 flex-1">
-                      {article.description}
-                    </p>
-                  )}
-                  <span className="mt-4 text-xs font-semibold text-jade flex items-center gap-1">
-                    Read more
-                    <span className="inline-block translate-x-0 group-hover:translate-x-1 transition-transform">
-                      →
-                    </span>
-                  </span>
-                </a>
-              ))}
-            </div>
-          )}
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {feeds === null ? (
+              <>
+                <SkeletonWidget />
+                <SkeletonWidget />
+                <SkeletonWidget />
+              </>
+            ) : (
+              feeds.map((feed) => (
+                <FeedWidget key={feed.label} {...feed} />
+              ))
+            )}
+          </div>
 
           <p className="mt-10 text-xs text-muted text-center">
             Stories sourced from independent Baja media outlets. Baja 411 is not affiliated with any publisher.
