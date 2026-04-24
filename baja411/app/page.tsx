@@ -131,11 +131,6 @@ export default function HomePage() {
           backgroundSize: "36px 36px",
         }} />
 
-        {/* ── Horizon shimmer ── */}
-        <div className="horizon-glow absolute left-0 right-0 pointer-events-none z-[3]" style={{
-          top: "58%", height: "1px",
-          background: "linear-gradient(90deg, transparent, rgba(255,210,80,0.25) 30%, rgba(255,225,80,0.40) 50%, rgba(255,210,80,0.25) 70%, transparent)",
-        }} />
 
         {/* ── Sun sparkles on water (canvas) ── */}
         <HeroCanvas />
@@ -146,7 +141,7 @@ export default function HomePage() {
         <div className="relative z-[20] max-w-7xl mx-auto px-5 pt-28 pb-24 w-full">
           <div className="max-w-3xl">
             <span className="label-tag mb-5 block">
-              Cerritos · Pescadero · Todos Santos · La Paz · Cabo
+              Baja California Sur
             </span>
 
             <h1
