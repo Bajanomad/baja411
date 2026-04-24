@@ -9,6 +9,10 @@ interface SatelliteImage {
   subLabel: string;
 }
 
+function proxied(src: string) {
+  return `/api/satellite?url=${encodeURIComponent(src)}`;
+}
+
 function SatelliteCard({ src, alt, label, subLabel }: SatelliteImage) {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
@@ -34,9 +38,7 @@ function SatelliteCard({ src, alt, label, subLabel }: SatelliteImage) {
         )}
       </div>
 
-      {/* Container always has a minimum height so spinner has space */}
       <div className="relative bg-black/[0.03]" style={{ minHeight: loaded ? 0 : "200px" }}>
-        {/* Spinner overlay — sits on top of the invisible img */}
         {!loaded && !error && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
             <div className="w-10 h-10 rounded-full border-2 border-jade border-t-transparent animate-spin" />
@@ -45,14 +47,22 @@ function SatelliteCard({ src, alt, label, subLabel }: SatelliteImage) {
         )}
 
         {error && (
-          <div className="flex flex-col items-center justify-center gap-2 py-16">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
             <p className="text-xs text-muted">Image unavailable</p>
+            <a
+              href={src}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-jade hover:underline"
+            >
+              View on NOAA →
+            </a>
           </div>
         )}
 
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={src}
+          src={proxied(src)}
           alt={alt}
           className={`w-full object-cover transition-opacity duration-500 group-hover:scale-105 ${loaded ? "opacity-100" : "opacity-0"}`}
           onLoad={() => setLoaded(true)}
