@@ -224,6 +224,62 @@ export default function HomePage() {
         </div>
       </ParallaxImage>
 
+      {/* ── Events & News ────────────────────────────────────────────── */}
+      <section className="bg-sand py-16 px-5">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10 reveal">
+            <span className="label-tag mb-3 block">Stay in the loop</span>
+            <h2
+              className="font-bold text-foreground"
+              style={{ fontSize: "clamp(1.6rem, 4vw, 2.5rem)" }}
+            >
+              Events &amp; News
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+            <div className="reveal reveal-delay-1">
+              <FeatureCard
+                href="/calendar"
+                icon="📅"
+                title="Events Calendar"
+                description="Festivals, art walks, fiestas, and government holidays across the corridor."
+                badge="Coming Soon"
+              />
+            </div>
+            <div className="reveal reveal-delay-2">
+              <FeatureCard
+                href="/news"
+                icon="📰"
+                title="Local News"
+                description="Headlines from Mexico News Daily, the Gringo Gazette, and The Baja Nomad."
+                live={true}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Parallax 2: Baja Desert ───────────────────────────────────── */}
+      <ParallaxImage
+        src={PHOTOS.golden}
+        alt="Golden hour sunset over the Sea of Cortez, Baja California Sur"
+        height="460px"
+        strength={0.28}
+        overlay="linear-gradient(180deg, rgba(6,13,24,0.1) 0%, rgba(80,30,10,0.35) 60%, rgba(6,13,24,0.55) 100%)"
+      >
+        <div className="text-center px-5 reveal">
+          <p
+            className="font-extrabold text-white leading-tight drop-shadow-lg"
+            style={{ fontSize: "clamp(1.8rem, 5vw, 3.5rem)" }}
+          >
+            No Bad Days.
+          </p>
+          <p className="text-white/75 mt-3 text-lg drop-shadow">
+
+          </p>
+        </div>
+      </ParallaxImage>
+
       {/* ── Pillars ──────────────────────────────────────────────────── */}
       <section className="bg-white py-20 px-5 relative overflow-hidden">
         <div
@@ -257,62 +313,6 @@ export default function HomePage() {
                 </p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Parallax 2: Baja Desert ───────────────────────────────────── */}
-      <ParallaxImage
-        src={PHOTOS.golden}
-        alt="Golden hour sunset over the Sea of Cortez, Baja California Sur"
-        height="460px"
-        strength={0.28}
-        overlay="linear-gradient(180deg, rgba(6,13,24,0.1) 0%, rgba(80,30,10,0.35) 60%, rgba(6,13,24,0.55) 100%)"
-      >
-        <div className="text-center px-5 reveal">
-          <p
-            className="font-extrabold text-white leading-tight drop-shadow-lg"
-            style={{ fontSize: "clamp(1.8rem, 5vw, 3.5rem)" }}
-          >
-            No Bad Days.
-          </p>
-          <p className="text-white/75 mt-3 text-lg drop-shadow">
-  
-          </p>
-        </div>
-      </ParallaxImage>
-
-      {/* ── Events & News ────────────────────────────────────────────── */}
-      <section className="bg-sand py-16 px-5">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-10 reveal">
-            <span className="label-tag mb-3 block">Stay in the loop</span>
-            <h2
-              className="font-bold text-foreground"
-              style={{ fontSize: "clamp(1.6rem, 4vw, 2.5rem)" }}
-            >
-              Events &amp; News
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
-            <div className="reveal reveal-delay-1">
-              <FeatureCard
-                href="/calendar"
-                icon="📅"
-                title="Events Calendar"
-                description="Festivals, art walks, fiestas, and government holidays across the corridor."
-                badge="Coming Soon"
-              />
-            </div>
-            <div className="reveal reveal-delay-2">
-              <FeatureCard
-                href="/news"
-                icon="📰"
-                title="Local News"
-                description="Headlines from Mexico News Daily, the Gringo Gazette, and The Baja Nomad."
-                live={true}
-              />
-            </div>
           </div>
         </div>
       </section>
