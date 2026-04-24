@@ -18,16 +18,16 @@ interface Feed {
 
 const FEEDS: Feed[] = [
   {
-    label: "The Baja Post",
-    url: "https://thebajapost.com/feed/",
+    label: "Mexico News Daily",
+    url: "https://mexiconewsdaily.com/feed/",
   },
   {
     label: "Gringo Gazette",
-    url: "https://gringo-gazette.com/feed/",
+    url: "https://www.gringogazette.com/feed/",
   },
   {
-    label: "Los Cabos Guide",
-    url: "https://loscabosguide.com/feed/",
+    label: "The Baja Nomad",
+    url: "https://www.thebajanomad.com/feed/",
   },
 ];
 
@@ -95,8 +95,8 @@ export default function NewsPage() {
   return (
     <>
       <PageHero
-        image="https://images.unsplash.com/photo-1508193638397-1c4234db14d8?w=1800&q=80&fit=crop&crop=center"
-        alt="Colorful buildings and palm trees lining the waterfront of a Baja coastal town"
+        image="https://images.unsplash.com/photo-1533105079780-92b9be482077?w=1800&q=80&fit=crop&crop=center"
+        alt="Colorful coastal town along the Baja California corridor at sunset"
         eyebrow="Baja California Sur"
         title="Local News"
         subtitle="Headlines from across the Baja corridor — updated throughout the day."

@@ -65,8 +65,8 @@ export default function HurricanePage() {
       <ScrollReveal />
 
       <PageHero
-        image="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=1800&q=80&fit=crop&crop=center"
-        alt="Swirling storm clouds viewed from above, Eastern Pacific"
+        image="https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=1800&q=80&fit=crop&crop=top"
+        alt="Dramatic golden-hour sky over the Eastern Pacific Ocean"
         eyebrow="Eastern Pacific · Live GOES-19 Imagery"
         title="Hurricane Tracker"
         subtitle="Live satellite imagery for Baja California Sur and the Eastern Pacific. Images update every 10–15 minutes."
