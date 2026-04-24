@@ -126,7 +126,7 @@ export default function NewsPage() {
 
       <div className="bg-sand pb-16 px-5">
         <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16">
+          <div className="flex flex-col gap-12">
             {feeds === null ? (
               <>
                 <SkeletonSection />
