@@ -29,86 +29,72 @@ function formatDate(raw: string) {
   }
 }
 
-function FeedWidget({ label, icon, color, articles, error }: FeedResult) {
+function FeedSection({ label, icon, color, articles, error }: FeedResult) {
   return (
-    <div
-      className="bg-white rounded-2xl border border-black/[0.07] shadow-sm flex flex-col overflow-hidden"
-      style={{ borderTop: `3px solid ${color}` }}
-    >
-      {/* Header */}
-      <div className="px-6 pt-5 pb-4 flex items-center gap-3 border-b border-black/[0.05]">
-        <span className="text-2xl leading-none">{icon}</span>
-        <h2 className="font-bold text-foreground text-base flex-1 leading-tight">
-          {label}
-        </h2>
+    <div>
+      {/* Source heading */}
+      <div className="flex items-center gap-2.5 mb-5 pb-3 border-b-2" style={{ borderColor: color }}>
+        <span className="text-xl leading-none">{icon}</span>
+        <h2 className="font-bold text-foreground text-lg">{label}</h2>
         {!error && (
           <span
-            className="flex items-center gap-1.5 text-[0.6rem] font-bold uppercase tracking-wider"
+            className="ml-auto flex items-center gap-1.5 text-[0.6rem] font-bold uppercase tracking-wider"
             style={{ color }}
           >
-            <span
-              className="w-1.5 h-1.5 rounded-full animate-pulse"
-              style={{ backgroundColor: color }}
-            />
+            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: color }} />
             Live
           </span>
         )}
       </div>
 
-      {/* Article list */}
-      <div className="overflow-y-auto" style={{ maxHeight: "400px" }}>
-        {error && (
-          <div className="px-6 py-10 text-center">
-            <p className="text-muted text-sm">Feed unavailable right now.</p>
-          </div>
-        )}
+      {/* Articles */}
+      {error && (
+        <p className="text-muted text-sm py-6">Feed unavailable right now.</p>
+      )}
 
-        {!error && articles.length === 0 && (
-          <div className="px-6 py-10 text-center">
-            <p className="text-muted text-sm">No articles found.</p>
-          </div>
-        )}
+      {!error && articles.length === 0 && (
+        <p className="text-muted text-sm py-6">No articles found.</p>
+      )}
 
-        {!error && articles.length > 0 && (
-          <ul className="divide-y divide-black/[0.05]">
-            {articles.map((article, i) => (
-              <li key={`${article.link}-${i}`}>
-                <a
-                  href={article.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group block px-6 py-4 hover:bg-black/[0.02] transition-colors"
-                >
-                  <p className="text-sm font-medium text-foreground leading-snug group-hover:text-jade transition-colors">
-                    {article.title}
-                  </p>
-                  {article.pubDate && (
-                    <span className="mt-1 text-xs text-muted block">
-                      {formatDate(article.pubDate)}
-                    </span>
-                  )}
-                </a>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      {!error && articles.length > 0 && (
+        <ul className="space-y-0 divide-y divide-black/[0.06]">
+          {articles.map((article, i) => (
+            <li key={`${article.link}-${i}`}>
+              <a
+                href={article.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group block py-4 hover:pl-1 transition-all duration-150"
+              >
+                <p className="text-sm font-medium text-foreground leading-snug group-hover:text-jade transition-colors">
+                  {article.title}
+                </p>
+                {article.pubDate && (
+                  <span className="mt-1 text-xs text-muted block">
+                    {formatDate(article.pubDate)}
+                  </span>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
 
-function SkeletonWidget() {
+function SkeletonSection() {
   return (
-    <div className="bg-white rounded-2xl border border-black/[0.07] shadow-sm flex flex-col overflow-hidden border-t-[3px] border-t-black/10">
-      <div className="px-6 pt-5 pb-4 flex items-center gap-3 border-b border-black/[0.05]">
-        <div className="w-8 h-8 bg-black/[0.06] rounded-full animate-pulse" />
-        <div className="h-4 bg-black/[0.06] rounded-full w-32 animate-pulse" />
+    <div>
+      <div className="flex items-center gap-2.5 mb-5 pb-3 border-b-2 border-black/10">
+        <div className="w-6 h-6 bg-black/[0.06] rounded-full animate-pulse" />
+        <div className="h-5 bg-black/[0.06] rounded-full w-36 animate-pulse" />
       </div>
-      <div className="px-6 py-8 space-y-5">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="space-y-2">
-            <div className="h-3 bg-black/[0.06] rounded-full w-full animate-pulse" />
-            <div className="h-3 bg-black/[0.06] rounded-full w-4/5 animate-pulse" />
+      <div className="space-y-5 pt-1">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="py-3 space-y-2 border-b border-black/[0.06]">
+            <div className="h-3.5 bg-black/[0.06] rounded-full w-full animate-pulse" />
+            <div className="h-3.5 bg-black/[0.06] rounded-full w-3/4 animate-pulse" />
             <div className="h-2.5 bg-black/[0.04] rounded-full w-12 animate-pulse" />
           </div>
         ))}
@@ -139,22 +125,21 @@ export default function NewsPage() {
       />
 
       <div className="bg-sand pb-16 px-5">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-col gap-12">
             {feeds === null ? (
               <>
-                <SkeletonWidget />
-                <SkeletonWidget />
-                <SkeletonWidget />
+                <SkeletonSection />
+                <SkeletonSection />
               </>
             ) : (
               feeds.map((feed) => (
-                <FeedWidget key={feed.label} {...feed} />
+                <FeedSection key={feed.label} {...feed} />
               ))
             )}
           </div>
 
-          <p className="mt-10 text-xs text-muted text-center">
+          <p className="mt-12 text-xs text-muted text-center">
             Stories sourced from independent Baja media outlets. Baja 411 is not affiliated with any publisher.
           </p>
         </div>
