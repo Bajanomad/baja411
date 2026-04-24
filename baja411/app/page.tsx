@@ -128,7 +128,7 @@ export default function HomePage() {
             top: "62%",
             height: "1px",
             background:
-              "linear-gradient(90deg, transparent, rgba(232,149,109,0.35) 30%, rgba(232,149,109,0.5) 50%, rgba(232,149,109,0.35) 70%, transparent)",
+              "linear-gradient(90deg, transparent, rgba(255,210,80,0.30) 30%, rgba(255,220,80,0.45) 50%, rgba(255,210,80,0.30) 70%, transparent)",
           }}
         />
 

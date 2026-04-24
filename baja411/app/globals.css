@@ -36,24 +36,17 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Baja beach night sky gradient */
+/* Baja golden-hour beach — fallback before canvas paints */
 .hero-gradient {
   background:
     linear-gradient(
       180deg,
-      transparent 50%,
-      rgba(232, 149, 109, 0.12) 62%,
-      rgba(232, 100, 60, 0.06) 68%,
-      transparent 76%
-    ),
-    linear-gradient(
-      180deg,
-      #060d18 0%,
-      #0a1628 35%,
-      #0f2540 55%,
-      #0d3040 72%,
-      #081e2e 88%,
-      #040e18 100%
+      #1a3a60 0%,
+      #2e72b0 18%,
+      #c97828 42%,
+      #e8a020 62%,
+      #0e6e82 72%,
+      #062e3e 100%
     );
 }
 
