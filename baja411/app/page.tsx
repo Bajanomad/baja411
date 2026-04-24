@@ -140,17 +140,13 @@ export default function HomePage() {
 
         <div className="relative z-[20] max-w-7xl mx-auto px-5 pt-28 pb-24 w-full">
           <div className="max-w-3xl">
-            <span className="label-tag mb-5 block">
-              Baja California Sur
-            </span>
-
             <h1
               className="font-extrabold text-white leading-[1.04] mb-6"
               style={{ fontSize: "clamp(2.8rem, 7vw, 6rem)" }}
             >
-              Your Guide to
+              Your Guide to Life in
               <br />
-              <span className="text-sunset">Life in Baja.</span>
+              <span className="text-sunset">Baja California Sur.</span>
             </h1>
 
             <p className="text-white/60 text-lg md:text-xl leading-relaxed mb-10 max-w-xl">
