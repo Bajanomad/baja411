@@ -27,7 +27,7 @@ export default function PageHero({
         strength={0.3}
         overlay="linear-gradient(180deg, rgba(6,13,24,0.55) 0%, rgba(6,13,24,0.3) 50%, rgba(6,13,24,0.6) 100%)"
       >
-        <div className="text-center px-5 max-w-3xl mx-auto">
+        <div className="text-center px-5 max-w-3xl mx-auto pb-16 md:pb-20">
           <span className="label-tag mb-4 block">{eyebrow}</span>
           <h1
             className="font-extrabold text-white leading-tight drop-shadow-lg"
