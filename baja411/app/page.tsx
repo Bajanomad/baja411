@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import FeatureCard from "@/components/FeatureCard";
 import HeroCanvas from "@/components/HeroCanvas";
+import HeroWaves from "@/components/HeroWaves";
 import WaveDivider from "@/components/WaveDivider";
 import ScrollReveal from "@/components/ScrollReveal";
 import ParallaxImage from "@/components/ParallaxImage";
@@ -109,30 +110,54 @@ export default function HomePage() {
       <ScrollReveal />
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section className="hero-gradient relative min-h-screen flex items-center overflow-hidden">
+      <section className="relative min-h-screen flex items-center overflow-hidden" style={{ background: "#04111c" }}>
+
+        {/* ── Background photo ── */}
+        <div className="absolute inset-0 z-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=2000&q=85&fit=crop&crop=center"
+            alt=""
+            className="w-full h-full object-cover"
+            style={{ transform: "scale(1.06)", transformOrigin: "center 55%" }}
+            loading="eager"
+            fetchPriority="high"
+          />
+        </div>
+
+        {/* ── Overlays ── */}
+        {/* Left-side dark gradient keeps text readable */}
+        <div className="absolute inset-0 z-[1]" style={{
+          background: "linear-gradient(108deg, rgba(4,17,28,0.88) 0%, rgba(4,17,28,0.60) 38%, rgba(4,17,28,0.20) 65%, transparent 100%)"
+        }} />
+        {/* Bottom dark fade */}
+        <div className="absolute inset-0 z-[1]" style={{
+          background: "linear-gradient(180deg, transparent 45%, rgba(4,17,28,0.72) 100%)"
+        }} />
+        {/* Warm golden-hour tint — slowly breathes */}
+        <div className="absolute inset-0 z-[1] hero-breathe" style={{
+          background: "linear-gradient(180deg, rgba(210,110,20,0.20) 0%, rgba(240,165,30,0.10) 38%, transparent 68%)"
+        }} />
+
+        {/* ── Subtle dot grid texture ── */}
+        <div className="absolute inset-0 z-[2] opacity-[0.018] pointer-events-none" style={{
+          backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
+          backgroundSize: "36px 36px",
+        }} />
+
+        {/* ── Horizon shimmer ── */}
+        <div className="horizon-glow absolute left-0 right-0 pointer-events-none z-[3]" style={{
+          top: "58%", height: "1px",
+          background: "linear-gradient(90deg, transparent, rgba(255,210,80,0.25) 30%, rgba(255,225,80,0.40) 50%, rgba(255,210,80,0.25) 70%, transparent)",
+        }} />
+
+        {/* ── Sun sparkles on water (canvas) ── */}
         <HeroCanvas />
 
-        <div
-          className="absolute inset-0 opacity-[0.025] pointer-events-none"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
-            backgroundSize: "36px 36px",
-          }}
-        />
+        {/* ── Animated ocean waves ── */}
+        <HeroWaves />
 
-        {/* Sunset horizon shimmer */}
-        <div
-          className="horizon-glow absolute left-0 right-0 pointer-events-none"
-          style={{
-            top: "62%",
-            height: "1px",
-            background:
-              "linear-gradient(90deg, transparent, rgba(255,210,80,0.30) 30%, rgba(255,220,80,0.45) 50%, rgba(255,210,80,0.30) 70%, transparent)",
-          }}
-        />
-
-        <div className="relative z-10 max-w-7xl mx-auto px-5 pt-28 pb-24 w-full">
+        <div className="relative z-[20] max-w-7xl mx-auto px-5 pt-28 pb-24 w-full">
           <div className="max-w-3xl">
             <span className="label-tag mb-5 block">
               Cerritos · Pescadero · Todos Santos · La Paz · Cabo
@@ -169,7 +194,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 z-10">
+        <div className="absolute bottom-0 left-0 right-0 z-[30]">
           <WaveDivider fill="#FAFAF7" />
         </div>
       </section>

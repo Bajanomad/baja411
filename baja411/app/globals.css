@@ -36,18 +36,22 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Baja golden-hour beach — fallback before canvas paints */
-.hero-gradient {
-  background:
-    linear-gradient(
-      180deg,
-      #1a3a60 0%,
-      #2e72b0 18%,
-      #c97828 42%,
-      #e8a020 62%,
-      #0e6e82 72%,
-      #062e3e 100%
-    );
+/* Animated hero waves */
+@keyframes hero-wave {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.hero-wave {
+  animation: hero-wave linear infinite;
+}
+
+/* Warm golden-hour tint — slow breathing pulse */
+@keyframes hero-breathe {
+  0%, 100% { opacity: 0.75; }
+  50%       { opacity: 1;    }
+}
+.hero-breathe {
+  animation: hero-breathe 8s ease-in-out infinite;
 }
 
 /* Slow horizon shimmer */
