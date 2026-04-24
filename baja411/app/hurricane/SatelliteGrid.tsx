@@ -34,10 +34,11 @@ function SatelliteCard({ src, alt, label, subLabel }: SatelliteImage) {
         )}
       </div>
 
-      <div className="relative overflow-hidden bg-black/[0.03]">
-        {/* Skeleton shown until image loads */}
+      {/* Container always has a minimum height so spinner has space */}
+      <div className="relative bg-black/[0.03]" style={{ minHeight: loaded ? 0 : "200px" }}>
+        {/* Spinner overlay — sits on top of the invisible img */}
         {!loaded && !error && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 py-16">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
             <div className="w-10 h-10 rounded-full border-2 border-jade border-t-transparent animate-spin" />
             <p className="text-xs text-muted">Fetching satellite data…</p>
           </div>
@@ -53,10 +54,9 @@ function SatelliteCard({ src, alt, label, subLabel }: SatelliteImage) {
         <img
           src={src}
           alt={alt}
-          className={`w-full object-cover transition-all duration-500 group-hover:scale-105 ${loaded ? "opacity-100" : "opacity-0 absolute inset-0"}`}
+          className={`w-full object-cover transition-opacity duration-500 group-hover:scale-105 ${loaded ? "opacity-100" : "opacity-0"}`}
           onLoad={() => setLoaded(true)}
           onError={() => setError(true)}
-          style={!loaded ? { height: "200px" } : undefined}
         />
       </div>
     </div>
