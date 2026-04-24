@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 const FEEDS = [
   { label: "The Cabo Sun", icon: "☀️", color: "#E8956D", url: "https://thecabosun.com/feed" },
   { label: "Gringo Gazette", icon: "📰", color: "#2A7A5A", url: "https://www.gringogazette.com/feed" },
-  { label: "La Paz Times", icon: "🌊", color: "#2A7A5A", url: "https://lapaztimes.com/feed" },
 ];
 
 function extractText(xml: string, tag: string): string {
