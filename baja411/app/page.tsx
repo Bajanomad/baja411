@@ -15,9 +15,9 @@ const PHOTOS = {
   // Turquoise bay / Sea of Cortez
   ocean:
     "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1800&q=80&fit=crop&crop=center",
-  // Cardon cactus / Baja desert at golden hour
-  desert:
-    "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1800&q=80&fit=crop&crop=center",
+  // Golden hour on the Sea of Cortez — warm tones, no bad days
+  golden:
+    "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=1800&q=80&fit=crop&crop=center",
   // Coastal town at sunset
   town:
     "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=1800&q=80&fit=crop&crop=center",
@@ -74,11 +74,11 @@ const features = [
     badge: "Coming Soon",
   },
   {
-    href: "#join",
-    icon: "🌊",
-    title: "Join the Community",
-    description: "Sign up free to add map pins, post classifieds, and submit business listings.",
-    badge: "Free",
+    href: "/news",
+    icon: "📰",
+    title: "Local News",
+    description: "Headlines from the Gringo Gazette, Cabo Sun, and La Paz Times — all in one feed.",
+    live: true,
   },
 ];
 
@@ -261,21 +261,21 @@ export default function HomePage() {
 
       {/* ── Parallax 2: Baja Desert ───────────────────────────────────── */}
       <ParallaxImage
-        src={PHOTOS.desert}
-        alt="Cardon cactus desert landscape of Baja California Sur at golden hour"
+        src={PHOTOS.golden}
+        alt="Golden hour sunset over the Sea of Cortez, Baja California Sur"
         height="460px"
         strength={0.28}
-        overlay="linear-gradient(180deg, rgba(6,13,24,0.2) 0%, rgba(15,26,20,0.45) 100%)"
+        overlay="linear-gradient(180deg, rgba(6,13,24,0.1) 0%, rgba(80,30,10,0.35) 60%, rgba(6,13,24,0.55) 100%)"
       >
         <div className="text-center px-5 reveal">
           <p
             className="font-extrabold text-white leading-tight drop-shadow-lg"
             style={{ fontSize: "clamp(1.8rem, 5vw, 3.5rem)" }}
           >
-            Desert meets ocean.
+            No Bad Days.
           </p>
-          <p className="text-white/70 mt-3 text-lg drop-shadow">
-            Nowhere else on earth quite like it.
+          <p className="text-white/75 mt-3 text-lg drop-shadow">
+            Golden hour on the Sea of Cortez.
           </p>
         </div>
       </ParallaxImage>

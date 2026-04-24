@@ -1,4 +1,6 @@
 import Link from "next/link";
+import PageHero from "@/components/PageHero";
+import ScrollReveal from "@/components/ScrollReveal";
 
 interface PlaceholderPageProps {
   eyebrow: string;
@@ -7,6 +9,9 @@ interface PlaceholderPageProps {
   icon: string;
   launchMonth?: string;
   features?: string[];
+  heroImage?: string;
+  heroAlt?: string;
+  heroTagline?: string;
 }
 
 export default function PlaceholderPage({
@@ -16,7 +21,57 @@ export default function PlaceholderPage({
   icon,
   launchMonth,
   features,
+  heroImage,
+  heroAlt,
+  heroTagline,
 }: PlaceholderPageProps) {
+  if (heroImage) {
+    return (
+      <>
+        <ScrollReveal />
+        <PageHero
+          image={heroImage}
+          alt={heroAlt ?? title}
+          eyebrow={eyebrow}
+          title={title}
+          subtitle={heroTagline}
+          pageBg="#FAFAF7"
+        />
+        <div className="bg-sand pb-16 px-5">
+          <div className="max-w-2xl mx-auto text-center flex flex-col items-center py-12">
+            <p className="text-muted text-base leading-relaxed mb-8 max-w-md reveal">
+              {description}
+            </p>
+
+            {features && features.length > 0 && (
+              <ul className="text-left space-y-2.5 mb-10 w-full max-w-sm reveal reveal-delay-1">
+                {features.map((f) => (
+                  <li key={f} className="flex items-start gap-3 text-sm text-muted">
+                    <span className="text-jade mt-0.5 flex-shrink-0">✓</span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {launchMonth && (
+              <div className="bg-jade-dim border border-jade/20 rounded-2xl px-6 py-4 mb-8 text-sm text-jade font-medium reveal reveal-delay-2">
+                Planned for {launchMonth}
+              </div>
+            )}
+
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-jade/30 text-jade font-semibold text-sm hover:bg-jade-dim transition-colors reveal reveal-delay-3"
+            >
+              ← Back to Baja 411
+            </Link>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <div className="bg-sand min-h-screen pt-24 pb-16 flex flex-col">
       <div className="max-w-2xl mx-auto px-5 text-center flex flex-col items-center flex-1 justify-center py-20">

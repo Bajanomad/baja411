@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PlaceholderPage from "@/components/PlaceholderPage";
 
 export const metadata: Metadata = {
-  title: "Events Calendar",
+  title: "Events Calendar — Baja 411",
   description: "Local events, festivals, art walks, and fiestas across the Baja California Sur corridor.",
 };
 
@@ -12,6 +12,9 @@ export default function CalendarPage() {
       icon="📅"
       eyebrow="Coming Month 4"
       title="Events Calendar"
+      heroImage="https://images.unsplash.com/photo-1533105079780-92b9be482077?w=1800&q=80&fit=crop&crop=center"
+      heroAlt="Colorful lights and festivities at a Baja coastal town celebration"
+      heroTagline="Life in Baja moves to its own rhythm."
       description="Never miss a festival, art walk, market day, or government holiday in the corridor again. Filterable by town and category."
       launchMonth="Month 4"
       features={[

@@ -11,6 +11,7 @@ const links = [
   { href: "/classifieds", label: "Classifieds" },
   { href: "/directory", label: "Directory" },
   { href: "/blog", label: "Blog" },
+  { href: "/news", label: "News" },
 ];
 
 export default function Nav() {
