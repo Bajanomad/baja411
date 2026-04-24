@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 export const revalidate = 60;
@@ -137,12 +136,12 @@ export async function GET() {
 export async function POST(req: Request) {
   let session;
   try {
-    session = await getServerSession(authOptions);
+    session = await auth();
   } catch {
     session = null;
   }
 
-  if (!session?.user || !(session.user as { id?: string }).id) {
+  if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -163,7 +162,7 @@ export async function POST(req: Request) {
         category,
         photos: [],
         status: "PENDING",
-        authorId: (session.user as { id: string }).id,
+        authorId: session.user.id,
       },
     });
     return NextResponse.json(pin, { status: 201 });
