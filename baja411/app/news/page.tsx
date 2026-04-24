@@ -7,27 +7,29 @@ interface Article {
   title: string;
   link: string;
   pubDate: string;
-  description: string;
-  source: string;
 }
 
-interface Feed {
-  label: string;
-  url: string;
+interface FeedState {
+  loading: boolean;
+  articles: Article[];
+  error: boolean;
 }
 
-const FEEDS: Feed[] = [
+const FEEDS = [
   {
-    label: "Mexico News Daily",
-    url: "https://mexiconewsdaily.com/feed/",
+    name: "The Cabo Sun",
+    apiUrl:
+      "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fthecabosun.com%2Ffeed",
   },
   {
-    label: "Gringo Gazette",
-    url: "https://www.gringogazette.com/feed/",
+    name: "Gringo Gazette",
+    apiUrl:
+      "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.gringogazette.com%2Ffeed",
   },
   {
-    label: "The Baja Nomad",
-    url: "https://www.thebajanomad.com/feed/",
+    name: "La Paz Times",
+    apiUrl:
+      "https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Flapaztimes.com%2Ffeed",
   },
 ];
 
@@ -43,53 +45,101 @@ function formatDate(raw: string) {
   }
 }
 
-function stripHtml(html: string) {
-  return html.replace(/<[^>]*>/g, "").slice(0, 160).trim();
-}
+function FeedWidget({ name, state }: { name: string; state: FeedState }) {
+  return (
+    <div className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col">
+      <div className="px-5 py-4 border-b border-border">
+        <h2 className="font-semibold text-sm text-foreground">{name}</h2>
+      </div>
 
-async function fetchFeed(feed: Feed): Promise<Article[]> {
-  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}&count=5`;
-  const res = await fetch(apiUrl, { next: { revalidate: 900 } });
-  if (!res.ok) return [];
-  const data = await res.json();
-  if (data.status !== "ok" || !Array.isArray(data.items)) return [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return data.items.map((item: any) => ({
-    title: item.title ?? "",
-    link: item.link ?? "",
-    pubDate: item.pubDate ?? "",
-    description: item.description ? stripHtml(item.description) : "",
-    source: feed.label,
-  }));
+      {state.loading && (
+        <div className="flex flex-col items-center justify-center py-10 gap-3">
+          <div className="w-6 h-6 border-2 border-jade border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs text-muted">Loading…</p>
+        </div>
+      )}
+
+      {!state.loading && state.error && (
+        <div className="py-10 px-5 text-center">
+          <p className="text-xs text-muted">
+            Couldn&apos;t load {name} right now — check back shortly.
+          </p>
+        </div>
+      )}
+
+      {!state.loading && !state.error && state.articles.length === 0 && (
+        <div className="py-10 px-5 text-center">
+          <p className="text-xs text-muted">No articles found.</p>
+        </div>
+      )}
+
+      {!state.loading && state.articles.length > 0 && (
+        <ul className="divide-y divide-border">
+          {state.articles.map((article, i) => (
+            <li key={`${article.link}-${i}`}>
+              <a
+                href={article.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group block px-5 py-3.5 hover:bg-sand/50 transition-colors"
+              >
+                <p className="text-sm text-foreground group-hover:text-jade leading-snug transition-colors">
+                  {article.title}
+                </p>
+                {article.pubDate && (
+                  <p className="text-xs text-muted mt-1">
+                    {formatDate(article.pubDate)}
+                  </p>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 }
 
 export default function NewsPage() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [feedStates, setFeedStates] = useState<FeedState[]>(
+    FEEDS.map(() => ({ loading: true, articles: [], error: false }))
+  );
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all(FEEDS.map(fetchFeed))
-      .then((results) => {
-        if (cancelled) return;
-        const all = results
-          .flat()
-          .filter((a) => a.title && a.link)
-          .sort(
-            (a, b) =>
-              new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
-          );
-        setArticles(all);
-        setLoading(false);
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setError(true);
-          setLoading(false);
-        }
-      });
-    return () => { cancelled = true; };
+
+    Promise.allSettled(
+      FEEDS.map((feed) =>
+        fetch(feed.apiUrl)
+          .then((res) => {
+            if (!res.ok) throw new Error("Network error");
+            return res.json();
+          })
+          .then((data) => {
+            if (data.status !== "ok" || !Array.isArray(data.items)) return [];
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            return data.items.slice(0, 8).map((item: any) => ({
+              title: item.title ?? "",
+              link: item.link ?? "",
+              pubDate: item.pubDate ?? "",
+            })) as Article[];
+          })
+      )
+    ).then((results) => {
+      if (cancelled) return;
+      setFeedStates(
+        results.map((result) => {
+          if (result.status === "fulfilled") {
+            return { loading: false, articles: result.value.filter((a) => a.title && a.link), error: false };
+          }
+          return { loading: false, articles: [], error: true };
+        })
+      );
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
@@ -104,65 +154,12 @@ export default function NewsPage() {
       />
 
       <div className="bg-sand pb-16 px-5">
-        <div className="max-w-4xl mx-auto">
-
-          {loading && (
-            <div className="text-center py-20">
-              <div className="inline-block w-8 h-8 border-2 border-jade border-t-transparent rounded-full animate-spin mb-4" />
-              <p className="text-muted text-sm">Loading latest headlines…</p>
-            </div>
-          )}
-
-          {error && !loading && (
-            <div className="text-center py-20">
-              <p className="text-muted text-sm">
-                Couldn&apos;t load news right now — check back shortly.
-              </p>
-            </div>
-          )}
-
-          {!loading && !error && articles.length === 0 && (
-            <div className="text-center py-20">
-              <p className="text-muted text-sm">No articles found at this time.</p>
-            </div>
-          )}
-
-          {!loading && articles.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
-              {articles.map((article, i) => (
-                <a
-                  key={`${article.link}-${i}`}
-                  href={article.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group bg-white rounded-2xl border border-border shadow-sm p-6 hover:-translate-y-1 hover:shadow-md transition-all duration-200 flex flex-col"
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="label-tag text-[10px]">{article.source}</span>
-                    {article.pubDate && (
-                      <span className="text-xs text-muted">
-                        {formatDate(article.pubDate)}
-                      </span>
-                    )}
-                  </div>
-                  <h2 className="font-semibold text-foreground text-sm leading-snug mb-2 group-hover:text-jade transition-colors">
-                    {article.title}
-                  </h2>
-                  {article.description && (
-                    <p className="text-xs text-muted leading-relaxed line-clamp-3 flex-1">
-                      {article.description}
-                    </p>
-                  )}
-                  <span className="mt-4 text-xs font-semibold text-jade flex items-center gap-1">
-                    Read more
-                    <span className="inline-block translate-x-0 group-hover:translate-x-1 transition-transform">
-                      →
-                    </span>
-                  </span>
-                </a>
-              ))}
-            </div>
-          )}
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {FEEDS.map((feed, i) => (
+              <FeedWidget key={feed.name} name={feed.name} state={feedStates[i]} />
+            ))}
+          </div>
 
           <p className="mt-10 text-xs text-muted text-center">
             Stories sourced from independent Baja media outlets. Baja 411 is not affiliated with any publisher.
