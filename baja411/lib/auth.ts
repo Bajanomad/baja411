@@ -3,8 +3,8 @@ import Resend from "next-auth/providers/resend";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "./db";
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
+// Lazy init: setEnvDefaults runs per-request so AUTH_SECRET is always read fresh.
+export const { handlers, auth, signIn, signOut } = NextAuth(() => ({
   trustHost: true,
   adapter: PrismaAdapter(db),
   providers: [
@@ -13,4 +13,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       from: "Baja 411 <onboarding@resend.dev>",
     }),
   ],
-});
+}));
