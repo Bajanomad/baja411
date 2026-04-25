@@ -145,35 +145,28 @@ export default function HomePage() {
         <HeroWaves />
 
         <div className="relative z-[20] max-w-7xl mx-auto px-5 pt-28 pb-24 w-full">
-          <div className="max-w-3xl">
+          <div className="max-w-2xl">
+            <span className="label-tag mb-5 block">Baja California Sur</span>
             <h1
-              className="font-extrabold text-white leading-[1.04] mb-6"
-              style={{ fontSize: "clamp(2.8rem, 7vw, 6rem)" }}
+              className="font-extrabold text-white leading-[1.06] mb-6"
+              style={{ fontSize: "clamp(2.6rem, 6.5vw, 5.5rem)" }}
             >
-              Your Guide to Life in
+              Local knowledge,
               <br />
-              <span className="text-sunset">Baja California Sur.</span>
+              <span className="text-sunset">from the people who live here.</span>
             </h1>
 
-            <p className="text-white/60 text-lg md:text-xl leading-relaxed mb-10 max-w-xl">
-              Weather, hurricane tracking, boondocking maps, local events,
-              classifieds, and a business directory — all free, all in one place.
+            <p className="text-white/55 text-base md:text-lg leading-relaxed mb-10 max-w-lg">
+              Community-pinned spots, live weather, and real intel — added by locals,
+              travelers, and expats who actually know Baja Sur.
             </p>
 
-            <div className="flex flex-wrap gap-4">
-              <Link
-                href="/map"
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-jade text-white font-semibold text-sm hover:bg-jade-light transition-colors shadow-lg shadow-jade/20"
-              >
-                Explore the Map
-              </Link>
-              <Link
-                href="/directory"
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-sunset/50 text-sunset font-semibold text-sm hover:bg-sunset-dim backdrop-blur-sm transition-colors"
-              >
-                Browse Directory
-              </Link>
-            </div>
+            <Link
+              href="/map"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-jade text-white font-bold text-sm hover:bg-jade-light transition-colors shadow-lg shadow-jade/25"
+            >
+              Open the Map
+            </Link>
           </div>
         </div>
 
