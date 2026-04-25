@@ -1,32 +1,22 @@
 import { db } from "@/lib/db";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 
 export async function GET() {
-  const adapter = PrismaAdapter(db);
-
-  const adapterResults: Record<string, string> = {};
+  const results: Record<string, string> = {};
 
   try {
-    await adapter.getUserByEmail!("__debug_probe__@example.com");
-    adapterResults.getUserByEmail = "OK";
+    await db.user.findFirst({ where: { email: "__probe__@example.com" } });
+    results.userQuery = "OK";
   } catch (e: any) {
-    adapterResults.getUserByEmail = e?.message?.split("\n")[0] ?? "error";
+    results.userQuery = e?.message?.split("\n")[0] ?? "error";
   }
 
   try {
-    const token = await adapter.createVerificationToken!({
-      identifier: "__debug_probe__@example.com",
-      token: "debug-token-" + Date.now(),
-      expires: new Date(Date.now() + 60000),
+    await db.verificationToken.findFirst({
+      where: { identifier: "__probe__@example.com" },
     });
-    adapterResults.createVerificationToken = token ? "OK" : "returned null";
-    // Clean up
-    await adapter.useVerificationToken!({
-      identifier: "__debug_probe__@example.com",
-      token: token!.token,
-    }).catch(() => {});
+    results.verificationTokenQuery = "OK";
   } catch (e: any) {
-    adapterResults.createVerificationToken = e?.message?.split("\n")[0] ?? "error";
+    results.verificationTokenQuery = e?.message?.split("\n")[0] ?? "error";
   }
 
   return Response.json({
@@ -36,6 +26,6 @@ export async function GET() {
       hasResendApiKey: !!process.env.RESEND_API_KEY,
       hasDatabaseUrl: !!process.env.DATABASE_URL,
     },
-    adapter: adapterResults,
+    db: results,
   });
 }
