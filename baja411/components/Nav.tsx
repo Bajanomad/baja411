@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 const links = [
   { href: "/weather", label: "Weather" },
@@ -17,6 +18,8 @@ const links = [
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const alwaysSolid = pathname === "/map";
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 56);
@@ -27,7 +30,7 @@ export default function Nav() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
+        scrolled || alwaysSolid
           ? "bg-white/95 backdrop-blur-sm shadow-sm border-b border-black/[0.06]"
           : "bg-transparent"
       }`}
@@ -38,7 +41,7 @@ export default function Nav() {
         <Link
           href="/"
           className={`font-bold text-lg tracking-tight transition-colors ${
-            scrolled ? "text-jade" : "text-white"
+            scrolled || alwaysSolid ? "text-jade" : "text-white"
           }`}
         >
           BAJA <span className="text-sunset">411</span>
@@ -72,7 +75,7 @@ export default function Nav() {
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
           className={`md:hidden flex flex-col gap-[5px] p-2 ${
-            scrolled ? "text-foreground" : "text-white"
+            scrolled || alwaysSolid ? "text-foreground" : "text-white"
           }`}
         >
           <span

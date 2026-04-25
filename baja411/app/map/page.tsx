@@ -9,7 +9,10 @@ export const metadata: Metadata = {
 
 export default function MapPage() {
   return (
-    <div className="flex flex-col" style={{ height: "calc(100vh - var(--nav-height))" }}>
+    <div
+      className="flex flex-col"
+      style={{ height: "calc(100vh - var(--nav-height))", marginTop: "var(--nav-height)" }}
+    >
       <MapLoader />
     </div>
   );
