@@ -85,6 +85,7 @@ export default function MapClient() {
   const markersRef = useRef<L.Marker[]>([]);
   const tempMarkerRef = useRef<L.Marker | null>(null);
   const locationMarkerRef = useRef<L.Marker | null>(null);
+  const watchIdRef = useRef<number | null>(null);
   const addModeRef = useRef(false);
 
   const [pins, setPins] = useState<Pin[]>([]);
@@ -93,6 +94,7 @@ export default function MapClient() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [pendingLatLng, setPendingLatLng] = useState<[number, number] | null>(null);
   const [locating, setLocating] = useState(false);
+  const [tracking, setTracking] = useState(false);
 
   // Form state
   const [formTitle, setFormTitle] = useState("");
@@ -220,30 +222,58 @@ export default function MapClient() {
       ? pins.length
       : pins.filter((p) => p.category === activeCategory).length;
 
+  function stopTracking() {
+    if (watchIdRef.current !== null) {
+      navigator.geolocation.clearWatch(watchIdRef.current);
+      watchIdRef.current = null;
+    }
+    locationMarkerRef.current?.remove();
+    locationMarkerRef.current = null;
+    setTracking(false);
+  }
+
   function handleLocate() {
     if (!navigator.geolocation) return;
+
+    if (tracking) {
+      stopTracking();
+      return;
+    }
+
     setLocating(true);
-    navigator.geolocation.getCurrentPosition(
+
+    const dot = L.divIcon({
+      html: `<div style="width:16px;height:16px;border-radius:50%;background:#2A7A5A;border:3px solid white;box-shadow:0 0 0 3px rgba(42,122,90,0.35)"></div>`,
+      className: "",
+      iconSize: [16, 16],
+      iconAnchor: [8, 8],
+    });
+
+    let firstFix = true;
+
+    watchIdRef.current = navigator.geolocation.watchPosition(
       (pos) => {
         const { latitude: lat, longitude: lng } = pos.coords;
         const map = mapRef.current;
         if (!map) return;
 
-        locationMarkerRef.current?.remove();
-        const dot = L.divIcon({
-          html: `<div style="width:16px;height:16px;border-radius:50%;background:#2A7A5A;border:3px solid white;box-shadow:0 0 0 3px rgba(42,122,90,0.35)"></div>`,
-          className: "",
-          iconSize: [16, 16],
-          iconAnchor: [8, 8],
-        });
-        locationMarkerRef.current = L.marker([lat, lng], { icon: dot })
-          .bindPopup("<div style='font-size:0.8rem;font-weight:600'>You are here</div>")
-          .addTo(map);
+        if (!locationMarkerRef.current) {
+          locationMarkerRef.current = L.marker([lat, lng], { icon: dot })
+            .bindPopup("<div style='font-size:0.8rem;font-weight:600'>You are here</div>")
+            .addTo(map);
+        } else {
+          locationMarkerRef.current.setLatLng([lat, lng]);
+        }
 
-        map.setView([lat, lng], 14, { animate: true });
+        if (firstFix) {
+          map.setView([lat, lng], 14, { animate: true });
+          firstFix = false;
+        }
+
         setLocating(false);
+        setTracking(true);
       },
-      () => setLocating(false),
+      () => { setLocating(false); stopTracking(); },
       { enableHighAccuracy: true, timeout: 10000 }
     );
   }
@@ -326,10 +356,14 @@ export default function MapClient() {
           <button
             onClick={handleLocate}
             disabled={locating}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-border text-foreground text-sm font-semibold shadow-lg hover:border-jade/40 transition-colors disabled:opacity-50"
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold shadow-lg transition-colors disabled:opacity-50 ${
+              tracking
+                ? "bg-jade text-white hover:bg-jade-light"
+                : "bg-white border border-border text-foreground hover:border-jade/40"
+            }`}
           >
             <span className="text-base leading-none">{locating ? "⏳" : "📍"}</span>
-            {locating ? "Locating…" : "Find Me"}
+            {locating ? "Locating…" : tracking ? "Tracking" : "Find Me"}
           </button>
         </div>
 
