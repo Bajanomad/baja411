@@ -1,22 +1,22 @@
 import { db } from "@/lib/db";
+import { auth } from "@/lib/auth";
 
 export async function GET() {
-  const results: Record<string, string> = {};
+  const dbResult: Record<string, string> = {};
 
   try {
     await db.user.findFirst({ where: { email: "__probe__@example.com" } });
-    results.userQuery = "OK";
+    dbResult.userQuery = "OK";
   } catch (e: any) {
-    results.userQuery = e?.message?.split("\n")[0] ?? "error";
+    dbResult.userQuery = e?.message?.split("\n")[0] ?? "error";
   }
 
+  let authResult = "unknown";
   try {
-    await db.verificationToken.findFirst({
-      where: { identifier: "__probe__@example.com" },
-    });
-    results.verificationTokenQuery = "OK";
+    await auth();
+    authResult = "OK";
   } catch (e: any) {
-    results.verificationTokenQuery = e?.message?.split("\n")[0] ?? "error";
+    authResult = e?.message?.split("\n")[0] ?? "error";
   }
 
   return Response.json({
@@ -24,8 +24,10 @@ export async function GET() {
       hasAuthSecret: !!process.env.AUTH_SECRET,
       authSecretLength: process.env.AUTH_SECRET?.length ?? 0,
       hasResendApiKey: !!process.env.RESEND_API_KEY,
+      resendKeyPrefix: process.env.RESEND_API_KEY?.slice(0, 8) ?? "",
       hasDatabaseUrl: !!process.env.DATABASE_URL,
     },
-    db: results,
+    db: dbResult,
+    auth: authResult,
   });
 }
