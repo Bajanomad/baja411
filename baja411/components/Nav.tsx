@@ -29,7 +29,7 @@ export default function Nav() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-[100001] transition-all duration-300 ${
         scrolled || alwaysSolid
           ? "bg-white/95 backdrop-blur-sm shadow-sm border-b border-black/[0.06]"
           : "bg-transparent"
