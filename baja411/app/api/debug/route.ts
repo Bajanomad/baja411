@@ -1,20 +1,20 @@
 import { Pool } from "pg";
 
 const PROJECT_REF = "jeaxvuzwcodagtyeykri";
-const REGIONS = [
-  "us-east-1",
-  "us-east-2",
-  "us-west-1",
-  "us-west-2",
-  "eu-west-1",
-  "eu-west-2",
-  "eu-central-1",
-  "ap-southeast-1",
-  "ap-northeast-1",
+const HOSTS = [
+  "aws-0-us-east-1.pooler.supabase.com",
+  "aws-0-us-east-2.pooler.supabase.com",
+  "aws-1-us-east-2.pooler.supabase.com",
+  "aws-0-us-west-1.pooler.supabase.com",
+  "aws-0-us-west-2.pooler.supabase.com",
+  "aws-0-eu-west-1.pooler.supabase.com",
+  "aws-0-eu-west-2.pooler.supabase.com",
+  "aws-0-eu-central-1.pooler.supabase.com",
+  "aws-0-ap-southeast-1.pooler.supabase.com",
+  "aws-0-ap-northeast-1.pooler.supabase.com",
 ];
 
-async function testPooler(region: string, password: string): Promise<string> {
-  const host = `aws-0-${region}.pooler.supabase.com`;
+async function testHost(host: string, password: string): Promise<string> {
   const pool = new Pool({
     host,
     port: 6543,
@@ -37,19 +37,18 @@ async function testPooler(region: string, password: string): Promise<string> {
 
 export async function GET() {
   const rawUrl = process.env.DATABASE_URL ?? "";
-  // Extract password from current DATABASE_URL
   const match = rawUrl.match(/:\/\/[^:]+:(.+)@/);
   const password = match ? decodeURIComponent(match[1]) : "";
 
   const results: Record<string, string> = {};
   await Promise.all(
-    REGIONS.map(async (region) => {
-      results[region] = await testPooler(region, password);
+    HOSTS.map(async (host) => {
+      results[host] = await testHost(host, password);
     })
   );
 
   return Response.json({
-    testedRegions: results,
-    correctRegion: Object.entries(results).find(([, v]) => v === "OK")?.[0] ?? null,
+    testedHosts: results,
+    correctHost: Object.entries(results).find(([, v]) => v === "OK")?.[0] ?? null,
   });
 }
