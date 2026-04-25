@@ -84,6 +84,7 @@ export default function MapClient() {
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
   const tempMarkerRef = useRef<L.Marker | null>(null);
+  const locationMarkerRef = useRef<L.Marker | null>(null);
   const addModeRef = useRef(false);
 
   const [pins, setPins] = useState<Pin[]>([]);
@@ -91,6 +92,7 @@ export default function MapClient() {
   const [session, setSession] = useState<{ user?: SessionUser } | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [pendingLatLng, setPendingLatLng] = useState<[number, number] | null>(null);
+  const [locating, setLocating] = useState(false);
 
   // Form state
   const [formTitle, setFormTitle] = useState("");
@@ -218,6 +220,34 @@ export default function MapClient() {
       ? pins.length
       : pins.filter((p) => p.category === activeCategory).length;
 
+  function handleLocate() {
+    if (!navigator.geolocation) return;
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude: lat, longitude: lng } = pos.coords;
+        const map = mapRef.current;
+        if (!map) return;
+
+        locationMarkerRef.current?.remove();
+        const dot = L.divIcon({
+          html: `<div style="width:16px;height:16px;border-radius:50%;background:#2A7A5A;border:3px solid white;box-shadow:0 0 0 3px rgba(42,122,90,0.35)"></div>`,
+          className: "",
+          iconSize: [16, 16],
+          iconAnchor: [8, 8],
+        });
+        locationMarkerRef.current = L.marker([lat, lng], { icon: dot })
+          .bindPopup("<div style='font-size:0.8rem;font-weight:600'>You are here</div>")
+          .addTo(map);
+
+        map.setView([lat, lng], 14, { animate: true });
+        setLocating(false);
+      },
+      () => setLocating(false),
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }
+
   function handleAddPinClick() {
     if (!session?.user) {
       window.location.href = "/api/auth/signin";
@@ -285,13 +315,21 @@ export default function MapClient() {
           style={{ height: "65vh", minHeight: "480px" }}
         />
 
-        {/* Add Pin button */}
-        <div className="absolute top-4 right-4 z-[1000]">
+        {/* Map controls */}
+        <div className="absolute top-4 right-4 z-[1000] flex flex-col gap-2">
           <button
             onClick={handleAddPinClick}
             className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-jade text-white text-sm font-semibold shadow-lg hover:bg-jade-light transition-colors"
           >
             <span className="text-base leading-none">+</span> Add Pin
+          </button>
+          <button
+            onClick={handleLocate}
+            disabled={locating}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-border text-foreground text-sm font-semibold shadow-lg hover:border-jade/40 transition-colors disabled:opacity-50"
+          >
+            <span className="text-base leading-none">{locating ? "⏳" : "📍"}</span>
+            {locating ? "Locating…" : "Find Me"}
           </button>
         </div>
 
