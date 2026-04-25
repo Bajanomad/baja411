@@ -35,30 +35,11 @@ export default function VisitCounter() {
   if (target === null) return null;
 
   return (
-    <div className="mt-10 inline-block text-left select-none">
-      {/* Live badge */}
-      <div className="flex items-center gap-2 mb-2">
-        <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: "#2A7A5A" }} />
-          <span className="relative inline-flex h-2 w-2 rounded-full" style={{ background: "#2A7A5A" }} />
-        </span>
-        <span className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: "#3D9970" }}>
-          Live
-        </span>
-      </div>
-
-      {/* Big number */}
-      <div
-        className="font-extrabold text-white tabular-nums leading-none"
-        style={{ fontSize: "clamp(2.4rem, 6vw, 4rem)", textShadow: "0 0 40px rgba(42,122,90,0.4)" }}
-      >
+    <div className="mt-8 inline-flex items-center gap-2 select-none">
+      <span className="font-extrabold text-white tabular-nums text-xl leading-none">
         {fmt(displayed)}
-      </div>
-
-      {/* Label */}
-      <div className="text-white/45 text-sm mt-1.5 font-medium tracking-wide">
-        Baja travelers &amp; counting
-      </div>
+      </span>
+      <span className="text-white/40 text-sm font-medium">Baja travelers &amp; counting</span>
     </div>
   );
 }
