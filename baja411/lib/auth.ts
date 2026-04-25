@@ -1,5 +1,5 @@
 import NextAuth from "next-auth";
-import Resend from "next-auth/providers/resend";
+import Nodemailer from "next-auth/providers/nodemailer";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "./db";
 
@@ -8,9 +8,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth(() => ({
   trustHost: true,
   adapter: PrismaAdapter(db),
   providers: [
-    Resend({
-      apiKey: process.env.RESEND_API_KEY,
-      from: "Baja 411 <onboarding@resend.dev>",
+    Nodemailer({
+      server: {
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: process.env.EMAIL_SERVER_USER,
+          pass: process.env.EMAIL_SERVER_PASSWORD,
+        },
+      },
+      from: process.env.EMAIL_FROM,
     }),
   ],
 }));
