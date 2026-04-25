@@ -1,58 +1,41 @@
-import { Pool } from "pg";
-
-const PROJECT_REF = "jeaxvuzwcodagtyeykri";
-const HOSTS = [
-  "aws-0-us-east-1.pooler.supabase.com",
-  "aws-0-us-east-2.pooler.supabase.com",
-  "aws-1-us-east-2.pooler.supabase.com",
-  "aws-0-us-west-1.pooler.supabase.com",
-  "aws-0-us-west-2.pooler.supabase.com",
-  "aws-0-eu-west-1.pooler.supabase.com",
-  "aws-0-eu-west-2.pooler.supabase.com",
-  "aws-0-eu-central-1.pooler.supabase.com",
-  "aws-0-ap-southeast-1.pooler.supabase.com",
-  "aws-0-ap-northeast-1.pooler.supabase.com",
-];
-
-async function testHost(host: string, password: string): Promise<string> {
-  const pool = new Pool({
-    host,
-    port: 6543,
-    database: "postgres",
-    user: `postgres.${PROJECT_REF}`,
-    password,
-    ssl: { rejectUnauthorized: false },
-    connectionTimeoutMillis: 4000,
-  });
-  try {
-    const client = await pool.connect();
-    client.release();
-    await pool.end();
-    return "OK";
-  } catch (e: any) {
-    await pool.end().catch(() => {});
-    return e?.message?.split("\n")[0] ?? "error";
-  }
-}
+import { db } from "@/lib/db";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 
 export async function GET() {
-  const rawUrl = process.env.DATABASE_URL ?? "";
-  const match = rawUrl.match(/:\/\/[^:]+:(.+)@/);
-  const password = match ? decodeURIComponent(match[1]) : "";
+  const adapter = PrismaAdapter(db);
 
-  const results: Record<string, string> = {};
-  await Promise.all(
-    HOSTS.map(async (host) => {
-      results[host] = await testHost(host, password);
-    })
-  );
+  const adapterResults: Record<string, string> = {};
 
-  const parsedUrl = rawUrl.replace(/:([^@]+)@/, ":[REDACTED]@");
+  try {
+    await adapter.getUserByEmail!("__debug_probe__@example.com");
+    adapterResults.getUserByEmail = "OK";
+  } catch (e: any) {
+    adapterResults.getUserByEmail = e?.message?.split("\n")[0] ?? "error";
+  }
+
+  try {
+    const token = await adapter.createVerificationToken!({
+      identifier: "__debug_probe__@example.com",
+      token: "debug-token-" + Date.now(),
+      expires: new Date(Date.now() + 60000),
+    });
+    adapterResults.createVerificationToken = token ? "OK" : "returned null";
+    // Clean up
+    await adapter.useVerificationToken!({
+      identifier: "__debug_probe__@example.com",
+      token: token!.token,
+    }).catch(() => {});
+  } catch (e: any) {
+    adapterResults.createVerificationToken = e?.message?.split("\n")[0] ?? "error";
+  }
 
   return Response.json({
-    databaseUrlInVercel: parsedUrl || "(empty)",
-    passwordLength: password.length,
-    testedHosts: results,
-    correctHost: Object.entries(results).find(([, v]) => v === "OK")?.[0] ?? null,
+    env: {
+      hasAuthSecret: !!process.env.AUTH_SECRET,
+      authSecretLength: process.env.AUTH_SECRET?.length ?? 0,
+      hasResendApiKey: !!process.env.RESEND_API_KEY,
+      hasDatabaseUrl: !!process.env.DATABASE_URL,
+    },
+    adapter: adapterResults,
   });
 }
