@@ -115,18 +115,19 @@ export default function MapClient() {
       .catch(() => setPins([]));
   }, []);
 
-  // Keep addModeRef synced with state (avoids stale closure in Leaflet events)
+  // Keep addModeRef synced — map is clickable whenever modal is open and pin not yet placed
   useEffect(() => {
-    addModeRef.current = showAddModal;
+    const placing = showAddModal && !pendingLatLng;
+    addModeRef.current = placing;
     if (mapRef.current) {
-      mapRef.current.getContainer().style.cursor = showAddModal ? "crosshair" : "";
+      mapRef.current.getContainer().style.cursor = placing ? "crosshair" : "";
     }
     if (!showAddModal) {
       tempMarkerRef.current?.remove();
       tempMarkerRef.current = null;
       setPendingLatLng(null);
     }
-  }, [showAddModal]);
+  }, [showAddModal, pendingLatLng]);
 
   // Initialize Leaflet map (once)
   useEffect(() => {
@@ -325,16 +326,30 @@ export default function MapClient() {
         Click a pin to see details · Sign in to add your own
       </p>
 
-      {/* Add Pin Modal */}
-      {showAddModal && (
+      {/* Step 1: tap-to-place banner (no modal blocking the map) */}
+      {showAddModal && !pendingLatLng && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 bg-white rounded-2xl shadow-2xl px-5 py-3.5 border border-border">
+          <span className="text-xl">📌</span>
+          <span className="text-sm font-semibold text-foreground">Tap the map to place your pin</span>
+          <button
+            onClick={() => setShowAddModal(false)}
+            className="ml-2 text-muted hover:text-foreground text-xl leading-none transition-colors"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      {/* Step 2: form modal appears after location is chosen */}
+      {showAddModal && pendingLatLng && (
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+          className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center sm:p-4"
           style={{ background: "rgba(6,13,24,0.55)" }}
           onClick={(e) => {
             if (e.target === e.currentTarget) setShowAddModal(false);
           }}
         >
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-md p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-bold text-foreground text-lg">Add a Pin</h2>
               <button
@@ -345,25 +360,22 @@ export default function MapClient() {
               </button>
             </div>
 
-            {/* Location hint */}
-            <div
-              className={`rounded-xl px-4 py-3 mb-5 text-sm flex items-center gap-2.5 ${
-                pendingLatLng
-                  ? "bg-jade/10 text-jade"
-                  : "bg-sand border border-border text-muted"
-              }`}
-            >
-              <span className="text-base">{pendingLatLng ? "✅" : "👆"}</span>
-              {pendingLatLng ? (
-                <span>
-                  Location set:{" "}
-                  <strong>
-                    {pendingLatLng[0].toFixed(4)}, {pendingLatLng[1].toFixed(4)}
-                  </strong>
-                </span>
-              ) : (
-                <span>Click the map behind this dialog to place your pin</span>
-              )}
+            {/* Location confirmation */}
+            <div className="rounded-xl px-4 py-3 mb-5 text-sm flex items-center gap-2.5 bg-jade/10 text-jade">
+              <span className="text-base">✅</span>
+              <span>
+                Location set:{" "}
+                <strong>
+                  {pendingLatLng[0].toFixed(4)}, {pendingLatLng[1].toFixed(4)}
+                </strong>
+              </span>
+              <button
+                type="button"
+                onClick={() => setPendingLatLng(null)}
+                className="ml-auto text-xs underline opacity-70 hover:opacity-100"
+              >
+                Change
+              </button>
             </div>
 
             <form onSubmit={handleSubmitPin} className="space-y-4">
@@ -427,7 +439,7 @@ export default function MapClient() {
                 </button>
                 <button
                   type="submit"
-                  disabled={submitting || !pendingLatLng}
+                  disabled={submitting}
                   className="flex-1 px-4 py-2.5 rounded-xl bg-jade text-white text-sm font-semibold hover:bg-jade-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {submitting ? "Submitting…" : "Submit Pin"}
