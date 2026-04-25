@@ -47,7 +47,11 @@ export async function GET() {
     })
   );
 
+  const parsedUrl = rawUrl.replace(/:([^@]+)@/, ":[REDACTED]@");
+
   return Response.json({
+    databaseUrlInVercel: parsedUrl || "(empty)",
+    passwordLength: password.length,
     testedHosts: results,
     correctHost: Object.entries(results).find(([, v]) => v === "OK")?.[0] ?? null,
   });
