@@ -278,25 +278,6 @@ export default function MapClient() {
 
   return (
     <div className="max-w-7xl mx-auto px-4">
-      {/* Category filter pills */}
-      <div className="flex gap-2 flex-wrap py-4">
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setActiveCategory(cat)}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors whitespace-nowrap ${
-              activeCategory === cat
-                ? "bg-jade text-white"
-                : "bg-white text-muted border border-border hover:border-jade/40"
-            }`}
-          >
-            {cat === "ALL"
-              ? "All"
-              : `${CATEGORY_EMOJI[cat]} ${CATEGORY_LABELS[cat]}`}
-          </button>
-        ))}
-      </div>
-
       {/* Map wrapper */}
       <div className="relative rounded-2xl overflow-hidden border border-border shadow-sm">
         <div
@@ -325,6 +306,25 @@ export default function MapClient() {
       <p className="text-xs text-muted text-center mt-3">
         Click a pin to see details · Sign in to add your own
       </p>
+
+      {/* Category filter pills */}
+      <div className="flex gap-2 flex-wrap py-4">
+        {CATEGORIES.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setActiveCategory(cat)}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors whitespace-nowrap ${
+              activeCategory === cat
+                ? "bg-jade text-white"
+                : "bg-white text-muted border border-border hover:border-jade/40"
+            }`}
+          >
+            {cat === "ALL"
+              ? "All"
+              : `${CATEGORY_EMOJI[cat]} ${CATEGORY_LABELS[cat]}`}
+          </button>
+        ))}
+      </div>
 
       {/* Step 1: tap-to-place banner (no modal blocking the map) */}
       {showAddModal && !pendingLatLng && (
