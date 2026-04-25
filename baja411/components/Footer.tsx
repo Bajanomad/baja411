@@ -41,9 +41,12 @@ export default function Footer() {
                 BAJA <span className="text-sunset">411</span>
               </span>
             </Link>
-            <p className="text-sm leading-relaxed text-white/50 max-w-xs mb-5">
+            <p className="text-sm leading-relaxed text-white/50 max-w-xs mb-4">
               Community-driven local knowledge for Baja California Sur.
               Real spots, real info — from people who actually live here.
+            </p>
+            <p className="text-sm italic text-sunset/70 mb-5">
+              Curated locally. Updated often.
             </p>
             <p className="text-xs text-white/25 tracking-wide">
               Cerritos · Pescadero · Todos Santos · La Paz · Cabo
