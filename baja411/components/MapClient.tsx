@@ -359,7 +359,7 @@ export default function MapClient() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4">
+    <div className="flex flex-col h-full px-4 pb-4">
       {/* Toolbar above map */}
       <div className="flex items-center gap-2 py-3">
         <div className="flex items-center gap-2">
@@ -392,11 +392,11 @@ export default function MapClient() {
         </span>
       </div>
 
-      {/* Map wrapper */}
-      <div ref={mapWrapperRef} className="relative rounded-2xl overflow-hidden border border-border shadow-sm bg-black">
+      {/* Map wrapper — fills remaining height */}
+      <div ref={mapWrapperRef} className="relative rounded-2xl overflow-hidden border border-border shadow-sm bg-black flex-1 min-h-0">
         <div
           ref={mapContainerRef}
-          style={{ height: fullscreen ? "100vh" : "65vh", minHeight: fullscreen ? undefined : "480px" }}
+          style={{ height: fullscreen ? "100vh" : "100%" }}
         />
       </div>
 
