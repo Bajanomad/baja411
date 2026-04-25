@@ -1,45 +1,55 @@
-import { db } from "@/lib/db";
+import { Pool } from "pg";
+
+const PROJECT_REF = "jeaxvuzwcodagtyeykri";
+const REGIONS = [
+  "us-east-1",
+  "us-east-2",
+  "us-west-1",
+  "us-west-2",
+  "eu-west-1",
+  "eu-west-2",
+  "eu-central-1",
+  "ap-southeast-1",
+  "ap-northeast-1",
+];
+
+async function testPooler(region: string, password: string): Promise<string> {
+  const host = `aws-0-${region}.pooler.supabase.com`;
+  const pool = new Pool({
+    host,
+    port: 6543,
+    database: "postgres",
+    user: `postgres.${PROJECT_REF}`,
+    password,
+    ssl: { rejectUnauthorized: false },
+    connectionTimeoutMillis: 4000,
+  });
+  try {
+    const client = await pool.connect();
+    client.release();
+    await pool.end();
+    return "OK";
+  } catch (e: any) {
+    await pool.end().catch(() => {});
+    return e?.message?.split("\n")[0] ?? "error";
+  }
+}
 
 export async function GET() {
-  const env = {
-    hasAuthSecret: !!process.env.AUTH_SECRET,
-    authSecretLength: process.env.AUTH_SECRET?.length ?? 0,
-    hasResendApiKey: !!process.env.RESEND_API_KEY,
-    hasDatabaseUrl: !!process.env.DATABASE_URL,
-    nodeEnv: process.env.NODE_ENV,
-    vercel: !!process.env.VERCEL,
-  };
+  const rawUrl = process.env.DATABASE_URL ?? "";
+  // Extract password from current DATABASE_URL
+  const match = rawUrl.match(/:\/\/[^:]+:(.+)@/);
+  const password = match ? decodeURIComponent(match[1]) : "";
 
-  // Test whether each auth table actually exists in the database
-  const tables: Record<string, string> = {};
+  const results: Record<string, string> = {};
+  await Promise.all(
+    REGIONS.map(async (region) => {
+      results[region] = await testPooler(region, password);
+    })
+  );
 
-  try {
-    await (db as any).user.count();
-    tables.User = "ok";
-  } catch (e: any) {
-    tables.User = e?.message ?? "error";
-  }
-
-  try {
-    await (db as any).verificationToken.count();
-    tables.VerificationToken = "ok";
-  } catch (e: any) {
-    tables.VerificationToken = e?.message ?? "error";
-  }
-
-  try {
-    await (db as any).session.count();
-    tables.Session = "ok";
-  } catch (e: any) {
-    tables.Session = e?.message ?? "error";
-  }
-
-  try {
-    await (db as any).account.count();
-    tables.Account = "ok";
-  } catch (e: any) {
-    tables.Account = e?.message ?? "error";
-  }
-
-  return Response.json({ env, tables });
+  return Response.json({
+    testedRegions: results,
+    correctRegion: Object.entries(results).find(([, v]) => v === "OK")?.[0] ?? null,
+  });
 }
