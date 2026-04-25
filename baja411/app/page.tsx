@@ -24,7 +24,7 @@ const PHOTOS = {
     "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=1800&q=80&fit=crop&crop=center",
   // Mexican tianguis / swap meet market stalls
   market:
-    "https://images.unsplash.com/photo-fqJK6QbDIQk?w=1800&q=80&fit=crop&crop=center",
+    "https://images.unsplash.com/photo-1723942093326-47203a1941c3?w=1800&q=80&fit=crop&crop=center",
 };
 
 const liveFeatures = [
