@@ -282,9 +282,10 @@ export default function MapClient() {
 
   useEffect(() => {
     function onFullscreenChange() {
-      const isFs = !!document.fullscreenElement;
-      setFullscreen(isFs);
-      setTimeout(() => mapRef.current?.invalidateSize(), 100);
+      if (!document.fullscreenElement) {
+        setFullscreen(false);
+        setTimeout(() => mapRef.current?.invalidateSize(), 100);
+      }
     }
     document.addEventListener("fullscreenchange", onFullscreenChange);
     return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
@@ -293,10 +294,24 @@ export default function MapClient() {
   function handleFullscreen() {
     const el = mapWrapperRef.current;
     if (!el) return;
-    if (!document.fullscreenElement) {
-      el.requestFullscreen().catch(() => {});
+
+    if (fullscreen) {
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      }
+      setFullscreen(false);
+      setTimeout(() => mapRef.current?.invalidateSize(), 100);
+      return;
+    }
+
+    // Try native fullscreen first, fall back to CSS fullscreen for iOS
+    if (el.requestFullscreen) {
+      el.requestFullscreen()
+        .then(() => { setFullscreen(true); setTimeout(() => mapRef.current?.invalidateSize(), 100); })
+        .catch(() => { setFullscreen(true); setTimeout(() => mapRef.current?.invalidateSize(), 100); });
     } else {
-      document.exitFullscreen().catch(() => {});
+      setFullscreen(true);
+      setTimeout(() => mapRef.current?.invalidateSize(), 100);
     }
   }
 
@@ -361,7 +376,7 @@ export default function MapClient() {
   return (
     <div className="flex flex-col h-full px-4 pb-4">
       {/* Toolbar above map */}
-      <div className="flex items-center gap-2 py-3">
+      <div className={`flex items-center gap-2 py-3 ${fullscreen ? "fixed top-0 left-0 right-0 z-[100000] bg-white/95 backdrop-blur-sm border-b border-border px-4" : ""}`}>
         <div className="flex items-center gap-2">
           <button
             onClick={handleAddPinClick}
@@ -392,12 +407,16 @@ export default function MapClient() {
         </span>
       </div>
 
-      {/* Map wrapper — fills remaining height */}
-      <div ref={mapWrapperRef} className="relative rounded-2xl overflow-hidden border border-border shadow-sm bg-black flex-1 min-h-0">
-        <div
-          ref={mapContainerRef}
-          style={{ height: fullscreen ? "100vh" : "100%" }}
-        />
+      {/* Map wrapper — fills remaining height, or fixed fullscreen on iOS */}
+      <div
+        ref={mapWrapperRef}
+        className={`overflow-hidden border border-border shadow-sm bg-black ${
+          fullscreen
+            ? "fixed inset-0 z-[99999] rounded-none"
+            : "relative rounded-2xl flex-1 min-h-0"
+        }`}
+      >
+        <div ref={mapContainerRef} style={{ height: "100%" }} />
       </div>
 
       <p className="text-xs text-muted text-center mt-3">
