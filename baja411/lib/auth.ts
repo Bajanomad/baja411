@@ -3,10 +3,12 @@ import Nodemailer from "next-auth/providers/nodemailer";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "./db";
 
-// Lazy init: setEnvDefaults runs per-request so AUTH_SECRET is always read fresh.
 export const { handlers, auth, signIn, signOut } = NextAuth(() => ({
   trustHost: true,
   adapter: PrismaAdapter(db),
+  pages: {
+    signIn: "/signin",
+  },
   providers: [
     Nodemailer({
       server: {
@@ -21,4 +23,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth(() => ({
       from: process.env.EMAIL_FROM,
     }),
   ],
+  events: {
+    async signIn({ user }) {
+      if (!user.email) return;
+      const pending = await db.pendingOptIn.findUnique({ where: { email: user.email } });
+      if (!pending) return;
+      await db.user.update({
+        where: { email: user.email },
+        data: { marketingOptIn: pending.optIn },
+      });
+      await db.pendingOptIn.delete({ where: { email: user.email } });
+    },
+  },
 }));
