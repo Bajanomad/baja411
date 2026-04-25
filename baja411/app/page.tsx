@@ -297,7 +297,7 @@ export default function HomePage() {
                 href="/news"
                 icon="📰"
                 title="Local News"
-                description="Headlines from Mexico News Daily, the Gringo Gazette, and The Baja Nomad."
+                description="Headlines from Cabo Sun and the Gringo Gazette."
                 live={true}
               />
             </div>
