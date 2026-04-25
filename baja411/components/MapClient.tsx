@@ -280,13 +280,23 @@ export default function MapClient() {
     );
   }
 
+  useEffect(() => {
+    function onFullscreenChange() {
+      const isFs = !!document.fullscreenElement;
+      setFullscreen(isFs);
+      setTimeout(() => mapRef.current?.invalidateSize(), 100);
+    }
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
+  }, []);
+
   function handleFullscreen() {
     const el = mapWrapperRef.current;
     if (!el) return;
     if (!document.fullscreenElement) {
-      el.requestFullscreen().then(() => setFullscreen(true)).catch(() => {});
+      el.requestFullscreen().catch(() => {});
     } else {
-      document.exitFullscreen().then(() => setFullscreen(false)).catch(() => {});
+      document.exitFullscreen().catch(() => {});
     }
   }
 
@@ -351,42 +361,42 @@ export default function MapClient() {
   return (
     <div className="max-w-7xl mx-auto px-4">
       {/* Toolbar above map */}
-      <div className="flex items-center gap-2 py-3 flex-wrap">
-        <button
-          onClick={handleAddPinClick}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-jade text-white text-sm font-semibold hover:bg-jade-light transition-colors shadow-sm"
-        >
-          <span className="text-base leading-none">+</span> Add Pin
-        </button>
-        <button
-          onClick={handleLocate}
-          disabled={locating}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-colors shadow-sm disabled:opacity-50 ${
-            tracking
-              ? "bg-jade text-white hover:bg-jade-light"
-              : "bg-white border border-border text-foreground hover:border-jade/40"
-          }`}
-        >
-          <span className="text-base leading-none">{locating ? "⏳" : "📍"}</span>
-          {locating ? "Locating…" : tracking ? "Tracking" : "Find Me"}
-        </button>
-        <button
-          onClick={handleFullscreen}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-border text-foreground text-sm font-semibold hover:border-jade/40 transition-colors shadow-sm"
-        >
-          <span className="text-base leading-none">{fullscreen ? "⛶" : "⛶"}</span>
-          {fullscreen ? "Exit Full" : "Full Screen"}
-        </button>
-        <span className="ml-auto text-xs font-semibold text-muted bg-white border border-border px-3 py-1.5 rounded-full shadow-sm">
+      <div className="flex items-center gap-2 py-3">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleAddPinClick}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-jade text-white text-xs font-semibold hover:bg-jade-light transition-colors shadow-sm whitespace-nowrap"
+          >
+            + Add Pin
+          </button>
+          <button
+            onClick={handleLocate}
+            disabled={locating}
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold transition-colors shadow-sm disabled:opacity-50 whitespace-nowrap ${
+              tracking
+                ? "bg-jade text-white hover:bg-jade-light"
+                : "bg-white border border-border text-foreground hover:border-jade/40"
+            }`}
+          >
+            {locating ? "⏳ Locating…" : tracking ? "📍 Tracking" : "📍 Find Me"}
+          </button>
+          <button
+            onClick={handleFullscreen}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-white border border-border text-foreground text-xs font-semibold hover:border-jade/40 transition-colors shadow-sm whitespace-nowrap"
+          >
+            {fullscreen ? "⛶ Exit" : "⛶ Full Screen"}
+          </button>
+        </div>
+        <span className="ml-auto text-xs font-semibold text-muted bg-white border border-border px-3 py-1.5 rounded-full shadow-sm whitespace-nowrap">
           {filteredCount} {filteredCount === 1 ? "pin" : "pins"}
         </span>
       </div>
 
       {/* Map wrapper */}
-      <div ref={mapWrapperRef} className="relative rounded-2xl overflow-hidden border border-border shadow-sm">
+      <div ref={mapWrapperRef} className="relative rounded-2xl overflow-hidden border border-border shadow-sm bg-black">
         <div
           ref={mapContainerRef}
-          style={{ height: "65vh", minHeight: "480px" }}
+          style={{ height: fullscreen ? "100vh" : "65vh", minHeight: fullscreen ? undefined : "480px" }}
         />
       </div>
 
