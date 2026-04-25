@@ -1,5 +1,4 @@
 import { db } from "@/lib/db";
-import { auth } from "@/lib/auth";
 
 export async function GET() {
   const dbResult: Record<string, string> = {};
@@ -11,23 +10,36 @@ export async function GET() {
     dbResult.userQuery = e?.message?.split("\n")[0] ?? "error";
   }
 
-  let authResult = "unknown";
+  let resendResult = "unknown";
+  const apiKey = process.env.RESEND_API_KEY ?? "";
   try {
-    await auth();
-    authResult = "OK";
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "Baja 411 <onboarding@resend.dev>",
+        to: ["delivered@resend.dev"],
+        subject: "Debug test",
+        text: "This is a test.",
+      }),
+    });
+    const body = await res.json();
+    resendResult = res.ok ? "OK" : `${res.status}: ${JSON.stringify(body)}`;
   } catch (e: any) {
-    authResult = e?.message?.split("\n")[0] ?? "error";
+    resendResult = e?.message ?? "error";
   }
 
   return Response.json({
     env: {
       hasAuthSecret: !!process.env.AUTH_SECRET,
-      authSecretLength: process.env.AUTH_SECRET?.length ?? 0,
-      hasResendApiKey: !!process.env.RESEND_API_KEY,
-      resendKeyPrefix: process.env.RESEND_API_KEY?.slice(0, 8) ?? "",
+      hasResendApiKey: !!apiKey,
+      resendKeyPrefix: apiKey.slice(0, 8),
       hasDatabaseUrl: !!process.env.DATABASE_URL,
     },
     db: dbResult,
-    auth: authResult,
+    resend: resendResult,
   });
 }
