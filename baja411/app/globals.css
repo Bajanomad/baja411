@@ -64,6 +64,16 @@ body {
   animation: horizon-glow 6s ease-in-out infinite;
 }
 
+/* GPS location pulse */
+@keyframes location-pulse {
+  0%   { transform: scale(1); opacity: 0.8; }
+  70%  { transform: scale(3); opacity: 0; }
+  100% { transform: scale(3); opacity: 0; }
+}
+.location-pulse-ring {
+  animation: location-pulse 2s ease-out infinite;
+}
+
 /* Scroll reveal */
 .reveal {
   opacity: 0;
