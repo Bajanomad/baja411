@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Thesis Portfolio Projections — Analyst Validated — Apr 2026</title>
+<title>Thesis Portfolio — Apr 20 + Apr 24, 2026</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root {
@@ -41,111 +41,306 @@
     letter-spacing: 0.5px;
     color: var(--accent);
   }
-  .header .sub {
-    color: var(--dim);
-    font-size: 12px;
-    letter-spacing: 0.3px;
-  }
-  .header .stamp {
-    color: var(--green);
-    font-size: 11px;
-    margin-top: 8px;
-  }
+  .header .sub { color: var(--dim); font-size: 12px; letter-spacing: 0.3px; }
+  .header .stamp { color: var(--green); font-size: 11px; margin-top: 8px; }
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
     gap: 18px;
   }
-  .card {
-    background: var(--panel);
-    border: 1px solid var(--grid);
-    padding: 16px;
-  }
+  .card { background: var(--panel); border: 1px solid var(--grid); padding: 16px; }
   .card-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
-    flex-wrap: wrap;
-    gap: 8px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 12px; flex-wrap: wrap; gap: 8px;
   }
-  .ticker {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--accent);
-    letter-spacing: 1px;
-  }
-  .name {
-    color: var(--dim);
-    font-size: 11px;
-    margin-left: 8px;
-    font-weight: 400;
-    letter-spacing: 0.3px;
-  }
-  .meta {
-    display: flex;
-    gap: 14px;
-    font-size: 11px;
-    color: var(--dim);
-  }
+  .ticker { font-size: 16px; font-weight: 700; color: var(--accent); letter-spacing: 1px; }
+  .name { color: var(--dim); font-size: 11px; margin-left: 8px; font-weight: 400; letter-spacing: 0.3px; }
+  .meta { display: flex; gap: 14px; font-size: 11px; color: var(--dim); }
   .meta span strong { color: var(--text); }
   .chart-wrap { height: 280px; position: relative; }
   .scenarios {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-top: 12px;
-    font-size: 11px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    margin-top: 12px; font-size: 11px;
   }
-  .scenario {
-    border: 1px solid var(--grid);
-    padding: 6px 8px;
-  }
+  .scenario { border: 1px solid var(--grid); padding: 6px 8px; }
   .scenario .label { color: var(--dim); font-size: 10px; letter-spacing: 0.3px; }
   .scenario .value { font-size: 13px; margin-top: 2px; font-weight: 600; }
   .bull .value { color: var(--green); }
   .base .value { color: var(--amber); }
   .bear .value { color: var(--red); }
   .note {
-    margin-top: 10px;
-    font-size: 10px;
-    color: var(--dim);
-    line-height: 1.5;
-    border-top: 1px dashed var(--grid);
-    padding-top: 8px;
+    margin-top: 10px; font-size: 10px; color: var(--dim); line-height: 1.5;
+    border-top: 1px dashed var(--grid); padding-top: 8px;
   }
   .note strong { color: var(--text); }
   .footer {
-    margin-top: 24px;
-    padding: 14px 18px;
-    border: 1px solid var(--grid);
-    background: var(--panel);
-    font-size: 11px;
-    color: var(--dim);
-    line-height: 1.7;
+    margin-top: 24px; padding: 14px 18px;
+    border: 1px solid var(--grid); background: var(--panel);
+    font-size: 11px; color: var(--dim); line-height: 1.7;
   }
   .footer strong { color: var(--accent); }
+
+/* Page break divider */
+.page-break {
+margin: 60px 0 40px 0;
+border-top: 2px dashed var(–accent);
+position: relative;
+text-align: center;
+}
+.page-break span {
+background: var(–bg);
+color: var(–accent);
+padding: 0 20px;
+position: relative;
+top: -10px;
+font-size: 12px;
+letter-spacing: 2px;
+font-weight: 600;
+}
+
+/* Snapshot table styles */
+.snap-table {
+width: 100%;
+border-collapse: collapse;
+font-size: 12px;
+}
+.snap-table th {
+text-align: left;
+padding: 10px 12px;
+background: var(–grid);
+color: var(–accent);
+font-weight: 600;
+font-size: 11px;
+letter-spacing: 0.5px;
+border-bottom: 1px solid var(–grid);
+}
+.snap-table td {
+padding: 10px 12px;
+border-bottom: 1px solid var(–grid);
+}
+.snap-table tr:hover td { background: rgba(76, 201, 240, 0.04); }
+.snap-table .tick { color: var(–accent); font-weight: 700; letter-spacing: 0.5px; }
+.snap-table .nm { color: var(–dim); font-size: 11px; }
+.snap-table .price { font-weight: 600; color: var(–text); text-align: right; }
+.snap-table .chg-up { color: var(–green); text-align: right; font-weight: 600; }
+.snap-table .chg-down { color: var(–red); text-align: right; font-weight: 600; }
+.snap-table .cat {
+color: var(–thesis); font-size: 10px; letter-spacing: 0.5px;
+text-transform: uppercase;
+}
+.section-head {
+color: var(–accent);
+font-size: 13px;
+letter-spacing: 1px;
+margin: 24px 0 10px 0;
+padding-bottom: 6px;
+border-bottom: 1px solid var(–grid);
+}
 </style>
+
 </head>
 <body>
+
+<!-- ============================================ -->
+
+<!-- PAGE 1 — ORIGINAL: APR 20, 2026             -->
+
+<!-- ============================================ -->
 
 <div class="header">
   <h1>THESIS PORTFOLIO // 3-YEAR PROJECTIONS // ANALYST VALIDATED</h1>
   <div class="sub">RKLB · IRDM · IONQ · TSM · NVDA · NEE</div>
-  <div class="stamp">Baseline: Apr 20, 2026 close · Sources: Public.com, MarketBeat, Benzinga, StockAnalysis, TipRanks, Investing.com (12-mo analyst consensus)</div>
+  <div class="stamp">Baseline: Apr 20, 2026 close · Sources: Public.com, MarketBeat, Benzinga, StockAnalysis, TipRanks, Investing.com</div>
 </div>
 
 <div class="grid" id="grid"></div>
 
 <div class="footer">
-  <strong>READ THIS.</strong> Year 1 endpoints are anchored to real 12-month analyst consensus targets pulled from multiple sources. Years 2 and 3 extend the thesis using three scenarios: <strong>BULL</strong> assumes accelerating orbital infra demand and thesis tailwinds compound. <strong>BASE</strong> assumes steady execution at analyst trajectory. <strong>BEAR</strong> assumes sector rotation, capex cuts, or geopolitical shock. Solid line = actuals. Dashed lines = projections. Red dot = current price. <br><br>
-  <strong>IRDM flag:</strong> Analyst consensus is BELOW current price. Street thinks the 141% bounce is overdone. Consider this a yellow light, not a green one.
+  <strong>READ THIS.</strong> Year 1 endpoints are anchored to real 12-month analyst consensus targets. Years 2 and 3 extend the thesis using three scenarios: <strong>BULL</strong> assumes accelerating orbital infra demand and thesis tailwinds compound. <strong>BASE</strong> assumes steady execution at analyst trajectory. <strong>BEAR</strong> assumes sector rotation, capex cuts, or geopolitical shock. Solid line = actuals. Dashed lines = projections. Red dot = current price.<br><br>
+  <strong>IRDM flag:</strong> Analyst consensus is BELOW current price. Street thinks the bounce is overdone. Yellow light, not green.
+</div>
+
+<!-- ============================================ -->
+
+<!-- PAGE BREAK                                   -->
+
+<!-- ============================================ -->
+
+<div class="page-break"><span>// SNAPSHOT // APRIL 24, 2026 //</span></div>
+
+<!-- ============================================ -->
+
+<!-- PAGE 2 — APR 24, 2026 SNAPSHOT              -->
+
+<!-- ============================================ -->
+
+<div class="header">
+  <h1>FULL PORTFOLIO SNAPSHOT // APRIL 24, 2026</h1>
+  <div class="sub">All tracked positions across all theses · Source: Yahoo Finance via iOS Stocks app</div>
+  <div class="stamp">Reference point for forward tracking · 4-day delta from Apr 20 baseline shown where applicable</div>
+</div>
+
+<div class="section-head">CORE THESIS — ORBITAL / ENERGY / SEMI INFRA</div>
+<table class="snap-table">
+  <thead>
+    <tr>
+      <th>Ticker</th>
+      <th>Name</th>
+      <th class="cat">Category</th>
+      <th style="text-align:right">Apr 20</th>
+      <th style="text-align:right">Apr 24</th>
+      <th style="text-align:right">Day Chg</th>
+      <th style="text-align:right">4-Day %</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="tick">RKLB</td><td class="nm">Rocket Lab</td><td class="cat">Launch / Comms</td>
+      <td class="price">$87.48</td><td class="price">$79.68</td>
+      <td class="chg-down">-$4.92</td><td class="chg-down">-8.9%</td>
+    </tr>
+    <tr>
+      <td class="tick">IRDM</td><td class="nm">Iridium</td><td class="cat">Satellite Comms</td>
+      <td class="price">$41.74</td><td class="price">$38.96</td>
+      <td class="chg-down">-$1.97</td><td class="chg-down">-6.7%</td>
+    </tr>
+    <tr>
+      <td class="tick">IONQ</td><td class="nm">IonQ</td><td class="cat">Quantum</td>
+      <td class="price">$47.55</td><td class="price">$42.69</td>
+      <td class="chg-down">-$0.94</td><td class="chg-down">-10.2%</td>
+    </tr>
+    <tr>
+      <td class="tick">TSM</td><td class="nm">Taiwan Semi</td><td class="cat">Foundry</td>
+      <td class="price">$366.29</td><td class="price">$402.46</td>
+      <td class="chg-up">+$19.80</td><td class="chg-up">+9.9%</td>
+    </tr>
+    <tr>
+      <td class="tick">NVDA</td><td class="nm">Nvidia</td><td class="cat">GPU / Watch</td>
+      <td class="price">$202.06</td><td class="price">$208.27</td>
+      <td class="chg-up">+$8.63</td><td class="chg-up">+3.1%</td>
+    </tr>
+    <tr>
+      <td class="tick">NEE</td><td class="nm">NextEra Energy</td><td class="cat">Power Infra</td>
+      <td class="price">$91.58</td><td class="price">$95.28</td>
+      <td class="chg-down">-$0.97</td><td class="chg-up">+4.0%</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="section-head">SEMICONDUCTOR EQUIPMENT — NEW ADDS (CHIP CHOKEPOINT)</div>
+<table class="snap-table">
+  <thead>
+    <tr>
+      <th>Ticker</th>
+      <th>Name</th>
+      <th class="cat">Category</th>
+      <th style="text-align:right">Apr 20</th>
+      <th style="text-align:right">Apr 24</th>
+      <th style="text-align:right">Day Chg</th>
+      <th style="text-align:right">4-Day %</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="tick">ASML</td><td class="nm">ASML Holding</td><td class="cat">EUV Lithography</td>
+      <td class="price">$1,459.80</td><td class="price">$1,457.70</td>
+      <td class="chg-up">+$39.90</td><td class="chg-down">-0.1%</td>
+    </tr>
+    <tr>
+      <td class="tick">AMAT</td><td class="nm">Applied Materials</td><td class="cat">Deposition / Etch</td>
+      <td class="price">$378.00</td><td class="price">$417.04</td>
+      <td class="chg-up">+$13.13</td><td class="chg-up">+10.3%</td>
+    </tr>
+    <tr>
+      <td class="tick">LRCX</td><td class="nm">Lam Research</td><td class="cat">Etch / Deposition</td>
+      <td class="price">$258.37</td><td class="price">$267.78</td>
+      <td class="chg-up">+$9.22</td><td class="chg-up">+3.6%</td>
+    </tr>
+    <tr>
+      <td class="tick">VRT</td><td class="nm">Vertiv Holdings</td><td class="cat">DC Cooling / Power</td>
+      <td class="price">$307.40</td><td class="price">$323.46</td>
+      <td class="chg-up">+$1.71</td><td class="chg-up">+5.2%</td>
+    </tr>
+    <tr>
+      <td class="tick">EQIX</td><td class="nm">Equinix</td><td class="cat">Data Center REIT</td>
+      <td class="price">N/A</td><td class="price">$1,108.76</td>
+      <td class="chg-down">-$6.53</td><td class="cat">NEW</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="section-head">SECONDARY THESIS — JAPAN / CHINA ROBOTICS PRECISION MOTION</div>
+<table class="snap-table">
+  <thead>
+    <tr>
+      <th>Ticker</th>
+      <th>Name</th>
+      <th class="cat">Category</th>
+      <th style="text-align:right">Apr 24 Close</th>
+      <th style="text-align:right">Day Chg</th>
+      <th colspan="2">Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="tick">6324.T</td><td class="nm">Harmonic Drive Sys</td><td class="cat">Precision Reducers</td>
+      <td class="price">¥4,195.00</td>
+      <td class="chg-down">-¥75.00</td>
+      <td colspan="2" class="nm">Japan TSE · humanoid robotics gear</td>
+    </tr>
+    <tr>
+      <td class="tick">002050.SZ</td><td class="nm">Zhejiang Sanhua</td><td class="cat">Thermal / Motion</td>
+      <td class="price">¥44.94</td>
+      <td class="chg-down">-¥0.22</td>
+      <td colspan="2" class="nm">Shenzhen · Tesla Optimus supplier</td>
+    </tr>
+    <tr>
+      <td class="tick">002979.SZ</td><td class="nm">Leadshine</td><td class="cat">Servo / Motion</td>
+      <td class="price">¥42.27</td>
+      <td class="chg-up">+¥0.42</td>
+      <td colspan="2" class="nm">Shenzhen · motion control</td>
+    </tr>
+    <tr>
+      <td class="tick">6268.T</td><td class="nm">Nabtesco</td><td class="cat">Precision Reducers</td>
+      <td class="price" colspan="3" style="color:var(--dim); text-align:left">Not in screenshot — needs lookup</td>
+    </tr>
+    <tr>
+      <td class="tick">688017.SS</td><td class="nm">Green Harmonic</td><td class="cat">Harmonic Drives</td>
+      <td class="price" colspan="3" style="color:var(--dim); text-align:left">Not in screenshot — needs lookup</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="section-head">OTHER POSITIONS</div>
+<table class="snap-table">
+  <thead>
+    <tr>
+      <th>Ticker</th>
+      <th>Name</th>
+      <th class="cat">Notes</th>
+      <th style="text-align:right">Apr 24 Close</th>
+      <th style="text-align:right">Day Chg</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="tick">TSLA</td><td class="nm">Tesla</td><td class="cat">Robotics / Energy / EV</td>
+      <td class="price">$376.30</td>
+      <td class="chg-up">+$2.58</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="footer" style="margin-top: 28px">
+  <strong>SNAPSHOT NOTES.</strong> Captured from Yahoo Finance iOS Stocks app, April 24, 2026 at 8:21 PM. Daily change values (Day Chg) reflect today's session move per the screenshot. The "4-Day %" column compares against the Apr 20 baseline used in Page 1 projections. <br><br>
+  <strong>Day's read:</strong> The thesis-aligned semi equipment names ran hard while the orbital / quantum names (RKLB, IRDM, IONQ) pulled back. TSM and AMAT printing big gains today says the chip chokepoint trade is alive. The orbital pullback may just be the post-IRDM-sector-hype correction starting to reach the rest of the names. Watch whether RKLB holds $75 or breaks down.<br><br>
+  <strong>EQIX is a new add worth noting</strong> — data center REIT down on the day. If states keep blocking new builds, existing operators with already-permitted footprint become more valuable. Worth watching the spread between EQIX and VRT.<br><br>
+  <strong>Reconvene:</strong> Use this snapshot as the reference point for the next check-in.
 </div>
 
 <script>
 // =====================================================================
-// BASELINE DATA - verified Apr 20-21, 2026
-// Current prices and 12-month analyst consensus targets
+// PAGE 1 DATA — UNCHANGED FROM ORIGINAL APR 20 ARTIFACT
 // =====================================================================
 
 const tickers = [
@@ -153,12 +348,11 @@ const tickers = [
     symbol: "RKLB",
     name: "Rocket Lab",
     current: 87.48,
-    consensus12mo: 90.00,    // median of 88 / 96.67 / 84.62 / 79.42 / 81.62
+    consensus12mo: 90.00,
     consensusLow: 68.00,
     consensusHigh: 120.00,
     rating: "Buy / Strong Buy",
     analystCount: 20,
-    // Historical anchor points (approx monthly closes from thesis session)
     historical: [
       { date: "2024-01", price: 4.50 },
       { date: "2024-07", price: 4.80 },
@@ -168,17 +362,16 @@ const tickers = [
       { date: "2026-03", price: 57.00 },
       { date: "2026-04", price: 87.48 }
     ],
-    // 3-year scenarios (end of year)
-    bull:  [87.48, 120.00, 165.00, 210.00],   // high analyst + thesis compounding
-    base:  [87.48, 90.00, 115.00, 140.00],    // consensus median + modest extension
-    bear:  [87.48, 68.00, 62.00, 70.00],      // analyst low + sector rotation
+    bull:  [87.48, 120.00, 165.00, 210.00],
+    base:  [87.48, 90.00, 115.00, 140.00],
+    bear:  [87.48, 68.00, 62.00, 70.00],
     note:  "Stifel $105, Roth $100, B of A $120 street high. Mynaric acquisition closed. SpaceX IPO filing is a tailwind. Neutron rocket the 2027 inflection."
   },
   {
     symbol: "IRDM",
     name: "Iridium",
     current: 41.74,
-    consensus12mo: 27.60,    // Hold rating, analysts see downside
+    consensus12mo: 27.60,
     consensusLow: 16.00,
     consensusHigh: 40.00,
     rating: "Hold",
@@ -188,20 +381,20 @@ const tickers = [
       { date: "2024-07", price: 29.50 },
       { date: "2025-01", price: 25.00 },
       { date: "2025-07", price: 22.00 },
-      { date: "2025-12", price: 17.00 },    // bottom
+      { date: "2025-12", price: 17.00 },
       { date: "2026-03", price: 26.00 },
       { date: "2026-04", price: 41.74 }
     ],
-    bull:  [41.74, 48.00, 58.00, 72.00],     // thesis-driven re-rate (satellite comms demand)
-    base:  [41.74, 32.00, 35.00, 40.00],     // mean revert toward analyst target
-    bear:  [41.74, 22.00, 20.00, 24.00],     // analyst low, sector hype unwind
+    bull:  [41.74, 48.00, 58.00, 72.00],
+    base:  [41.74, 32.00, 35.00, 40.00],
+    bear:  [41.74, 22.00, 20.00, 24.00],
     note:  "⚠ Analyst consensus $27.60 is BELOW current $41.74. Street thinks the bounce is overdone. Barclays raised to $36 (Apr 8). Hold rating dominant."
   },
   {
     symbol: "IONQ",
     name: "IonQ",
     current: 47.55,
-    consensus12mo: 67.67,    // avg of 65 / 69.27 / 69.45 / 75.17
+    consensus12mo: 67.67,
     consensusLow: 35.00,
     consensusHigh: 100.00,
     rating: "Strong Buy",
@@ -215,16 +408,16 @@ const tickers = [
       { date: "2026-03", price: 28.00 },
       { date: "2026-04", price: 47.55 }
     ],
-    bull:  [47.55, 100.00, 145.00, 190.00],  // Jefferies $100 high target extended
-    base:  [47.55, 68.00, 90.00, 115.00],    // consensus + quantum buildout
-    bear:  [47.55, 35.00, 32.00, 38.00],     // cash burn concerns materialize
+    bull:  [47.55, 100.00, 145.00, 190.00],
+    base:  [47.55, 68.00, 90.00, 115.00],
+    bear:  [47.55, 35.00, 32.00, 38.00],
     note:  "Northland initiated Outperform $55 (Apr 20). Jefferies $100 street high. 202% revenue growth 2025. $3.5B pro-forma cash. SkyWater acquisition pending."
   },
   {
     symbol: "TSM",
     name: "Taiwan Semi",
     current: 366.29,
-    consensus12mo: 400.00,   // avg of 374 / 384 / 401 / 458
+    consensus12mo: 400.00,
     consensusLow: 210.00,
     consensusHigh: 600.00,
     rating: "Strong Buy",
@@ -238,16 +431,16 @@ const tickers = [
       { date: "2026-03", price: 340.00 },
       { date: "2026-04", price: 366.29 }
     ],
-    bull:  [366.29, 475.00, 570.00, 650.00],  // AI chip chokepoint thesis
-    base:  [366.29, 400.00, 450.00, 505.00],  // consensus + steady AI demand
-    bear:  [366.29, 280.00, 260.00, 290.00],  // Taiwan geopolitical shock
+    bull:  [366.29, 475.00, 570.00, 650.00],
+    base:  [366.29, 400.00, 450.00, 505.00],
+    bear:  [366.29, 280.00, 260.00, 290.00],
     note:  "Foundry monopoly for Nvidia, AMD, Apple. Revenue +31.6% in 2025. 52-wk range $145-$390. Geopolitical risk is the only real bear case."
   },
   {
     symbol: "NVDA",
     name: "Nvidia",
     current: 202.06,
-    consensus12mo: 270.00,   // avg of 264.54 / 267.55 / 273.57 / 275.25 / 268.61
+    consensus12mo: 270.00,
     consensusLow: 100.00,
     consensusHigh: 380.00,
     rating: "Strong Buy",
@@ -261,16 +454,16 @@ const tickers = [
       { date: "2026-03", price: 168.00 },
       { date: "2026-04", price: 202.06 }
     ],
-    bull:  [202.06, 320.00, 420.00, 510.00],  // AI capex keeps compounding
-    base:  [202.06, 270.00, 340.00, 400.00],  // consensus + steady growth
-    bear:  [202.06, 150.00, 130.00, 145.00],  // AI capex pullback / margin compression
+    bull:  [202.06, 320.00, 420.00, 510.00],
+    base:  [202.06, 270.00, 340.00, 400.00],
+    bear:  [202.06, 150.00, 130.00, 145.00],
     note:  "59 Buy / 4 Hold / 1 Sell. $4.9T market cap. Excluded from your buy list but on the watch because the supply chain dynamics matter."
   },
   {
     symbol: "NEE",
     name: "NextEra Energy",
     current: 91.58,
-    consensus12mo: 95.57,    // avg of 93.38 / 95.18 / 95.57 / 97.21
+    consensus12mo: 95.57,
     consensusLow: 55.00,
     consensusHigh: 111.00,
     rating: "Buy / Moderate Buy",
@@ -284,16 +477,12 @@ const tickers = [
       { date: "2026-03", price: 93.00 },
       { date: "2026-04", price: 91.58 }
     ],
-    bull:  [91.58, 111.00, 135.00, 160.00],   // AI data center power demand thesis
-    base:  [91.58, 95.57, 105.00, 115.00],    // consensus + modest growth
-    bear:  [91.58, 75.00, 70.00, 78.00],      // rate environment + renewable policy shift
+    bull:  [91.58, 111.00, 135.00, 160.00],
+    base:  [91.58, 95.57, 105.00, 115.00],
+    bear:  [91.58, 75.00, 70.00, 78.00],
     note:  "Morgan Stanley $107 Overweight. Largest US renewable operator. Flat YTD but AI data center power demand is the thesis-aligned catalyst."
   }
 ];
-
-// =====================================================================
-// CHART BUILDER
-// =====================================================================
 
 const grid = document.getElementById("grid");
 
@@ -326,13 +515,10 @@ tickers.forEach((t, idx) => {
   `;
   grid.appendChild(card);
 
-  // Build the chart
   const histLabels = t.historical.map(h => h.date);
   const histPrices = t.historical.map(h => h.price);
   const projLabels = ["2026-04", "2027", "2028", "2029"];
   const allLabels = [...histLabels.slice(0, -1), ...projLabels];
-
-  // Pad arrays so lines align on timeline
   const histSeries = [...histPrices, ...Array(projLabels.length - 1).fill(null)];
   const pad = Array(histLabels.length - 1).fill(null);
   const bullSeries = [...pad, ...t.bull];
@@ -356,37 +542,24 @@ tickers.forEach((t, idx) => {
           tension: 0.25
         },
         {
-          label: "Bull",
-          data: bullSeries,
-          borderColor: "#4ade80",
-          backgroundColor: "rgba(74, 222, 128, 0.05)",
-          borderWidth: 1.5,
-          borderDash: [6, 4],
-          pointRadius: 3,
-          pointBackgroundColor: "#4ade80",
-          tension: 0.2,
-          fill: false
+          label: "Bull", data: bullSeries,
+          borderColor: "#4ade80", backgroundColor: "rgba(74, 222, 128, 0.05)",
+          borderWidth: 1.5, borderDash: [6, 4],
+          pointRadius: 3, pointBackgroundColor: "#4ade80",
+          tension: 0.2, fill: false
         },
         {
-          label: "Base",
-          data: baseSeries,
-          borderColor: "#fbbf24",
-          backgroundColor: "transparent",
-          borderWidth: 1.5,
-          borderDash: [6, 4],
-          pointRadius: 3,
-          pointBackgroundColor: "#fbbf24",
+          label: "Base", data: baseSeries,
+          borderColor: "#fbbf24", backgroundColor: "transparent",
+          borderWidth: 1.5, borderDash: [6, 4],
+          pointRadius: 3, pointBackgroundColor: "#fbbf24",
           tension: 0.2
         },
         {
-          label: "Bear",
-          data: bearSeries,
-          borderColor: "#f87171",
-          backgroundColor: "transparent",
-          borderWidth: 1.5,
-          borderDash: [6, 4],
-          pointRadius: 3,
-          pointBackgroundColor: "#f87171",
+          label: "Bear", data: bearSeries,
+          borderColor: "#f87171", backgroundColor: "transparent",
+          borderWidth: 1.5, borderDash: [6, 4],
+          pointRadius: 3, pointBackgroundColor: "#f87171",
           tension: 0.2
         }
       ]
@@ -398,19 +571,11 @@ tickers.forEach((t, idx) => {
       plugins: {
         legend: {
           position: "bottom",
-          labels: {
-            color: "#c5d1de",
-            font: { family: "monospace", size: 10 },
-            boxWidth: 20,
-            padding: 10
-          }
+          labels: { color: "#c5d1de", font: { family: "monospace", size: 10 }, boxWidth: 20, padding: 10 }
         },
         tooltip: {
-          backgroundColor: "#0f141c",
-          borderColor: "#1c2330",
-          borderWidth: 1,
-          titleColor: "#4cc9f0",
-          bodyColor: "#c5d1de",
+          backgroundColor: "#0f141c", borderColor: "#1c2330", borderWidth: 1,
+          titleColor: "#4cc9f0", bodyColor: "#c5d1de",
           titleFont: { family: "monospace", size: 11 },
           bodyFont: { family: "monospace", size: 11 },
           callbacks: {
@@ -421,19 +586,11 @@ tickers.forEach((t, idx) => {
       scales: {
         x: {
           grid: { color: "#1c2330", drawTicks: false },
-          ticks: {
-            color: "#6b7a8f",
-            font: { family: "monospace", size: 10 },
-            maxRotation: 0
-          }
+          ticks: { color: "#6b7a8f", font: { family: "monospace", size: 10 }, maxRotation: 0 }
         },
         y: {
           grid: { color: "#1c2330", drawTicks: false },
-          ticks: {
-            color: "#6b7a8f",
-            font: { family: "monospace", size: 10 },
-            callback: (v) => "$" + v
-          }
+          ticks: { color: "#6b7a8f", font: { family: "monospace", size: 10 }, callback: (v) => "$" + v }
         }
       }
     }
