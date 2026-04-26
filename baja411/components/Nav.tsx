@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const links = [
   { href: "/map", label: "Map" },
@@ -14,8 +14,25 @@ const links = [
 export default function Nav() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const menuRef = useRef<HTMLDivElement>(null);
   const isHome = pathname === "/";
+
+  function handleLogoClick(event: React.MouseEvent<HTMLAnchorElement>) {
+    setOpen(false);
+
+    if (pathname === "/") {
+      event.preventDefault();
+      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+      return;
+    }
+
+    event.preventDefault();
+    router.push("/");
+    window.setTimeout(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    }, 0);
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -43,7 +60,7 @@ export default function Nav() {
       style={{ height: "var(--nav-height)" }}
     >
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-5">
-        <Link href="/" className={`text-lg font-extrabold tracking-tight ${logoColor}`}>
+        <Link href="/" onClick={handleLogoClick} className={`text-lg font-extrabold tracking-tight ${logoColor}`}>
           BAJA <span className="text-sunset">411</span>
         </Link>
 
