@@ -49,7 +49,7 @@ export default function HomePage() {
     <>
       <ScrollReveal />
 
-      <section className="relative min-h-screen overflow-hidden bg-night">
+      <section className="relative min-h-[100svh] overflow-hidden bg-night">
         <div className="absolute inset-0 z-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -87,7 +87,7 @@ export default function HomePage() {
         <HeroCanvas />
         <HeroWaves />
 
-        <div className="relative z-[20] mx-auto flex min-h-screen w-full max-w-7xl items-center px-5 pb-24 pt-28">
+        <div className="relative z-[20] mx-auto flex min-h-[100svh] w-full max-w-7xl items-center px-5 pb-24 pt-28">
           <div className="max-w-3xl">
             <span className="label-tag mb-5 block">Baja California Sur</span>
             <h1
