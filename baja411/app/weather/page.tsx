@@ -1,35 +1,17 @@
 "use client";
 
-import Link from "next/link";
+import { ReactNode, useState } from "react";
 import PageHero from "@/components/PageHero";
 import ScrollReveal from "@/components/ScrollReveal";
-import SatelliteGrid from "../hurricane/SatelliteGrid";
 
-const satelliteImages = [
-  {
-    src: "https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/mex/13/GOES19-MEX-13-1000x1000.gif",
-    alt: "Mexico Sector — Band 13 (Infrared)",
-    label: "Mexico Sector · Band 13",
-    subLabel: "Infrared · GOES-19",
-  },
-  {
-    src: "https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/eep/13/GOES19-EEP-13-900x540.gif",
-    alt: "East Pacific — Band 13 (Infrared)",
-    label: "East Pacific · Band 13",
-    subLabel: "Infrared · GOES-19",
-  },
-  {
-    src: "https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/mex/GEOCOLOR/GOES19-MEX-GEOCOLOR-1000x1000.gif",
-    alt: "Mexico Sector — GeoColor",
-    label: "Mexico Sector · GeoColor",
-    subLabel: "True color · GOES-19",
-  },
-  {
-    src: "https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/eep/GEOCOLOR/GOES19-EEP-GEOCOLOR-900x540.gif",
-    alt: "East Pacific — GeoColor",
-    label: "East Pacific · GeoColor",
-    subLabel: "True color · GOES-19",
-  },
+interface WeatherImage {
+  src: string;
+  alt: string;
+  label: string;
+  subLabel: string;
+}
+
+const nhcImages: WeatherImage[] = [
   {
     src: "https://www.nhc.noaa.gov/archive/xgtwo/epac/latest/two_pac_7d0.png",
     alt: "7-Day Pacific Tropical Weather Outlook",
@@ -56,6 +38,150 @@ const satelliteImages = [
   },
 ];
 
+const satelliteImages: WeatherImage[] = [
+  {
+    src: "https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/mex/13/GOES19-MEX-13-1000x1000.gif",
+    alt: "Mexico Sector — Band 13 (Infrared)",
+    label: "Mexico Sector · Band 13",
+    subLabel: "Infrared · GOES-19",
+  },
+  {
+    src: "https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/eep/13/GOES19-EEP-13-900x540.gif",
+    alt: "East Pacific — Band 13 (Infrared)",
+    label: "East Pacific · Band 13",
+    subLabel: "Infrared · GOES-19",
+  },
+  {
+    src: "https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/mex/GEOCOLOR/GOES19-MEX-GEOCOLOR-1000x1000.gif",
+    alt: "Mexico Sector — GeoColor",
+    label: "Mexico Sector · GeoColor",
+    subLabel: "True color · GOES-19",
+  },
+  {
+    src: "https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/eep/GEOCOLOR/GOES19-EEP-GEOCOLOR-900x540.gif",
+    alt: "East Pacific — GeoColor",
+    label: "East Pacific · GeoColor",
+    subLabel: "True color · GOES-19",
+  },
+];
+
+function proxied(src: string) {
+  return `/api/satellite?url=${encodeURIComponent(src)}`;
+}
+
+function WeatherPanel({
+  label,
+  title,
+  description,
+  defaultOpen = false,
+  delayClass = "",
+  children,
+}: {
+  label: string;
+  title: string;
+  description: string;
+  defaultOpen?: boolean;
+  delayClass?: string;
+  children: ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  const [hasOpened, setHasOpened] = useState(defaultOpen);
+
+  function toggleOpen() {
+    setOpen((current) => {
+      if (!current) setHasOpened(true);
+      return !current;
+    });
+  }
+
+  return (
+    <section className={`overflow-hidden rounded-3xl border border-border bg-white shadow-sm reveal ${delayClass}`}>
+      <button
+        type="button"
+        onClick={toggleOpen}
+        aria-expanded={open}
+        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition hover:bg-sand/60"
+      >
+        <div>
+          <span className="label-tag mb-2 block">{label}</span>
+          <h2 className="text-xl font-extrabold text-foreground">{title}</h2>
+          <p className="mt-1 text-sm text-muted">{description}</p>
+        </div>
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-sand text-xl font-black text-foreground">
+          {open ? "−" : "+"}
+        </span>
+      </button>
+
+      {open && hasOpened && <div className="border-t border-border p-5">{children}</div>}
+    </section>
+  );
+}
+
+function WeatherImageCard({ src, alt, label, subLabel }: WeatherImage) {
+  const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState(false);
+
+  return (
+    <div className="group overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
+      <div className="flex items-center justify-between border-b border-border px-5 py-4">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">{label}</h3>
+          <p className="mt-0.5 text-xs text-muted">{subLabel}</p>
+        </div>
+        {!loaded && !error && (
+          <span className="flex items-center gap-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-muted">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-muted/50" />
+            Loading
+          </span>
+        )}
+        {loaded && (
+          <span className="flex items-center gap-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-jade">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-jade" />
+            Live
+          </span>
+        )}
+      </div>
+
+      <div className="relative bg-black/[0.03]" style={{ minHeight: loaded ? 0 : "200px" }}>
+        {!loaded && !error && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+            <div className="h-10 w-10 animate-spin rounded-full border-2 border-jade border-t-transparent" />
+            <p className="text-xs text-muted">Fetching weather data…</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+            <p className="text-xs text-muted">Image unavailable</p>
+            <a href={src} target="_blank" rel="noopener noreferrer" className="text-xs text-jade hover:underline">
+              View source →
+            </a>
+          </div>
+        )}
+
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={proxied(src)}
+          alt={alt}
+          className={`w-full object-cover transition-opacity duration-500 group-hover:scale-105 ${loaded ? "opacity-100" : "opacity-0"}`}
+          onLoad={() => setLoaded(true)}
+          onError={() => setError(true)}
+        />
+      </div>
+    </div>
+  );
+}
+
+function WeatherImageGrid({ images }: { images: WeatherImage[] }) {
+  return (
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+      {images.map((image) => (
+        <WeatherImageCard key={image.src} {...image} />
+      ))}
+    </div>
+  );
+}
+
 export default function WeatherPage() {
   return (
     <>
@@ -72,20 +198,13 @@ export default function WeatherPage() {
 
       <div className="bg-sand px-5 pb-16">
         <div className="mx-auto max-w-5xl space-y-6">
-          <div className="-mt-6 rounded-3xl border border-border bg-white p-5 shadow-sm reveal">
-            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <span className="label-tag mb-2 block">Forecast</span>
-                <h2 className="text-xl font-extrabold text-foreground">7-Day Forecast</h2>
-                <p className="mt-1 text-sm text-muted">La Paz, BCS · °F · Windy.com</p>
-              </div>
-              <Link
-                href="/hurricane"
-                className="inline-flex w-fit rounded-full bg-jade px-5 py-3 text-xs font-extrabold text-white transition hover:bg-jade-light"
-              >
-                Hurricane Tracker
-              </Link>
-            </div>
+          <WeatherPanel
+            label="Forecast"
+            title="7-Day Forecast"
+            description="La Paz, BCS · °F · Windy.com"
+            defaultOpen
+            delayClass="-mt-6"
+          >
             <iframe
               src="https://embed.windy.com/embed2.html?lat=23.446&lon=-110.223&detailLat=23.446&detailLon=-110.223&width=100%25&height=210&zoom=8&level=surface&overlay=wind&menu=&message=false&marker=false&calendar=7&pressure=false&type=forecast&location=coordinates&detail=true&metricWind=kt&metricTemp=%C2%B0F&radarRange=-1"
               className="w-full rounded-2xl border-0"
@@ -93,58 +212,58 @@ export default function WeatherPage() {
               title="7-day weather forecast"
               loading="lazy"
             />
-          </div>
+          </WeatherPanel>
 
-          <div className="overflow-hidden rounded-3xl border border-border bg-white shadow-sm reveal reveal-delay-1">
-            <div className="border-b border-border px-5 py-4">
-              <span className="label-tag mb-2 block">Live map</span>
-              <h2 className="text-xl font-extrabold text-foreground">Wind &amp; Rain Map</h2>
-              <p className="mt-1 text-sm text-muted">ECMWF model · wind speed in knots · temperature in °F</p>
-            </div>
+          <WeatherPanel
+            label="Live map"
+            title="Wind & Rain Map"
+            description="Open the Windy radar only when you need the full live map."
+            delayClass="reveal-delay-1"
+          >
             <iframe
               src="https://embed.windy.com/embed2.html?lat=23.446&lon=-110.261&detailLat=23.446&detailLon=-110.261&width=100%25&height=520&zoom=8&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=now&type=map&location=coordinates&detail=&metricWind=kt&metricTemp=%C2%B0F&radarRange=-1"
-              className="w-full border-0"
+              className="w-full rounded-2xl border-0"
               style={{ height: "520px" }}
-              title="Live wind map"
+              title="Live wind and rain map"
               allowFullScreen
               loading="lazy"
             />
-          </div>
+          </WeatherPanel>
 
-          <section className="rounded-3xl border border-border bg-white p-5 shadow-sm reveal reveal-delay-2">
-            <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <span className="label-tag mb-2 block">Storm watch</span>
-                <h2 className="text-xl font-extrabold text-foreground">Live Satellite &amp; Storm Widgets</h2>
-                <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted">
-                  NOAA GOES-19 satellite loops, NHC Pacific outlooks, sea surface temperature, and surface analysis.
-                </p>
-              </div>
-              <Link
-                href="/hurricane"
-                className="inline-flex w-fit rounded-full bg-sunset px-6 py-3 text-sm font-extrabold text-white shadow-lg shadow-sunset/20 transition hover:opacity-90"
-              >
-                Open Full Tracker
-              </Link>
-            </div>
-
+          <WeatherPanel
+            label="NHC products"
+            title="Pacific Outlook, SST & Surface Analysis"
+            description="Lower weight storm products from NHC and NOAA for quick checks."
+            delayClass="reveal-delay-2"
+          >
             <p className="mb-5 text-xs text-muted">
-              All satellite imagery updates automatically · Sources: NOAA GOES-19 &amp; NHC
+              Includes the 7-day Pacific tropical outlook, Gulf of California sea surface temperature, and Pacific surface analysis.
             </p>
+            <WeatherImageGrid images={nhcImages} />
+          </WeatherPanel>
 
-            <SatelliteGrid images={satelliteImages} />
-
-            <p className="mt-6 text-center text-xs text-muted">
-              Imagery sourced from{" "}
-              <a href="https://www.noaa.gov" target="_blank" rel="noopener noreferrer" className="text-jade hover:underline">
-                NOAA
-              </a>{" "}
-              and the{" "}
-              <a href="https://www.nhc.noaa.gov" target="_blank" rel="noopener noreferrer" className="text-jade hover:underline">
-                National Hurricane Center
-              </a>.
+          <WeatherPanel
+            label="Live satellite"
+            title="GOES-19 Satellite Loops"
+            description="Heavy animated satellite widgets. Keep these closed until you actually need them."
+            delayClass="reveal-delay-2"
+          >
+            <p className="mb-5 text-xs text-muted">
+              These NOAA GOES-19 loops can take a while on cell service. They only start loading after this panel opens.
             </p>
-          </section>
+            <WeatherImageGrid images={satelliteImages} />
+          </WeatherPanel>
+
+          <p className="text-center text-xs text-muted">
+            Weather imagery sourced from{" "}
+            <a href="https://www.noaa.gov" target="_blank" rel="noopener noreferrer" className="text-jade hover:underline">
+              NOAA
+            </a>{" "}
+            and the{" "}
+            <a href="https://www.nhc.noaa.gov" target="_blank" rel="noopener noreferrer" className="text-jade hover:underline">
+              National Hurricane Center
+            </a>.
+          </p>
         </div>
       </div>
     </>
