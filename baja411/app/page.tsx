@@ -6,7 +6,7 @@ import WaveDivider from "@/components/WaveDivider";
 import ScrollReveal from "@/components/ScrollReveal";
 import HomeWeatherStrip from "@/components/HomeWeatherStrip";
 
-// Final no-op deploy retry after Vercel build rate limit.
+// Deploy retry after Vercel build rate limit reset.
 
 export const metadata: Metadata = {
   title: "Baja 411 | Live Local Intel for Baja Sur",
