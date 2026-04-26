@@ -6,8 +6,7 @@ import HeroWaves from "@/components/HeroWaves";
 import WaveDivider from "@/components/WaveDivider";
 import ScrollReveal from "@/components/ScrollReveal";
 import ParallaxImage from "@/components/ParallaxImage";
-imp
-
+import VisitCounter from "@/components/VisitCounter";
 
 export const metadata: Metadata = {
   title: "Baja 411 — Your Guide to Life in Baja",
@@ -105,7 +104,6 @@ export default function HomePage() {
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative min-h-screen flex items-center overflow-hidden" style={{ background: "#04111c" }}>
-
         {/* ── Background photo ── */}
         <div className="absolute inset-0 z-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -139,7 +137,6 @@ export default function HomePage() {
           backgroundSize: "36px 36px",
         }} />
 
-
         {/* ── Sun sparkles on water (canvas) ── */}
         <HeroCanvas />
 
@@ -161,18 +158,18 @@ export default function HomePage() {
             <p className="text-white/55 text-base md:text-lg leading-relaxed mb-10 max-w-lg">
               Community-pinned spots, live weather, and real intel — added by locals,
               travelers, and expats who actually know Baja Sur.
-            </p> 
+            </p>
             <div className="flex flex-col items-start gap-3 mt-6">
-  <Link
-    href="/map"
-    className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-jade text-white font-bold text-sm hover:bg-jade-light transition-colors shadow-lg shadow-jade/25"
-  >
-    Open the Map
-  </Link>
+              <Link
+                href="/map"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-jade text-white font-bold text-sm hover:bg-jade-light transition-colors shadow-lg shadow-jade/25"
+              >
+                Open the Map
+              </Link>
 
-  <VisitCounter />
-</div>
-</Link>
+              <VisitCounter />
+            </div>
+          </div>
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 z-[30]">
