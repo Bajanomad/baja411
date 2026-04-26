@@ -165,8 +165,9 @@ export default function HomePage() {
           <div className="flex flex-col items-start mt-6 gap-3">
   <Link
     href="/map"
-    className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-jade text-white font-bold text-sm hover:bg-jade-light transition-colors shadow-lg shadow-jade/25"
- >
+    className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-jade text-white 
+    font-bold text-sm hover:bg-jade-light transition-colors shadow-lg shadow-jade/25"></Link>
+ 
     Open the Map
   </Link>
 
