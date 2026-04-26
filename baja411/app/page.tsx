@@ -1,170 +1,199 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import FeatureCard from "@/components/FeatureCard";
 import HeroCanvas from "@/components/HeroCanvas";
 import HeroWaves from "@/components/HeroWaves";
 import WaveDivider from "@/components/WaveDivider";
 import ScrollReveal from "@/components/ScrollReveal";
-import ParallaxImage from "@/components/ParallaxImage";
 
 export const metadata: Metadata = {
-  title: "Baja 411 — Your Guide to Life in Baja",
+  title: "Baja 411 | Live Local Intel for Baja Sur",
+  description:
+    "Baja 411 gives travelers, locals, and expats fast access to maps, weather, hurricane tracking, local news, and Baja road intel.",
 };
 
-// Unsplash photos chosen for Baja California Sur vibes
-const PHOTOS = {
-  // Turquoise bay / Sea of Cortez
-  ocean:
-    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1800&q=80&fit=crop&crop=center",
-  // Golden hour on the Sea of Cortez — warm tones, no bad days
-  golden:
-    "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=1800&q=80&fit=crop&crop=center",
-  // Coastal town at sunset
-  town:
-    "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=1800&q=80&fit=crop&crop=center",
-  // Mexican tianguis / swap meet market stalls
-  market:
-    "https://images.unsplash.com/photo-1723942093326-47203a1941c3?w=1800&q=80&fit=crop&crop=center",
-};
-
-const liveFeatures = [
+const quickActions = [
+  {
+    href: "/map",
+    label: "Drive mode",
+    title: "Open the map",
+    description: "GPS first. Track your position, find useful spots, and get directions fast.",
+    icon: "◎",
+    tone: "bg-jade text-white border-jade",
+  },
   {
     href: "/weather",
+    label: "Live weather",
+    title: "Check conditions",
+    description: "Wind, rain, temperature, and forecast tools for Baja Sur.",
     icon: "🌤️",
-    title: "Weather",
-    description: "Live forecasts, wind data, and radar for La Paz and the Baja corridor.",
-    live: true,
+    tone: "bg-white text-foreground border-white/70",
   },
   {
     href: "/hurricane",
+    label: "Storm watch",
+    title: "Track hurricanes",
+    description: "NOAA satellite views and Eastern Pacific storm tracking.",
     icon: "🌀",
-    title: "Hurricane Tracker",
-    description: "Real-time NOAA satellite imagery and storm tracking for the Eastern Pacific.",
-    live: true,
-  },
-  {
-    href: "/map",
-    icon: "🗺️",
-    title: "Interactive Map",
-    description: "Crowdsourced pins for boondocking, beaches, water fills, mechanics, and more.",
-    live: true,
+    tone: "bg-white text-foreground border-white/70",
   },
 ];
 
-const comingFeatures = [
-  {
-    href: "/classifieds",
-    icon: "🛒",
-    title: "Classifieds",
-    description: "Free buy, sell, and trade for vehicles, gear, housing, and services.",
-    badge: "Coming Soon",
-  },
-  {
-    href: "/directory",
-    icon: "🏪",
-    title: "Business Directory",
-    description: "Restaurants, bars, mechanics, doctors, hotels — searchable by town and category.",
-    badge: "Coming Soon",
-  },
-  {
-    href: "/blog",
-    icon: "📖",
-    title: "Blog & Lore",
-    description: "History, stories, and deep dives into the culture and landscape of Baja California.",
-    badge: "Coming Soon",
-  },
+const todayItems = [
+  { href: "/weather", icon: "🌡️", title: "Weather", body: "Quick forecast and wind tools." },
+  { href: "/hurricane", icon: "🌀", title: "Storms", body: "Hurricane tracker and satellite views." },
+  { href: "/news", icon: "📰", title: "News", body: "Local headlines from Baja sources." },
+  { href: "/calendar", icon: "📅", title: "Events", body: "Festivals, markets, closures, and local dates." },
 ];
 
-const pillars = [
-  {
-    icon: "🔓",
-    title: "Free Forever",
-    description:
-      "No paywalls, no subscriptions, no nonsense. All core features stay free — always.",
-  },
-  {
-    icon: "🤝",
-    title: "Community Driven",
-    description:
-      "Built by locals and expats who live here. Your contributions make the site better for everyone.",
-  },
-  {
-    icon: "🧭",
-    title: "Local Knowledge",
-    description:
-      "Real, on-the-ground intel for travelers, expats, and the curious — not tourist brochure fluff.",
-  },
+const roadTools = [
+  { icon: "⛽", title: "Fuel", body: "Find fuel stops from the map." },
+  { icon: "🔧", title: "Mechanics", body: "Useful when the road punches back." },
+  { icon: "💧", title: "Water", body: "Water fills and practical road resources." },
+  { icon: "🏕️", title: "Camp", body: "Boondocking and overnight spots." },
 ];
+
+const planTools = [
+  { href: "/map", icon: "🗺️", title: "Plan a route", body: "Switch to Plan Mode and search for stops before you roll." },
+  { href: "/directory", icon: "🏪", title: "Directory", body: "Businesses, services, food, hotels, and local help. Coming next." },
+  { href: "/classifieds", icon: "🛒", title: "Classifieds", body: "Vehicles, rentals, gear, and local services. Coming next." },
+];
+
+function ActionCard({ action }: { action: (typeof quickActions)[number] }) {
+  return (
+    <Link
+      href={action.href}
+      className={`group rounded-3xl border p-5 shadow-2xl transition-transform hover:-translate-y-1 ${action.tone}`}
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] opacity-70">
+            {action.label}
+          </p>
+          <h2 className="mt-2 text-xl font-extrabold leading-tight">{action.title}</h2>
+        </div>
+        <span className="text-3xl leading-none">{action.icon}</span>
+      </div>
+      <p className="mt-4 text-sm leading-relaxed opacity-75">{action.description}</p>
+      <p className="mt-5 text-xs font-extrabold uppercase tracking-[0.14em] opacity-80">
+        Open
+      </p>
+    </Link>
+  );
+}
+
+function SmallLinkCard({ item }: { item: (typeof todayItems)[number] }) {
+  return (
+    <Link
+      href={item.href}
+      className="rounded-2xl border border-border bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+    >
+      <span className="text-2xl">{item.icon}</span>
+      <h3 className="mt-3 text-sm font-extrabold text-foreground">{item.title}</h3>
+      <p className="mt-1 text-xs leading-relaxed text-muted">{item.body}</p>
+    </Link>
+  );
+}
+
+function RoadCard({ item }: { item: (typeof roadTools)[number] }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-white shadow-sm">
+      <span className="text-2xl">{item.icon}</span>
+      <h3 className="mt-3 text-sm font-extrabold">{item.title}</h3>
+      <p className="mt-1 text-xs leading-relaxed text-white/55">{item.body}</p>
+    </div>
+  );
+}
+
+function PlanCard({ item }: { item: (typeof planTools)[number] }) {
+  return (
+    <Link
+      href={item.href}
+      className="rounded-3xl border border-border bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
+    >
+      <span className="text-3xl">{item.icon}</span>
+      <h3 className="mt-4 text-lg font-extrabold text-foreground">{item.title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-muted">{item.body}</p>
+    </Link>
+  );
+}
 
 export default function HomePage() {
   return (
     <>
       <ScrollReveal />
 
-      {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center overflow-hidden" style={{ background: "#04111c" }}>
-        {/* ── Background photo ── */}
+      <section className="relative min-h-screen overflow-hidden bg-night">
         <div className="absolute inset-0 z-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=2000&q=85&fit=crop&crop=center"
-            alt=""
-            className="w-full h-full object-cover"
-            style={{ transform: "scale(1.06)", transformOrigin: "center 55%" }}
+            src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=2200&q=85&fit=crop&crop=center"
+            alt="Baja coastline"
+            className="h-full w-full object-cover"
+            style={{ transform: "scale(1.05)", transformOrigin: "center 55%" }}
             loading="eager"
             fetchPriority="high"
           />
         </div>
 
-        {/* ── Overlays ── */}
-        {/* Left-side dark gradient keeps text readable */}
-        <div className="absolute inset-0 z-[1]" style={{
-          background: "linear-gradient(108deg, rgba(4,17,28,0.88) 0%, rgba(4,17,28,0.60) 38%, rgba(4,17,28,0.20) 65%, transparent 100%)"
-        }} />
-        {/* Bottom dark fade */}
-        <div className="absolute inset-0 z-[1]" style={{
-          background: "linear-gradient(180deg, transparent 45%, rgba(4,17,28,0.72) 100%)"
-        }} />
-        {/* Warm golden-hour tint — slowly breathes */}
-        <div className="absolute inset-0 z-[1] hero-breathe" style={{
-          background: "linear-gradient(180deg, rgba(210,110,20,0.20) 0%, rgba(240,165,30,0.10) 38%, transparent 68%)"
-        }} />
+        <div
+          className="absolute inset-0 z-[1]"
+          style={{
+            background:
+              "linear-gradient(110deg, rgba(4,17,28,0.94) 0%, rgba(4,17,28,0.76) 42%, rgba(4,17,28,0.28) 100%)",
+          }}
+        />
+        <div
+          className="absolute inset-0 z-[1] hero-breathe"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(232,149,109,0.18) 0%, rgba(42,122,90,0.10) 44%, transparent 75%)",
+          }}
+        />
+        <div
+          className="absolute inset-0 z-[2] opacity-[0.018] pointer-events-none"
+          style={{
+            backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
+            backgroundSize: "34px 34px",
+          }}
+        />
 
-        {/* ── Subtle dot grid texture ── */}
-        <div className="absolute inset-0 z-[2] opacity-[0.018] pointer-events-none" style={{
-          backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
-          backgroundSize: "36px 36px",
-        }} />
-
-        {/* ── Sun sparkles on water (canvas) ── */}
         <HeroCanvas />
-
-        {/* ── Animated ocean waves ── */}
         <HeroWaves />
 
-        <div className="relative z-[20] max-w-7xl mx-auto px-5 pt-28 pb-24 w-full">
-          <div className="max-w-2xl">
-            <span className="label-tag mb-5 block">Baja California Sur</span>
-            <h1
-              className="font-extrabold text-white leading-[1.06] mb-6"
-              style={{ fontSize: "clamp(2.6rem, 6.5vw, 5.5rem)" }}
-            >
-              Local knowledge,
-              <br />
-              <span className="text-sunset">from the people who live here.</span>
-            </h1>
-
-            <p className="text-white/55 text-base md:text-lg leading-relaxed mb-10 max-w-lg">
-              Community-pinned spots, live weather, and real intel — added by locals,
-              travelers, and expats who actually know Baja Sur.
-            </p>
-            <div className="flex flex-col items-start gap-3 mt-6">
-              <Link
-                href="/map"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-jade text-white font-bold text-sm hover:bg-jade-light transition-colors shadow-lg shadow-jade/25"
+        <div className="relative z-[20] mx-auto flex min-h-screen w-full max-w-7xl items-center px-5 pb-24 pt-28">
+          <div className="grid w-full gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+            <div className="max-w-2xl">
+              <span className="label-tag mb-5 block">Baja California Sur</span>
+              <h1
+                className="font-extrabold leading-[1.02] text-white"
+                style={{ fontSize: "clamp(2.8rem, 7vw, 6.3rem)" }}
               >
-                Open the Map
-              </Link>
+                Live local intel for Baja.
+              </h1>
+              <p className="mt-6 max-w-xl text-base leading-relaxed text-white/62 md:text-lg">
+                A clean map first tool for driving, planning, weather, storms, local news, and the spots people actually use on the road.
+              </p>
+
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Link
+                  href="/map"
+                  className="inline-flex items-center justify-center rounded-full bg-jade px-7 py-4 text-sm font-extrabold text-white shadow-xl shadow-jade/25 transition hover:bg-jade-light"
+                >
+                  Open Baja411 Map
+                </Link>
+                <Link
+                  href="/weather"
+                  className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/10 px-7 py-4 text-sm font-extrabold text-white backdrop-blur transition hover:bg-white/15"
+                >
+                  Check Weather
+                </Link>
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
+              {quickActions.map((action) => (
+                <ActionCard key={action.href} action={action} />
+              ))}
             </div>
           </div>
         </div>
@@ -174,228 +203,97 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Feature Grid (Live) ──────────────────────────────────────── */}
-      <section className="bg-sand pt-4 pb-16 px-5">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12 reveal">
-            <span className="label-tag mb-3 block">Everything you need</span>
-            <h2
-              className="font-bold text-foreground"
-              style={{ fontSize: "clamp(1.6rem, 4vw, 2.5rem)" }}
-            >
-              The Baja Corridor, covered.
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {liveFeatures.map((feature, i) => (
-              <div
-                key={feature.href}
-                className={`reveal reveal-delay-${i + 1}`}
-              >
-                <FeatureCard {...feature} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Parallax: Tianguis / Market ──────────────────────────────── */}
-      <ParallaxImage
-        src={PHOTOS.market}
-        alt="Colorful Mexican tianguis market stalls with awnings, Baja California"
-        height="480px"
-        strength={0.28}
-        overlay="linear-gradient(180deg, rgba(6,13,24,0.25) 0%, rgba(120,50,10,0.38) 55%, rgba(6,13,24,0.55) 100%)"
-      >
-        <div className="text-center px-5 reveal">
-          <p
-            className="font-extrabold text-white leading-tight drop-shadow-lg"
-            style={{ fontSize: "clamp(1.8rem, 5vw, 3.5rem)" }}
-          >
-            Buy. Sell. Trade.
-          </p>
-          <p className="text-white/75 mt-3 text-lg drop-shadow">
-            The Baja marketplace — classifieds, directories, and local lore.
-          </p>
-        </div>
-      </ParallaxImage>
-
-      {/* ── Feature Grid (Coming Soon) ───────────────────────────────── */}
-      <section className="bg-sand pt-12 pb-16 px-5">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-10 reveal">
-            <span className="label-tag mb-3 block">Coming soon</span>
-            <h2
-              className="font-bold text-foreground"
-              style={{ fontSize: "clamp(1.6rem, 4vw, 2.5rem)" }}
-            >
-              More Baja, coming your way.
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {comingFeatures.map((feature, i) => (
-              <div
-                key={feature.href}
-                className={`reveal reveal-delay-${i + 1}`}
-              >
-                <FeatureCard {...feature} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Parallax 1: Sea of Cortez ─────────────────────────────────── */}
-      <ParallaxImage
-        src={PHOTOS.ocean}
-        alt="Turquoise waters of the Sea of Cortez, Baja California Sur"
-        height="520px"
-        strength={0.3}
-        overlay="linear-gradient(180deg, rgba(6,13,24,0.35) 0%, rgba(13,48,64,0.2) 50%, rgba(6,13,24,0.5) 100%)"
-      >
-        <div className="text-center px-5 reveal">
-          <p
-            className="font-extrabold text-white leading-tight drop-shadow-lg"
-            style={{ fontSize: "clamp(1.8rem, 5vw, 3.5rem)" }}
-          >
-            The Sea of Cortez.
-          </p>
-          <p className="text-white/75 mt-3 text-lg drop-shadow">
-            Jacques Cousteau called it{" "}
-            <em>&ldquo;the world&apos;s aquarium.&rdquo;</em>
-          </p>
-        </div>
-      </ParallaxImage>
-
-      {/* ── Events & News ────────────────────────────────────────────── */}
-      <section className="bg-sand py-16 px-5">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-10 reveal">
-            <span className="label-tag mb-3 block">Stay in the loop</span>
-            <h2
-              className="font-bold text-foreground"
-              style={{ fontSize: "clamp(1.6rem, 4vw, 2.5rem)" }}
-            >
-              Events &amp; News
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
-            <div className="reveal reveal-delay-1">
-              <FeatureCard
-                href="/calendar"
-                icon="📅"
-                title="Events Calendar"
-                description="Festivals, art walks, fiestas, and government holidays across the corridor."
-                badge="Coming Soon"
-              />
+      <section className="bg-sand px-5 py-14">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <span className="label-tag mb-2 block">Today in Baja</span>
+              <h2 className="text-2xl font-extrabold text-foreground md:text-4xl">
+                Open once. Know what matters.
+              </h2>
             </div>
-            <div className="reveal reveal-delay-2">
-              <FeatureCard
-                href="/news"
-                icon="📰"
-                title="Local News"
-                description="Headlines from Cabo Sun and the Gringo Gazette."
-                live={true}
-              />
-            </div>
+            <Link href="/news" className="text-sm font-extrabold text-jade hover:underline">
+              Read local headlines
+            </Link>
           </div>
-        </div>
-      </section>
 
-      {/* ── Parallax 2: Baja Desert ───────────────────────────────────── */}
-      <ParallaxImage
-        src={PHOTOS.golden}
-        alt="Golden hour sunset over the Sea of Cortez, Baja California Sur"
-        height="460px"
-        strength={0.28}
-        overlay="linear-gradient(180deg, rgba(6,13,24,0.1) 0%, rgba(80,30,10,0.35) 60%, rgba(6,13,24,0.55) 100%)"
-      >
-        <div className="text-center px-5 reveal">
-          <p
-            className="font-extrabold text-white leading-tight drop-shadow-lg"
-            style={{ fontSize: "clamp(1.8rem, 5vw, 3.5rem)" }}
-          >
-            No Bad Days.
-          </p>
-          <p className="text-white/75 mt-3 text-lg drop-shadow">
-
-          </p>
-        </div>
-      </ParallaxImage>
-
-      {/* ── Pillars ──────────────────────────────────────────────────── */}
-      <section className="bg-white py-20 px-5 relative overflow-hidden">
-        <div
-          className="absolute -top-32 -left-32 w-96 h-96 rounded-full pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(42,122,90,0.07) 0%, transparent 70%)",
-          }}
-        />
-        <div
-          className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(232,149,109,0.07) 0%, transparent 70%)",
-          }}
-        />
-
-        <div className="max-w-7xl mx-auto relative">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {pillars.map((pillar, i) => (
-              <div
-                key={pillar.title}
-                className={`text-center md:text-left reveal reveal-delay-${i + 1}`}
-              >
-                <span className="text-3xl mb-4 block">{pillar.icon}</span>
-                <h3 className="font-bold text-lg text-foreground mb-2">
-                  {pillar.title}
-                </h3>
-                <p className="text-sm text-muted leading-relaxed">
-                  {pillar.description}
-                </p>
-              </div>
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            {todayItems.map((item) => (
+              <SmallLinkCard key={item.href} item={item} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Wave into CTA */}
-      <WaveDivider fill="#060d18" />
+      <section className="bg-night px-5 py-16">
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+          <div>
+            <span className="label-tag mb-3 block">Drive mode</span>
+            <h2 className="text-3xl font-extrabold leading-tight text-white md:text-5xl">
+              Built for the road, not for clicking around like a lost tourist.
+            </h2>
+            <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/55 md:text-base">
+              Drive Mode keeps the map clean. GPS tracking, recenter, and the road in front of you. Planning tools stay out of the way until you switch modes.
+            </p>
+            <Link
+              href="/map"
+              className="mt-7 inline-flex rounded-full bg-sunset px-7 py-4 text-sm font-extrabold text-white shadow-xl shadow-sunset/20 transition hover:opacity-90"
+            >
+              Start Driving
+            </Link>
+          </div>
 
-      {/* ── CTA ──────────────────────────────────────────────────────── */}
-      <section
-        id="join"
-        className="bg-night py-20 px-5 text-center relative overflow-hidden"
-      >
+          <div className="grid grid-cols-2 gap-4">
+            {roadTools.map((item) => (
+              <RoadCard key={item.title} item={item} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white px-5 py-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-9 max-w-2xl">
+            <span className="label-tag mb-3 block">Plan mode</span>
+            <h2 className="text-3xl font-extrabold leading-tight text-foreground md:text-5xl">
+              Park first. Then search, pin, filter, and plan.
+            </h2>
+            <p className="mt-4 text-sm leading-relaxed text-muted md:text-base">
+              Plan Mode is where the useful mess lives. Search spots, filter categories, add pins, and build the next stretch before you start moving again.
+            </p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            {planTools.map((item) => (
+              <PlanCard key={item.href} item={item} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden bg-sand px-5 py-16">
         <div
-          className="absolute inset-0 opacity-10 pointer-events-none"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(42,122,90,0.3) 41px)",
-          }}
+          className="absolute -right-32 -top-32 h-80 w-80 rounded-full pointer-events-none"
+          style={{ background: "radial-gradient(circle, rgba(42,122,90,0.10) 0%, transparent 70%)" }}
         />
-        <div className="relative z-10 max-w-2xl mx-auto reveal">
-          <span className="label-tag mb-4 block">Join the community</span>
-          <h2
-            className="font-bold text-white mb-4"
-            style={{ fontSize: "clamp(1.6rem, 4vw, 2.25rem)" }}
-          >
-            Know a great spot?
-            <br />
-            Add it to the map.
+        <div
+          className="absolute -bottom-32 -left-32 h-80 w-80 rounded-full pointer-events-none"
+          style={{ background: "radial-gradient(circle, rgba(232,149,109,0.12) 0%, transparent 70%)" }}
+        />
+
+        <div className="relative mx-auto max-w-3xl text-center">
+          <span className="label-tag mb-3 block">Next up</span>
+          <h2 className="text-3xl font-extrabold text-foreground md:text-5xl">
+            Nearby, directory, classifieds, and better pin trust.
           </h2>
-          <p className="text-white/50 mb-8 text-base leading-relaxed">
-            Sign up free and start contributing — boondocking spots, hidden
-            beaches, reliable mechanics, the best taco stand on the corridor.
+          <p className="mt-5 text-sm leading-relaxed text-muted md:text-base">
+            The core app is the map. The next layer is making nearby fuel, water, mechanics, services, and community updates stupid easy to find.
           </p>
           <Link
             href="/map"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-sunset text-white font-bold text-sm hover:opacity-90 transition-opacity shadow-lg shadow-sunset/20"
+            className="mt-8 inline-flex rounded-full bg-jade px-8 py-4 text-sm font-extrabold text-white shadow-xl shadow-jade/20 transition hover:bg-jade-light"
           >
-            Get Started — It&apos;s Free
+            Go to Map
           </Link>
         </div>
       </section>
