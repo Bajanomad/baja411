@@ -42,7 +42,7 @@ export default function VisitCounter() {
         {fmt(displayed)}
       </span>
       <span className="text-white/40 text-xs">
-        Baja travelers &amp; counting
+        Baja Travelers &amp; Counting
       </span>
     </div>
   );
