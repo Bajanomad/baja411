@@ -4,6 +4,7 @@ import HeroCanvas from "@/components/HeroCanvas";
 import HeroWaves from "@/components/HeroWaves";
 import WaveDivider from "@/components/WaveDivider";
 import ScrollReveal from "@/components/ScrollReveal";
+import HomeWeatherStrip from "@/components/HomeWeatherStrip";
 
 export const metadata: Metadata = {
   title: "Baja 411 | Live Local Intel for Baja Sur",
@@ -100,12 +101,22 @@ export default function HomePage() {
               Baja411 is a map first tool for driving Baja, planning stops, checking useful places, and finding the road intel people actually need out here.
             </p>
 
-            <Link
-              href="/map"
-              className="mt-8 inline-flex items-center justify-center rounded-full bg-jade px-8 py-4 text-sm font-extrabold text-white shadow-xl shadow-jade/25 transition hover:bg-jade-light"
-            >
-              Open Baja411 Map
-            </Link>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/map"
+                className="inline-flex items-center justify-center rounded-full bg-jade px-8 py-4 text-sm font-extrabold text-white shadow-xl shadow-jade/25 transition hover:bg-jade-light"
+              >
+                Open Map
+              </Link>
+              <Link
+                href="/weather"
+                className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-8 py-4 text-sm font-extrabold text-white shadow-xl backdrop-blur transition hover:bg-white/15"
+              >
+                Weather
+              </Link>
+            </div>
+
+            <HomeWeatherStrip />
           </div>
         </div>
 
