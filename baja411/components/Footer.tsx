@@ -1,68 +1,56 @@
 import Link from "next/link";
 
 const explore = [
-  { href: "/map",       label: "Interactive Map" },
-  { href: "/weather",   label: "Weather" },
-  { href: "/hurricane", label: "Hurricane Tracker" },
-  { href: "/news",      label: "Local News" },
-  { href: "/calendar",  label: "Events" },
+  { href: "/map", label: "Interactive Map" },
+  { href: "/weather", label: "Weather" },
+  { href: "/news", label: "Local News" },
+  { href: "/calendar", label: "Events" },
 ];
 
 const community = [
   { href: "/classifieds", label: "Classifieds" },
-  { href: "/directory",   label: "Business Directory" },
-  { href: "/blog",        label: "Blog" },
-  { href: "/signin",      label: "Sign In" },
+  { href: "/directory", label: "Business Directory" },
+  { href: "/signin", label: "Sign In" },
 ];
 
 export default function Footer() {
   return (
-    <footer className="bg-night text-white/60 relative overflow-hidden">
+    <footer className="relative overflow-hidden bg-night text-white/60">
+      <div
+        className="h-px w-full"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent 0%, rgba(42,122,90,0.6) 30%, rgba(232,149,109,0.5) 70%, transparent 100%)",
+        }}
+      />
 
-      {/* Top accent line */}
-      <div className="h-px w-full" style={{
-        background: "linear-gradient(90deg, transparent 0%, rgba(42,122,90,0.6) 30%, rgba(232,149,109,0.5) 70%, transparent 100%)"
-      }} />
+      <div
+        className="pointer-events-none absolute left-1/2 top-0 h-[300px] w-[600px] -translate-x-1/2"
+        style={{
+          background: "radial-gradient(ellipse at top, rgba(42,122,90,0.06) 0%, transparent 70%)",
+        }}
+      />
 
-      {/* Subtle background glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] pointer-events-none" style={{
-        background: "radial-gradient(ellipse at top, rgba(42,122,90,0.06) 0%, transparent 70%)"
-      }} />
-
-      <div className="relative max-w-7xl mx-auto px-5 pt-14 pb-10">
-
-        {/* Main grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 pb-12 border-b border-white/[0.07]">
-
-          {/* Brand */}
+      <div className="relative mx-auto max-w-7xl px-5 pb-10 pt-14">
+        <div className="grid grid-cols-2 gap-10 border-b border-white/[0.07] pb-12 md:grid-cols-4">
           <div className="col-span-2">
-            <Link href="/" className="inline-block mb-4">
-              <span className="font-extrabold text-2xl text-white tracking-tight">
+            <Link href="/" className="mb-4 inline-block">
+              <span className="text-2xl font-extrabold tracking-tight text-white">
                 BAJA <span className="text-sunset">411</span>
               </span>
             </Link>
-            <p className="text-sm leading-relaxed text-white/50 max-w-xs mb-4">
-              Community-driven local knowledge for Baja California Sur.
-              Real spots, real info — from people who actually live here.
+            <p className="mb-4 max-w-xs text-sm leading-relaxed text-white/50">
+              Community-driven local knowledge for Baja California Sur. Weather, maps, events, listings, and local resources in one place.
             </p>
-            <p className="text-sm italic text-sunset/70 mb-5">
-              Curated locally. Updated often.
-            </p>
-            <p className="text-xs text-white/25 tracking-wide">
-              Cerritos · Pescadero · Todos Santos · La Paz · Cabo
-            </p>
+            <p className="text-xs tracking-wide text-white/25">Cerritos · Pescadero · Todos Santos · La Paz · Cabo</p>
           </div>
 
-          {/* Explore links */}
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/30 mb-5">
-              Explore
-            </p>
+            <p className="mb-5 text-[10px] font-bold uppercase tracking-[0.14em] text-white/30">Explore</p>
             <ul className="space-y-3">
               {explore.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href}
-                    className="text-sm text-white/50 hover:text-white transition-colors">
+                  <Link href={link.href} className="text-sm text-white/50 transition-colors hover:text-white">
                     {link.label}
                   </Link>
                 </li>
@@ -70,16 +58,12 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Community links */}
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/30 mb-5">
-              Community
-            </p>
+            <p className="mb-5 text-[10px] font-bold uppercase tracking-[0.14em] text-white/30">Community</p>
             <ul className="space-y-3">
               {community.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href}
-                    className="text-sm text-white/50 hover:text-white transition-colors">
+                  <Link href={link.href} className="text-sm text-white/50 transition-colors hover:text-white">
                     {link.label}
                   </Link>
                 </li>
@@ -88,9 +72,8 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/25">
-          <p>© {new Date().getFullYear()} Baja 411 · Free forever · No ads, no paywalls.</p>
+        <div className="flex flex-col items-center justify-between gap-3 pt-8 text-xs text-white/25 sm:flex-row">
+          <p>© {new Date().getFullYear()} Baja 411</p>
           <p>Made in La Paz, BCS, México</p>
         </div>
       </div>
