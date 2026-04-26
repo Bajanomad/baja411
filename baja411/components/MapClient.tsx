@@ -61,9 +61,45 @@ const CATEGORY_EMOJI: Record<string, string> = {
   OTHER: "📍",
 };
 
+const CATEGORY_SEARCH_TERMS: Record<string, string[]> = {
+  BOONDOCKING: ["boondocking", "camp", "camping", "rv", "overnight", "sleep"],
+  BEACH: ["beach", "playa", "swim", "surf", "ocean"],
+  WATER_FILL: ["water", "agua", "water fill", "fill water", "drinking water"],
+  DUMP_STATION: ["dump", "dump station", "rv dump", "sewer", "black water"],
+  MECHANIC: ["mechanic", "mechanics", "repair", "tire", "llanta", "taller", "auto repair"],
+  FUEL: ["fuel", "gas", "gas station", "gasoline", "diesel", "pemex", "station"],
+  TRAILHEAD: ["trail", "trailhead", "hike", "hiking", "sendero"],
+  FISHING: ["fish", "fishing", "pesca", "launch", "boat ramp"],
+  MARKET: ["market", "store", "grocery", "mercado", "food", "super", "tienda"],
+  OTHER: ["other", "spot", "place", "pin"],
+};
+
+const TOWNS = [
+  { name: "La Paz", aliases: ["la paz", "lapaz"], lat: 24.1426, lng: -110.3128, zoom: 13 },
+  { name: "Todos Santos", aliases: ["todos santos", "todo santos"], lat: 23.4464, lng: -110.2265, zoom: 13 },
+  { name: "El Pescadero", aliases: ["pescadero", "el pescadero", "pasadero", "pescadaro"], lat: 23.3655, lng: -110.1689, zoom: 13 },
+  { name: "Cerritos", aliases: ["cerritos", "los cerritos", "playa cerritos"], lat: 23.3312, lng: -110.1776, zoom: 14 },
+  { name: "Cabo San Lucas", aliases: ["cabo", "cabo san lucas", "san lucas"], lat: 22.8905, lng: -109.9167, zoom: 13 },
+  { name: "San José del Cabo", aliases: ["san jose", "san jose del cabo", "sjc"], lat: 23.0617, lng: -109.7086, zoom: 13 },
+  { name: "Loreto", aliases: ["loreto"], lat: 26.0118, lng: -111.3430, zoom: 13 },
+  { name: "Los Barriles", aliases: ["los barriles", "barriles"], lat: 23.6823, lng: -109.6995, zoom: 13 },
+  { name: "La Ventana", aliases: ["la ventana", "ventana"], lat: 24.0460, lng: -109.9938, zoom: 13 },
+  { name: "El Sargento", aliases: ["el sargento", "sargento"], lat: 24.0807, lng: -110.0184, zoom: 13 },
+  { name: "Santiago", aliases: ["santiago"], lat: 23.4772, lng: -109.7187, zoom: 13 },
+  { name: "Miraflores", aliases: ["miraflores"], lat: 23.3695, lng: -109.7748, zoom: 13 },
+];
+
 const TILE_LIGHT = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
 const TILE_DARK = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
 const TILE_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
+
+function normalizeText(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
 
 function createEmojiIcon(category: string): L.DivIcon {
   const emoji = CATEGORY_EMOJI[category] ?? "📍";
@@ -100,13 +136,30 @@ function panelStyle(dark: boolean) {
       };
 }
 
+function findTown(query: string) {
+  const q = normalizeText(query);
+  if (!q) return null;
+  return TOWNS.find((town) => town.aliases.some((alias) => q.includes(normalizeText(alias)))) ?? null;
+}
+
+function findCategory(query: string) {
+  const q = normalizeText(query);
+  if (!q) return null;
+  return (
+    Object.entries(CATEGORY_SEARCH_TERMS).find(([, terms]) =>
+      terms.some((term) => q.includes(normalizeText(term)))
+    )?.[0] ?? null
+  );
+}
+
 function pinMatchesSearch(pin: Pin, query: string) {
-  const q = query.trim().toLowerCase();
+  const q = normalizeText(query);
   if (!q) return true;
   const label = CATEGORY_LABELS[pin.category] ?? pin.category;
-  return [pin.title, pin.description ?? "", label, pin.category]
+  const categoryTerms = CATEGORY_SEARCH_TERMS[pin.category] ?? [];
+  return [pin.title, pin.description ?? "", label, pin.category, ...categoryTerms]
+    .map(normalizeText)
     .join(" ")
-    .toLowerCase()
     .includes(q);
 }
 
@@ -133,6 +186,7 @@ export default function MapClient() {
   const [following, setFollowing] = useState(false);
   const [showCategoryMenu, setShowCategoryMenu] = useState(false);
   const [search, setSearch] = useState("");
+  const [lastSearchHint, setLastSearchHint] = useState("");
   const [selectedPin, setSelectedPin] = useState<Pin | null>(null);
   const [visibleCategories, setVisibleCategories] = useState<Set<string>>(
     () => new Set(CATEGORIES as unknown as string[])
@@ -325,12 +379,49 @@ export default function MapClient() {
     setShowCategoryMenu(false);
     setSelectedPin(null);
     setSearch("");
+    setLastSearchHint("");
     recenter();
   }
 
   function switchToPlan() {
     setMode("PLAN");
     setFollowing(false);
+  }
+
+  function fitPins(matches: Pin[]) {
+    const map = mapRef.current;
+    if (!map || matches.length === 0) return;
+    if (matches.length === 1) {
+      map.setView([matches[0].lat, matches[0].lng], Math.max(map.getZoom(), 14), { animate: true });
+      return;
+    }
+    const bounds = L.latLngBounds(matches.map((pin) => [pin.lat, pin.lng] as [number, number]));
+    map.fitBounds(bounds, { padding: [44, 44], maxZoom: 14, animate: true });
+  }
+
+  function handleSearchSubmit(event?: React.FormEvent) {
+    event?.preventDefault();
+    const q = search.trim();
+    const map = mapRef.current;
+    if (!q || !map) return;
+
+    setShowCategoryMenu(false);
+    setFollowing(false);
+
+    const town = findTown(q);
+    if (town) {
+      map.setView([town.lat, town.lng], town.zoom, { animate: true });
+      setLastSearchHint(`Centered on ${town.name}`);
+      return;
+    }
+
+    const category = findCategory(q);
+    const activeCategories = category ? new Set([category]) : visibleCategories;
+    if (category) setVisibleCategories(activeCategories);
+
+    const matches = pins.filter((pin) => activeCategories.has(pin.category) && pinMatchesSearch(pin, q));
+    fitPins(matches);
+    setLastSearchHint(matches.length ? `${matches.length} result${matches.length === 1 ? "" : "s"}` : "No results yet");
   }
 
   function toggleCategory(category: string) {
@@ -424,16 +515,21 @@ export default function MapClient() {
             </div>
 
             {mode === "PLAN" && (
-              <div className={`flex items-center gap-2 rounded-full border px-4 py-3 shadow-xl max-w-xl ${dark ? "bg-[#050c16]/95 border-white/20" : "bg-white/95 border-black/10"}`}>
+              <form onSubmit={handleSearchSubmit} className={`flex items-center gap-2 rounded-full border px-4 py-3 shadow-xl max-w-xl ${dark ? "bg-[#050c16]/95 border-white/20" : "bg-white/95 border-black/10"}`}>
                 <span className="text-sm">🔎</span>
                 <input
                   value={search}
-                  onChange={(event) => setSearch(event.target.value)}
-                  placeholder="Search Baja411"
+                  onChange={(event) => {
+                    setSearch(event.target.value);
+                    setLastSearchHint("");
+                  }}
+                  placeholder="Search towns, fuel, water, beaches"
+                  enterKeyHint="search"
                   className={`w-full bg-transparent text-base outline-none ${dark ? "text-white placeholder-slate-400" : "text-slate-950 placeholder-slate-500"}`}
                 />
-                {search && <button onClick={() => setSearch("")} className={`text-xs font-extrabold ${textMuted}`}>Clear</button>}
-              </div>
+                {search && <button type="button" onClick={() => { setSearch(""); setLastSearchHint(""); }} className={`text-xs font-extrabold ${textMuted}`}>Clear</button>}
+                <button type="submit" className="rounded-full bg-jade px-3 py-1.5 text-xs font-extrabold text-white">Go</button>
+              </form>
             )}
           </div>
 
@@ -471,6 +567,7 @@ export default function MapClient() {
               <div className="flex gap-2">
                 <button onClick={() => setVisibleCategories(new Set(CATEGORIES as unknown as string[]))} className="px-3 py-2 rounded-full bg-jade text-white text-xs font-extrabold">All</button>
                 <button onClick={() => setVisibleCategories(new Set())} className={`px-3 py-2 rounded-full border text-xs font-extrabold ${dark ? "border-white/20 text-white" : "border-black/10 text-slate-700"}`}>None</button>
+                <button onClick={() => setShowCategoryMenu(false)} className={`px-3 py-2 rounded-full border text-xs font-extrabold ${dark ? "border-white/20 text-white" : "border-black/10 text-slate-700"}`}>Done</button>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
@@ -487,9 +584,9 @@ export default function MapClient() {
           </div>
         )}
 
-        {mode === "PLAN" && search && !showCategoryMenu && (
+        {mode === "PLAN" && (search || lastSearchHint) && !showCategoryMenu && (
           <div className={`absolute left-4 bottom-5 z-[1000] px-4 py-3 rounded-full text-sm font-extrabold border shadow-xl ${textPrimary}`} style={panel}>
-            {visiblePins.length} result{visiblePins.length === 1 ? "" : "s"}
+            {lastSearchHint || `${visiblePins.length} result${visiblePins.length === 1 ? "" : "s"}`}
           </div>
         )}
       </div>
