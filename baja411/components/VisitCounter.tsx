@@ -41,7 +41,9 @@ export default function VisitCounter() {
       <span className="font-semibold text-white/70 tabular-nums text-sm leading-none">
         {fmt(displayed)}
       </span>
+      <br></br>
       <span className="text-sunset text-xs">
+  
         people using Baja 411
       </span>
     </div>
