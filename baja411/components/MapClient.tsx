@@ -84,8 +84,20 @@ const TEMP_ICON = L.divIcon({
 
 function panelStyle(dark: boolean) {
   return dark
-    ? { background: "rgba(10,16,26,0.92)", backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)", borderColor: "rgba(255,255,255,0.10)" }
-    : { background: "rgba(255,255,255,0.94)", backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)", borderColor: "rgba(0,0,0,0.10)" };
+    ? {
+        background: "rgba(5,12,22,0.96)",
+        backdropFilter: "blur(18px)",
+        WebkitBackdropFilter: "blur(18px)",
+        borderColor: "rgba(255,255,255,0.18)",
+        color: "#f8fafc",
+      }
+    : {
+        background: "rgba(255,255,255,0.96)",
+        backdropFilter: "blur(18px)",
+        WebkitBackdropFilter: "blur(18px)",
+        borderColor: "rgba(15,23,42,0.14)",
+        color: "#111827",
+      };
 }
 
 function pinMatchesSearch(pin: Pin, query: string) {
@@ -386,66 +398,88 @@ export default function MapClient() {
     }
   }
 
-  const textPrimary = dark ? "text-white/90" : "text-foreground";
-  const textMuted = dark ? "text-white/50" : "text-muted";
-  const floating = "rounded-full border shadow-lg";
   const panel = panelStyle(dark);
+  const textPrimary = dark ? "text-white" : "text-slate-950";
+  const textMuted = dark ? "text-slate-300" : "text-slate-600";
+  const textSoft = dark ? "text-slate-400" : "text-slate-500";
+  const floating = "rounded-full border shadow-xl";
+  const activeMode = "bg-jade text-white shadow-sm";
+  const inactiveMode = dark ? "text-slate-200 hover:bg-white/10" : "text-slate-700 hover:bg-black/5";
+  const iconButton = `w-12 h-12 ${floating} flex items-center justify-center text-lg font-extrabold`;
 
   return (
     <>
       <div className={`relative h-full w-full ${dark ? "bg-[#060d18]" : "bg-sand"}`}>
         <div ref={mapContainerRef} className="absolute inset-0" />
 
-        <div className="absolute left-3 right-3 top-3 z-[1000] flex items-center gap-2">
-          {mode === "DRIVE" ? (
-            <div className={`flex items-center gap-2 px-3 py-2 ${floating} ${dark ? "text-white" : "text-foreground"}`} style={panel}>
-              <span className="text-xs font-extrabold">Drive</span>
-              <span className={`text-[10px] ${textMuted}`}>{locating ? "Finding GPS" : following ? "Tracking" : tracking ? "Paused" : "No GPS"}</span>
+        <div className="absolute left-3 right-3 top-3 z-[1000] flex items-start gap-2">
+          <div className="flex-1 min-w-0 space-y-2">
+            <div className={`inline-flex rounded-full border p-1 shadow-xl ${dark ? "bg-[#050c16]/95 border-white/20" : "bg-white/95 border-black/10"}`}>
+              <button onClick={switchToDrive} className={`px-4 py-2 rounded-full text-xs font-extrabold transition ${mode === "DRIVE" ? activeMode : inactiveMode}`}>
+                Drive
+              </button>
+              <button onClick={switchToPlan} className={`px-4 py-2 rounded-full text-xs font-extrabold transition ${mode === "PLAN" ? activeMode : inactiveMode}`}>
+                Plan
+              </button>
             </div>
-          ) : (
-            <div className={`flex-1 flex items-center gap-2 px-3 py-2 ${floating}`} style={panel}>
-              <span className="text-sm">🔎</span>
-              <input
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search Baja411"
-                className={`w-full bg-transparent text-sm outline-none ${dark ? "text-white placeholder-white/40" : "text-foreground placeholder-muted"}`}
-              />
-              {search && <button onClick={() => setSearch("")} className={`text-xs font-bold ${textMuted}`}>Clear</button>}
-            </div>
-          )}
 
-          <button onClick={mode === "DRIVE" ? switchToPlan : switchToDrive} className={`px-4 py-2 text-xs font-extrabold ${floating} ${dark ? "text-white" : "text-foreground"}`} style={panel}>
-            {mode === "DRIVE" ? "Plan" : "Drive"}
+            {mode === "PLAN" && (
+              <div className={`flex items-center gap-2 rounded-full border px-4 py-3 shadow-xl max-w-xl ${dark ? "bg-[#050c16]/95 border-white/20" : "bg-white/95 border-black/10"}`}>
+                <span className="text-sm">🔎</span>
+                <input
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Search Baja411"
+                  className={`w-full bg-transparent text-base outline-none ${dark ? "text-white placeholder-slate-400" : "text-slate-950 placeholder-slate-500"}`}
+                />
+                {search && <button onClick={() => setSearch("")} className={`text-xs font-extrabold ${textMuted}`}>Clear</button>}
+              </div>
+            )}
+          </div>
+
+          <button onClick={() => setDark((value) => !value)} className={`${iconButton} ${dark ? "text-white" : "text-slate-950"}`} style={panel} aria-label="Toggle map style">
+            {dark ? "☀️" : "🌙"}
           </button>
         </div>
 
-        <div className="absolute right-3 bottom-20 z-[1000] flex flex-col gap-2">
+        {mode === "DRIVE" && (
+          <div className={`absolute left-3 bottom-5 z-[1000] rounded-full border px-4 py-3 shadow-xl ${dark ? "bg-[#050c16]/95 border-white/20" : "bg-white/95 border-black/10"}`}>
+            <div className="flex items-center gap-2">
+              <span className={`h-2.5 w-2.5 rounded-full ${following ? "bg-jade" : tracking ? "bg-yellow-400" : "bg-red-500"}`} />
+              <span className={`text-sm font-extrabold ${textPrimary}`}>{locating ? "Finding GPS" : following ? "Tracking" : tracking ? "Paused" : "Location off"}</span>
+            </div>
+          </div>
+        )}
+
+        <div className="absolute right-3 bottom-5 z-[1000] flex flex-col gap-3">
           {mode === "PLAN" && (
-            <button onClick={() => setShowCategoryMenu((v) => !v)} className={`w-11 h-11 text-lg ${floating}`} style={panel} aria-label="Layers">☰</button>
+            <button onClick={() => setShowCategoryMenu((value) => !value)} className={`${iconButton} ${dark ? "text-white" : "text-slate-950"}`} style={panel} aria-label="Layers">☰</button>
           )}
           {mode === "PLAN" && (
-            <button onClick={handleAddPinClick} className="w-11 h-11 rounded-full border shadow-lg bg-jade text-white text-2xl font-light" aria-label="Add pin">+</button>
+            <button onClick={handleAddPinClick} className="w-12 h-12 rounded-full border border-jade/70 shadow-xl bg-jade text-white text-2xl font-light" aria-label="Add pin">+</button>
           )}
-          <button onClick={recenter} className={`w-11 h-11 text-lg ${floating} ${following ? "text-jade" : ""}`} style={panel} aria-label="Recenter">◎</button>
+          <button onClick={recenter} className={`${iconButton} ${following ? "text-jade" : dark ? "text-white" : "text-slate-950"}`} style={panel} aria-label="Recenter">◎</button>
         </div>
 
         {mode === "PLAN" && showCategoryMenu && (
-          <div className="absolute left-3 right-3 bottom-4 z-[1000] rounded-2xl border shadow-xl p-3" style={panel}>
-            <div className="flex items-center justify-between mb-3">
-              <p className={`text-xs font-extrabold ${textPrimary}`}>Show pins</p>
-              <div className="flex gap-3">
-                <button onClick={() => setVisibleCategories(new Set(CATEGORIES as unknown as string[]))} className="text-xs font-bold text-jade">All</button>
-                <button onClick={() => setVisibleCategories(new Set())} className={`text-xs font-bold ${textMuted}`}>None</button>
-                <button onClick={() => setDark((v) => !v)} className={`text-xs font-bold ${textMuted}`}>{dark ? "Light" : "Dark"}</button>
+          <div className="absolute left-3 right-3 bottom-5 z-[1000] rounded-3xl border shadow-2xl p-4" style={panel}>
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <div>
+                <p className={`text-sm font-extrabold ${textPrimary}`}>Map filters</p>
+                <p className={`text-xs ${textSoft}`}>{visiblePins.length} visible pins</p>
+              </div>
+              <div className="flex gap-2">
+                <button onClick={() => setVisibleCategories(new Set(CATEGORIES as unknown as string[]))} className="px-3 py-2 rounded-full bg-jade text-white text-xs font-extrabold">All</button>
+                <button onClick={() => setVisibleCategories(new Set())} className={`px-3 py-2 rounded-full border text-xs font-extrabold ${dark ? "border-white/20 text-white" : "border-black/10 text-slate-700"}`}>None</button>
               </div>
             </div>
-            <div className="flex gap-2 overflow-x-auto pb-1">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
               {(CATEGORIES as unknown as string[]).map((category) => {
                 const on = visibleCategories.has(category);
                 return (
-                  <button key={category} onClick={() => toggleCategory(category)} className={`px-3 py-2 rounded-full border text-xs font-bold whitespace-nowrap ${on ? "bg-jade text-white border-jade" : dark ? "bg-white/10 border-white/10 text-white/45" : "bg-white border-black/10 text-muted"}`}>
-                    {CATEGORY_EMOJI[category]} {CATEGORY_LABELS[category]}
+                  <button key={category} onClick={() => toggleCategory(category)} className={`px-3 py-3 rounded-2xl border text-xs font-extrabold text-left transition ${on ? "bg-jade text-white border-jade" : dark ? "bg-white/8 border-white/15 text-slate-200" : "bg-white border-black/10 text-slate-700"}`}>
+                    <span className="mr-1.5">{CATEGORY_EMOJI[category]}</span>
+                    {CATEGORY_LABELS[category]}
                   </button>
                 );
               })}
@@ -453,8 +487,8 @@ export default function MapClient() {
           </div>
         )}
 
-        {mode === "PLAN" && search && (
-          <div className={`absolute left-4 bottom-20 z-[1000] px-3 py-2 rounded-full text-xs font-bold border shadow-lg ${textPrimary}`} style={panel}>
+        {mode === "PLAN" && search && !showCategoryMenu && (
+          <div className={`absolute left-4 bottom-5 z-[1000] px-4 py-3 rounded-full text-sm font-extrabold border shadow-xl ${textPrimary}`} style={panel}>
             {visiblePins.length} result{visiblePins.length === 1 ? "" : "s"}
           </div>
         )}
@@ -462,16 +496,16 @@ export default function MapClient() {
 
       {selectedPin && (
         <div className="fixed inset-x-0 bottom-0 z-[200000] px-3 pb-3 pointer-events-none">
-          <div className="pointer-events-auto max-w-md mx-auto rounded-2xl border shadow-2xl p-4" style={panelStyle(dark)}>
+          <div className="pointer-events-auto max-w-md mx-auto rounded-3xl border shadow-2xl p-4" style={panelStyle(dark)}>
             <div className="flex items-start gap-3">
               <span className="text-2xl">{CATEGORY_EMOJI[selectedPin.category] ?? "📍"}</span>
               <div className="min-w-0 flex-1">
-                <p className={`text-[10px] font-bold uppercase tracking-widest ${textMuted}`}>{CATEGORY_LABELS[selectedPin.category] ?? selectedPin.category}</p>
-                <h2 className={`font-extrabold text-base leading-tight ${textPrimary}`}>{selectedPin.title}</h2>
+                <p className={`text-[10px] font-bold uppercase tracking-widest ${textSoft}`}>{CATEGORY_LABELS[selectedPin.category] ?? selectedPin.category}</p>
+                <h2 className={`font-extrabold text-lg leading-tight ${textPrimary}`}>{selectedPin.title}</h2>
                 {selectedPin.description && <p className={`text-sm mt-1 leading-relaxed ${textMuted}`}>{selectedPin.description}</p>}
-                <div className="flex gap-2 mt-3">
+                <div className="flex gap-2 mt-4">
                   <a href={`https://www.google.com/maps/dir/?api=1&destination=${selectedPin.lat},${selectedPin.lng}`} target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-full bg-jade text-white text-xs font-bold">Directions</a>
-                  <button onClick={() => setSelectedPin(null)} className={`px-4 py-2 rounded-full text-xs font-bold border ${dark ? "border-white/10 text-white/70" : "border-black/10 text-muted"}`}>Close</button>
+                  <button onClick={() => setSelectedPin(null)} className={`px-4 py-2 rounded-full text-xs font-bold border ${dark ? "border-white/20 text-white" : "border-black/10 text-slate-700"}`}>Close</button>
                 </div>
               </div>
               <button onClick={() => setSelectedPin(null)} className={`text-xl leading-none ${textMuted}`}>×</button>
@@ -496,16 +530,16 @@ export default function MapClient() {
               <button onClick={() => setShowAddModal(false)} className={`text-xl leading-none ${textMuted}`}>×</button>
             </div>
             <form onSubmit={handleSubmitPin} className="space-y-4">
-              <input type="text" value={formTitle} onChange={(event) => setFormTitle(event.target.value)} required placeholder="Name this spot" className={`w-full px-4 py-3 rounded-xl border text-sm outline-none ${dark ? "bg-white/10 border-white/10 text-white placeholder-white/30" : "bg-white border-black/10 text-foreground"}`} />
-              <textarea value={formDescription} onChange={(event) => setFormDescription(event.target.value)} placeholder="Useful details" rows={3} className={`w-full px-4 py-3 rounded-xl border text-sm outline-none resize-none ${dark ? "bg-white/10 border-white/10 text-white placeholder-white/30" : "bg-white border-black/10 text-foreground"}`} />
-              <select value={formCategory} onChange={(event) => setFormCategory(event.target.value)} className={`w-full px-4 py-3 rounded-xl border text-sm outline-none ${dark ? "bg-[#0f1824] border-white/10 text-white" : "bg-white border-black/10 text-foreground"}`}>
+              <input type="text" value={formTitle} onChange={(event) => setFormTitle(event.target.value)} required placeholder="Name this spot" className={`w-full px-4 py-3 rounded-xl border text-sm outline-none ${dark ? "bg-white/10 border-white/20 text-white placeholder-slate-400" : "bg-white border-black/10 text-slate-950"}`} />
+              <textarea value={formDescription} onChange={(event) => setFormDescription(event.target.value)} placeholder="Useful details" rows={3} className={`w-full px-4 py-3 rounded-xl border text-sm outline-none resize-none ${dark ? "bg-white/10 border-white/20 text-white placeholder-slate-400" : "bg-white border-black/10 text-slate-950"}`} />
+              <select value={formCategory} onChange={(event) => setFormCategory(event.target.value)} className={`w-full px-4 py-3 rounded-xl border text-sm outline-none ${dark ? "bg-[#0f1824] border-white/20 text-white" : "bg-white border-black/10 text-slate-950"}`}>
                 {(CATEGORIES as unknown as string[]).map((category) => <option key={category} value={category}>{CATEGORY_EMOJI[category]} {CATEGORY_LABELS[category]}</option>)}
               </select>
               {submitError && <p className="text-xs text-red-400 bg-red-500/10 rounded-lg px-3 py-2">{submitError}</p>}
               <button type="submit" disabled={submitting} className="w-full px-4 py-3 rounded-xl bg-jade text-white text-sm font-bold disabled:opacity-50">
                 {submitting ? "Submitting" : "Submit pin"}
               </button>
-              <p className={`text-xs text-center ${textMuted}`}>Pins are reviewed before appearing.</p>
+              <p className={`text-xs text-center ${textSoft}`}>Pins are reviewed before appearing.</p>
             </form>
           </div>
         </div>
