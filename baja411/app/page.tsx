@@ -90,8 +90,8 @@ export default function HomePage() {
         <HeroCanvas />
         <HeroWaves />
 
-        <div className="relative z-[20] mx-auto flex min-h-[100svh] w-full max-w-7xl items-center px-5 pb-28 pt-24 sm:pb-24 sm:pt-28">
-          <div className="max-w-3xl -translate-y-2 sm:translate-y-0">
+        <div className="relative z-[20] mx-auto flex min-h-[100svh] w-full max-w-7xl items-center px-5 pb-28 pt-24 sm:px-6 sm:pb-24 sm:pt-28 lg:px-8">
+          <div className="mx-auto w-full max-w-3xl -translate-y-2 text-center sm:translate-y-0 lg:mx-0 lg:text-left">
             <span className="label-tag mb-4 block sm:mb-5">Baja California Sur</span>
             <h1
               className="font-extrabold leading-[1.02] text-white"
@@ -99,11 +99,11 @@ export default function HomePage() {
             >
               Live local intel.
             </h1>
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-white/62 md:text-lg">
+            <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-white/62 md:text-lg lg:mx-0">
               Baja411 is a map first tool for driving Baja, planning stops, checking useful places, and finding the road intel people actually need out here.
             </p>
 
-            <div className="mt-7 grid w-full max-w-xl grid-cols-2 gap-3 sm:mt-8 sm:mx-0">
+            <div className="mx-auto mt-7 grid w-full max-w-xl grid-cols-2 gap-3 sm:mt-8 lg:mx-0">
               <Link
                 href="/map"
                 className="inline-flex min-h-16 items-center justify-center rounded-full bg-jade px-5 py-4 text-center text-base font-extrabold text-white shadow-xl shadow-jade/25 transition hover:bg-jade-light sm:px-8"
@@ -127,7 +127,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-night px-5 pb-18 pt-10">
+      <section className="bg-night px-5 pb-18 pt-10 sm:px-6 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
           <div className="reveal">
             <span className="label-tag mb-3 block">Drive mode</span>
@@ -147,7 +147,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-white px-5 py-18">
+      <section className="bg-white px-5 py-18 sm:px-6 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
           <div className="reveal">
             <span className="label-tag mb-3 block">Plan mode</span>
