@@ -160,19 +160,10 @@ export default function HomePage() {
             <p className="text-white/55 text-base md:text-lg leading-relaxed mb-10 max-w-lg">
               Community-pinned spots, live weather, and real intel — added by locals,
               travelers, and expats who actually know Baja Sur.
-            </p>
-
-          <div className="flex flex-col items-start mt-6 gap-3">
-  <Link
-    href="/map"
-    className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-jade text-white 
-    font-bold text-sm hover:bg-jade-light transition-colors shadow-lg shadow-jade/25"></Link>
- 
-    Open the Map
-  </Link>
-
-  <VisitCounter />
-</div>
+            </p> 
+            <Link href="/map className="inline-flex items-center ...">
+  Open the Map
+</Link>
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 z-[30]">
