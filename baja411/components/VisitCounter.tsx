@@ -19,6 +19,7 @@ export default function VisitCounter() {
 
   useEffect(() => {
     if (target === null) return;
+
     const start = Math.max(target - 60, 0);
     const duration = 1600;
     const startTime = performance.now();
@@ -29,17 +30,20 @@ export default function VisitCounter() {
       setDisplayed(Math.round(start + (target - start) * eased));
       if (t < 1) requestAnimationFrame(tick);
     };
+
     requestAnimationFrame(tick);
   }, [target]);
 
   if (target === null) return null;
 
   return (
-    <div className="mt-8 inline-flex items-center gap-2 select-none">
-      <span className="font-extrabold text-white tabular-nums text-xl leading-none">
+    <div className="mt-4 inline-flex items-center gap-1.5 select-none">
+      <span className="font-semibold text-white/70 tabular-nums text-sm leading-none">
         {fmt(displayed)}
       </span>
-      <span className="text-white/40 text-sm font-medium">Baja travelers &amp; counting</span>
+      <span className="text-white/40 text-xs">
+        Baja travelers &amp; counting
+      </span>
     </div>
   );
 }
