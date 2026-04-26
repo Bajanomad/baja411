@@ -162,15 +162,16 @@ export default function HomePage() {
               travelers, and expats who actually know Baja Sur.
             </p>
 
-            <Link
-              href="/map"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-jade text-white font-bold text-sm hover:bg-jade-light transition-colors shadow-lg shadow-jade/25"
-            >
-              Open the Map
-            </Link>
+          <div className="flex flex-col items-start mt-6 gap-3">
+  <Link
+    href="/map"
+    className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-jade text-white font-bold text-sm hover:bg-jade-light transition-colors shadow-lg shadow-jade/25"
+ >
+    Open the Map
+  </Link>
 
-            <VisitCounter />
-          </div>
+  <VisitCounter />
+</div>
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 z-[30]">
