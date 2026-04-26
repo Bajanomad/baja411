@@ -101,16 +101,16 @@ export default function HomePage() {
               Baja411 is a map first tool for driving Baja, planning stops, checking useful places, and finding the road intel people actually need out here.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-8 grid max-w-xl grid-cols-2 gap-3">
               <Link
                 href="/map"
-                className="inline-flex items-center justify-center rounded-full bg-jade px-8 py-4 text-sm font-extrabold text-white shadow-xl shadow-jade/25 transition hover:bg-jade-light"
+                className="inline-flex min-h-16 items-center justify-center rounded-full bg-jade px-5 py-4 text-center text-base font-extrabold text-white shadow-xl shadow-jade/25 transition hover:bg-jade-light sm:px-8"
               >
                 Open Map
               </Link>
               <Link
                 href="/weather"
-                className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-8 py-4 text-sm font-extrabold text-white shadow-xl backdrop-blur transition hover:bg-white/15"
+                className="inline-flex min-h-16 items-center justify-center rounded-full border border-white/22 bg-white/10 px-5 py-4 text-center text-base font-extrabold text-white shadow-xl backdrop-blur transition hover:bg-white/15 sm:px-8"
               >
                 Weather
               </Link>
