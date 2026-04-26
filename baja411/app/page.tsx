@@ -6,7 +6,8 @@ import HeroWaves from "@/components/HeroWaves";
 import WaveDivider from "@/components/WaveDivider";
 import ScrollReveal from "@/components/ScrollReveal";
 import ParallaxImage from "@/components/ParallaxImage";
-import VisitCounter from "@/components/VisitCounter";
+imp
+
 
 export const metadata: Metadata = {
   title: "Baja 411 — Your Guide to Life in Baja",
