@@ -37,13 +37,11 @@ export default function VisitCounter() {
   if (target === null) return null;
 
   return (
-    <div className="mt-4 inline-flex items-center gap-1.5 select-none">
+    <div className="mt-4 flex flex-col items-start select-none">
       <span className="font-semibold text-white/70 tabular-nums text-sm leading-none">
         {fmt(displayed)}
       </span>
-      <br></br>
-      <span className="text-sunset text-xs">
-  
+      <span className="text-sunset/80 text-xs">
         people using Baja 411
       </span>
     </div>
