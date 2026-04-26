@@ -20,72 +20,105 @@ interface SessionUser {
   email?: string | null;
 }
 
+type MapMode = "DRIVE" | "PLAN";
+
 const CATEGORIES = [
-  "BOONDOCKING","BEACH","WATER_FILL","DUMP_STATION",
-  "MECHANIC","FUEL","TRAILHEAD","FISHING","MARKET","OTHER",
+  "BOONDOCKING",
+  "BEACH",
+  "WATER_FILL",
+  "DUMP_STATION",
+  "MECHANIC",
+  "FUEL",
+  "TRAILHEAD",
+  "FISHING",
+  "MARKET",
+  "OTHER",
 ] as const;
 
 const CATEGORY_LABELS: Record<string, string> = {
-  BOONDOCKING:"Boondocking", BEACH:"Beach", WATER_FILL:"Water Fill",
-  DUMP_STATION:"Dump Station", MECHANIC:"Mechanic", FUEL:"Fuel",
-  TRAILHEAD:"Trailhead", FISHING:"Fishing", MARKET:"Market", OTHER:"Other",
+  BOONDOCKING: "Boondocking",
+  BEACH: "Beach",
+  WATER_FILL: "Water Fill",
+  DUMP_STATION: "Dump Station",
+  MECHANIC: "Mechanic",
+  FUEL: "Fuel",
+  TRAILHEAD: "Trailhead",
+  FISHING: "Fishing",
+  MARKET: "Market",
+  OTHER: "Other",
 };
 
 const CATEGORY_EMOJI: Record<string, string> = {
-  BOONDOCKING:"🏕️", BEACH:"🏖️", WATER_FILL:"💧", DUMP_STATION:"🚽",
-  MECHANIC:"🔧", FUEL:"⛽", TRAILHEAD:"🥾", FISHING:"🎣", MARKET:"🛒", OTHER:"📍",
+  BOONDOCKING: "🏕️",
+  BEACH: "🏖️",
+  WATER_FILL: "💧",
+  DUMP_STATION: "🚽",
+  MECHANIC: "🔧",
+  FUEL: "⛽",
+  TRAILHEAD: "🥾",
+  FISHING: "🎣",
+  MARKET: "🛒",
+  OTHER: "📍",
 };
 
 const TILE_LIGHT = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
-const TILE_DARK  = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
-const TILE_ATTR  = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
+const TILE_DARK = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+const TILE_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
 
 function createEmojiIcon(category: string): L.DivIcon {
   const emoji = CATEGORY_EMOJI[category] ?? "📍";
   return L.divIcon({
     html: `<div style="font-size:24px;line-height:1;filter:drop-shadow(0 1px 4px rgba(0,0,0,0.5))">${emoji}</div>`,
-    className: "", iconSize: [28, 28], iconAnchor: [14, 24], popupAnchor: [0, -26],
+    className: "",
+    iconSize: [28, 28],
+    iconAnchor: [14, 24],
   });
 }
 
 const TEMP_ICON = L.divIcon({
   html: `<div style="font-size:28px;line-height:1;filter:drop-shadow(0 1px 4px rgba(0,0,0,0.6))">📌</div>`,
-  className: "", iconSize: [28, 32], iconAnchor: [8, 30],
+  className: "",
+  iconSize: [28, 32],
+  iconAnchor: [8, 30],
 });
 
-function glassStyle(dark: boolean) {
+function panelStyle(dark: boolean) {
   return dark
-    ? { background: "rgba(10,16,26,0.88)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderColor: "rgba(255,255,255,0.08)" }
-    : { background: "rgba(255,255,255,0.88)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderColor: "rgba(0,0,0,0.07)" };
+    ? { background: "rgba(10,16,26,0.92)", backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)", borderColor: "rgba(255,255,255,0.10)" }
+    : { background: "rgba(255,255,255,0.94)", backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)", borderColor: "rgba(0,0,0,0.10)" };
 }
 
 function pinMatchesSearch(pin: Pin, query: string) {
   const q = query.trim().toLowerCase();
   if (!q) return true;
   const label = CATEGORY_LABELS[pin.category] ?? pin.category;
-  return [pin.title, pin.description ?? "", label, pin.category].join(" ").toLowerCase().includes(q);
+  return [pin.title, pin.description ?? "", label, pin.category]
+    .join(" ")
+    .toLowerCase()
+    .includes(q);
 }
 
 export default function MapClient() {
-  const mapContainerRef   = useRef<HTMLDivElement>(null);
-  const outerRef          = useRef<HTMLDivElement>(null);
-  const mapRef            = useRef<L.Map | null>(null);
-  const tileLayerRef      = useRef<L.TileLayer | null>(null);
-  const markersRef        = useRef<L.Marker[]>([]);
-  const tempMarkerRef     = useRef<L.Marker | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<L.Map | null>(null);
+  const tileLayerRef = useRef<L.TileLayer | null>(null);
+  const markersRef = useRef<L.Marker[]>([]);
+  const tempMarkerRef = useRef<L.Marker | null>(null);
   const locationMarkerRef = useRef<L.Marker | null>(null);
-  const watchIdRef        = useRef<number | null>(null);
-  const addModeRef        = useRef(false);
-  const followRef         = useRef(false);
+  const watchIdRef = useRef<number | null>(null);
+  const addModeRef = useRef(false);
+  const followRef = useRef(false);
+  const modeRef = useRef<MapMode>("DRIVE");
+  const snapBackTimerRef = useRef<number | null>(null);
 
-  const [pins, setPins]           = useState<Pin[]>([]);
-  const [session, setSession]     = useState<{ user?: SessionUser } | null>(null);
-  const [showAddModal, setShowAddModal]   = useState(false);
+  const [pins, setPins] = useState<Pin[]>([]);
+  const [session, setSession] = useState<{ user?: SessionUser } | null>(null);
+  const [mode, setMode] = useState<MapMode>("DRIVE");
+  const [showAddModal, setShowAddModal] = useState(false);
   const [pendingLatLng, setPendingLatLng] = useState<[number, number] | null>(null);
-  const [locating, setLocating]   = useState(false);
-  const [tracking, setTracking]   = useState(false);
+  const [locating, setLocating] = useState(false);
+  const [tracking, setTracking] = useState(false);
   const [following, setFollowing] = useState(false);
-  const [fullscreen, setFullscreen] = useState(false);
   const [showCategoryMenu, setShowCategoryMenu] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedPin, setSelectedPin] = useState<Pin | null>(null);
@@ -97,28 +130,115 @@ export default function MapClient() {
     return localStorage.getItem("baja411-map-dark") === "1";
   });
 
-  const [formTitle, setFormTitle]             = useState("");
+  const [formTitle, setFormTitle] = useState("");
   const [formDescription, setFormDescription] = useState("");
-  const [formCategory, setFormCategory]       = useState("BOONDOCKING");
-  const [submitting, setSubmitting]           = useState(false);
-  const [submitError, setSubmitError]         = useState("");
+  const [formCategory, setFormCategory] = useState("BOONDOCKING");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const visiblePins = useMemo(() => {
-    return pins.filter((p) => visibleCategories.has(p.category) && pinMatchesSearch(p, search));
+    return pins.filter((pin) => visibleCategories.has(pin.category) && pinMatchesSearch(pin, search));
   }, [pins, search, visibleCategories]);
 
   useEffect(() => { followRef.current = following; }, [following]);
+  useEffect(() => { modeRef.current = mode; }, [mode]);
 
   useEffect(() => {
     fetch("/api/auth/session")
-      .then((r) => r.json())
-      .then((d) => setSession(d?.user ? d : null))
+      .then((res) => res.json())
+      .then((data) => setSession(data?.user ? data : null))
       .catch(() => setSession(null));
+
+    fetch("/api/pins")
+      .then((res) => res.json())
+      .then((data) => setPins(Array.isArray(data) ? data : []))
+      .catch(() => setPins([]));
   }, []);
 
   useEffect(() => {
-    fetch("/api/pins").then((r) => r.json()).then(setPins).catch(() => setPins([]));
+    if (!mapContainerRef.current || mapRef.current) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    delete (L.Icon.Default.prototype as any)._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+      iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+      shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+    });
+
+    const map = L.map(mapContainerRef.current, {
+      center: [23.5, -110.0],
+      zoom: 8,
+      zoomControl: false,
+      attributionControl: false,
+    });
+
+    const initialDark = localStorage.getItem("baja411-map-dark") === "1";
+    tileLayerRef.current = L.tileLayer(initialDark ? TILE_DARK : TILE_LIGHT, {
+      attribution: TILE_ATTR,
+      subdomains: "abcd",
+      maxZoom: 20,
+    }).addTo(map);
+
+    map.on("dragstart zoomstart", () => {
+      setFollowing(false);
+      if (snapBackTimerRef.current !== null) window.clearTimeout(snapBackTimerRef.current);
+      if (modeRef.current === "DRIVE") {
+        snapBackTimerRef.current = window.setTimeout(() => {
+          setFollowing(true);
+          const current = locationMarkerRef.current?.getLatLng();
+          if (current) map.setView(current, Math.max(map.getZoom(), 14), { animate: true });
+        }, 12000);
+      }
+    });
+
+    map.on("click", (event: L.LeafletMouseEvent) => {
+      if (!addModeRef.current) return;
+      tempMarkerRef.current?.remove();
+      tempMarkerRef.current = L.marker([event.latlng.lat, event.latlng.lng], { icon: TEMP_ICON }).addTo(map);
+      setPendingLatLng([event.latlng.lat, event.latlng.lng]);
+    });
+
+    mapRef.current = map;
+    startTracking();
+
+    return () => {
+      if (snapBackTimerRef.current !== null) window.clearTimeout(snapBackTimerRef.current);
+      if (watchIdRef.current !== null) navigator.geolocation.clearWatch(watchIdRef.current);
+      map.remove();
+      mapRef.current = null;
+    };
   }, []);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    localStorage.setItem("baja411-map-dark", dark ? "1" : "0");
+    tileLayerRef.current?.remove();
+    tileLayerRef.current = L.tileLayer(dark ? TILE_DARK : TILE_LIGHT, {
+      attribution: TILE_ATTR,
+      subdomains: "abcd",
+      maxZoom: 20,
+    }).addTo(map);
+  }, [dark]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    markersRef.current.forEach((marker) => marker.remove());
+    markersRef.current = [];
+
+    visiblePins.forEach((pin) => {
+      const marker = L.marker([pin.lat, pin.lng], { icon: createEmojiIcon(pin.category) });
+      marker.on("click", () => {
+        setSelectedPin(pin);
+        if (modeRef.current === "DRIVE") setMode("PLAN");
+        map.setView([pin.lat, pin.lng], Math.max(map.getZoom(), 13), { animate: true });
+      });
+      marker.addTo(map);
+      markersRef.current.push(marker);
+    });
+  }, [visiblePins]);
 
   useEffect(() => {
     const placing = showAddModal && !pendingLatLng;
@@ -128,96 +248,12 @@ export default function MapClient() {
       tempMarkerRef.current?.remove();
       tempMarkerRef.current = null;
       setPendingLatLng(null);
+      addModeRef.current = false;
     }
   }, [showAddModal, pendingLatLng]);
 
-  useEffect(() => {
-    if (!mapContainerRef.current || mapRef.current) return;
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    delete (L.Icon.Default.prototype as any)._getIconUrl;
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-      iconUrl:       "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-      shadowUrl:     "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-    });
-
-    const map = L.map(mapContainerRef.current, { center: [23.5, -110.0], zoom: 8, zoomControl: false });
-
-    const initialDark = localStorage.getItem("baja411-map-dark") === "1";
-    tileLayerRef.current = L.tileLayer(initialDark ? TILE_DARK : TILE_LIGHT, {
-      attribution: TILE_ATTR, subdomains: "abcd", maxZoom: 20,
-    }).addTo(map);
-
-    L.control.zoom({ position: "bottomright" }).addTo(map);
-
-    map.on("dragstart zoomstart", () => setFollowing(false));
-
-    map.on("click", (e: L.LeafletMouseEvent) => {
-      if (!addModeRef.current) return;
-      tempMarkerRef.current?.remove();
-      tempMarkerRef.current = L.marker([e.latlng.lat, e.latlng.lng], { icon: TEMP_ICON }).addTo(map);
-      setPendingLatLng([e.latlng.lat, e.latlng.lng]);
-    });
-
-    mapRef.current = map;
-    return () => { map.remove(); mapRef.current = null; };
-  }, []);
-
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-    localStorage.setItem("baja411-map-dark", dark ? "1" : "0");
-    tileLayerRef.current?.remove();
-    tileLayerRef.current = L.tileLayer(dark ? TILE_DARK : TILE_LIGHT, {
-      attribution: TILE_ATTR, subdomains: "abcd", maxZoom: 20,
-    }).addTo(map);
-  }, [dark]);
-
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-    markersRef.current.forEach((m) => m.remove());
-    markersRef.current = [];
-
-    visiblePins.forEach((pin) => {
-      const marker = L.marker([pin.lat, pin.lng], { icon: createEmojiIcon(pin.category) });
-      marker.on("click", () => {
-        setSelectedPin(pin);
-        map.setView([pin.lat, pin.lng], Math.max(map.getZoom(), 13), { animate: true });
-      });
-      marker.addTo(map);
-      markersRef.current.push(marker);
-    });
-  }, [visiblePins]);
-
-  useEffect(() => {
-    setTimeout(() => mapRef.current?.invalidateSize(), 150);
-  }, [fullscreen]);
-
-  const filteredCount = visiblePins.length;
-
-  function toggleCategory(cat: string) {
-    setVisibleCategories((prev) => {
-      const next = new Set(prev);
-      if (next.has(cat)) next.delete(cat); else next.add(cat);
-      return next;
-    });
-  }
-  function showAllCategories() { setVisibleCategories(new Set(CATEGORIES as unknown as string[])); }
-  function hideAllCategories() { setVisibleCategories(new Set()); }
-
-  function stopTracking() {
-    if (watchIdRef.current !== null) { navigator.geolocation.clearWatch(watchIdRef.current); watchIdRef.current = null; }
-    locationMarkerRef.current?.remove();
-    locationMarkerRef.current = null;
-    setTracking(false);
-    setFollowing(false);
-  }
-
-  function handleLocate() {
-    if (!navigator.geolocation) return;
-    if (tracking) { stopTracking(); return; }
+  function startTracking() {
+    if (!navigator.geolocation || watchIdRef.current !== null) return;
     setLocating(true);
     setFollowing(true);
 
@@ -226,193 +262,216 @@ export default function MapClient() {
         <div class="location-pulse-ring" style="position:absolute;inset:0;border-radius:50%;background:rgba(42,122,90,0.45)"></div>
         <div style="position:absolute;inset:3px;border-radius:50%;background:#2A7A5A;border:2.5px solid white;box-shadow:0 0 10px rgba(42,122,90,0.7)"></div>
       </div>`,
-      className: "", iconSize: [22, 22], iconAnchor: [11, 11],
+      className: "",
+      iconSize: [22, 22],
+      iconAnchor: [11, 11],
     });
 
     let firstFix = true;
     watchIdRef.current = navigator.geolocation.watchPosition(
-      (pos) => {
-        const { latitude: lat, longitude: lng } = pos.coords;
+      (position) => {
+        const { latitude, longitude } = position.coords;
         const map = mapRef.current;
         if (!map) return;
+
         if (!locationMarkerRef.current) {
-          locationMarkerRef.current = L.marker([lat, lng], { icon: dot })
-            .bindPopup("<div style='font-size:0.8rem;font-weight:600'>You are here</div>")
-            .addTo(map);
+          locationMarkerRef.current = L.marker([latitude, longitude], { icon: dot }).addTo(map);
         } else {
-          locationMarkerRef.current.setLatLng([lat, lng]);
+          locationMarkerRef.current.setLatLng([latitude, longitude]);
         }
-        if (firstFix || followRef.current) { map.setView([lat, lng], firstFix ? 14 : map.getZoom(), { animate: true }); firstFix = false; }
+
+        if (firstFix || followRef.current) {
+          map.setView([latitude, longitude], firstFix ? 14 : map.getZoom(), { animate: true });
+          firstFix = false;
+        }
+
         setLocating(false);
         setTracking(true);
       },
-      () => { setLocating(false); stopTracking(); },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
+      () => {
+        setLocating(false);
+        setTracking(false);
+        setFollowing(false);
+      },
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 5000 }
     );
   }
 
-  function handleFollowToggle() {
-    if (!tracking) { handleLocate(); return; }
-    setFollowing((v) => !v);
+  function recenter() {
+    if (!tracking) {
+      startTracking();
+      return;
+    }
+    const current = locationMarkerRef.current?.getLatLng();
+    if (!current || !mapRef.current) return;
+    setFollowing(true);
+    mapRef.current.setView(current, Math.max(mapRef.current.getZoom(), 14), { animate: true });
   }
 
-  function handleFullscreen() { setFullscreen((v) => !v); }
+  function switchToDrive() {
+    setMode("DRIVE");
+    setShowCategoryMenu(false);
+    setSelectedPin(null);
+    setSearch("");
+    recenter();
+  }
+
+  function switchToPlan() {
+    setMode("PLAN");
+    setFollowing(false);
+  }
+
+  function toggleCategory(category: string) {
+    setVisibleCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(category)) next.delete(category);
+      else next.add(category);
+      return next;
+    });
+  }
 
   function handleAddPinClick() {
-    if (!session?.user) { window.location.href = "/signin"; return; }
-    setFormTitle(""); setFormDescription(""); setFormCategory("BOONDOCKING");
-    setSubmitError(""); setPendingLatLng(null); setShowAddModal(true);
+    if (!session?.user) {
+      window.location.href = "/signin";
+      return;
+    }
+    setMode("PLAN");
+    setFormTitle("");
+    setFormDescription("");
+    setFormCategory("BOONDOCKING");
+    setSubmitError("");
+    setPendingLatLng(null);
+    setShowAddModal(true);
   }
 
-  async function handleSubmitPin(e: React.FormEvent) {
-    e.preventDefault();
-    if (!pendingLatLng) { setSubmitError("Tap the map to set a location first."); return; }
-    setSubmitting(true); setSubmitError("");
+  async function handleSubmitPin(event: React.FormEvent) {
+    event.preventDefault();
+    if (!pendingLatLng) {
+      setSubmitError("Tap the map to set a location first.");
+      return;
+    }
+
+    setSubmitting(true);
+    setSubmitError("");
     try {
       const res = await fetch("/api/pins", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: formTitle, description: formDescription || null, lat: pendingLatLng[0], lng: pendingLatLng[1], category: formCategory }),
+        body: JSON.stringify({
+          title: formTitle,
+          description: formDescription || null,
+          lat: pendingLatLng[0],
+          lng: pendingLatLng[1],
+          category: formCategory,
+        }),
       });
-      if (res.status === 401) { window.location.href = "/signin"; return; }
-      if (!res.ok) { const d = await res.json(); setSubmitError(d.error ?? "Something went wrong."); return; }
+
+      if (res.status === 401) {
+        window.location.href = "/signin";
+        return;
+      }
+
+      if (!res.ok) {
+        const data = await res.json();
+        setSubmitError(data.error ?? "Something went wrong.");
+        return;
+      }
+
       setShowAddModal(false);
-      fetch("/api/pins").then((r) => r.json()).then(setPins).catch(() => {});
-    } catch { setSubmitError("Network error. Please try again."); }
-    finally { setSubmitting(false); }
+      fetch("/api/pins").then((r) => r.json()).then((data) => setPins(Array.isArray(data) ? data : [])).catch(() => {});
+    } catch {
+      setSubmitError("Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
-  const glass       = glassStyle(dark);
   const textPrimary = dark ? "text-white/90" : "text-foreground";
-  const textMuted   = dark ? "text-white/40" : "text-muted";
-  const btnBase     = dark
-    ? "bg-white/10 border-white/10 text-white/80 hover:bg-white/15"
-    : "bg-black/5 border-black/8 text-foreground/70 hover:bg-black/10";
-  const btnActive   = "bg-jade text-white border-jade hover:bg-jade-light";
-  const toolBtn     = "flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold border transition-colors shadow-sm whitespace-nowrap";
-
-  const categoryPanel = showCategoryMenu && (
-    <div className="flex-shrink-0 border-b p-3" style={glass}>
-      <div className="flex items-center justify-between mb-2.5">
-        <span className={`text-[10px] font-bold uppercase tracking-widest ${textMuted}`}>Pin Types</span>
-        <div className="flex gap-3">
-          <button onClick={showAllCategories} className="text-xs font-semibold text-jade hover:underline">Show All</button>
-          <button onClick={hideAllCategories} className={`text-xs font-semibold ${textMuted} hover:underline`}>Hide All</button>
-        </div>
-      </div>
-      <div className="flex flex-wrap gap-1.5">
-        {(CATEGORIES as unknown as string[]).map((cat) => {
-          const on = visibleCategories.has(cat);
-          return (
-            <button key={cat} onClick={() => toggleCategory(cat)}
-              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all ${
-                on ? "bg-jade text-white border-jade"
-                   : dark ? "bg-white/5 border-white/8 text-white/35"
-                           : "bg-black/4 border-black/6 text-foreground/35"
-              }`}>
-              {CATEGORY_EMOJI[cat]} {CATEGORY_LABELS[cat]}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-
-  const searchBox = (
-    <div className="flex-shrink-0 px-3 py-2 border-b" style={glass}>
-      <div className="flex items-center gap-2">
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search water, mechanics, beaches..."
-          className={`w-full rounded-full px-4 py-2 text-sm outline-none border ${dark ? "bg-white/8 border-white/10 text-white placeholder-white/35" : "bg-white border-border text-foreground placeholder-muted/70"}`}
-        />
-        {search && (
-          <button onClick={() => setSearch("")} className={`${toolBtn} ${btnBase}`}>Clear</button>
-        )}
-      </div>
-    </div>
-  );
+  const textMuted = dark ? "text-white/50" : "text-muted";
+  const floating = "rounded-full border shadow-lg";
+  const panel = panelStyle(dark);
 
   return (
     <>
-      <div
-        ref={outerRef}
-        className={`flex flex-col ${fullscreen ? "fixed inset-0 z-[99999]" : "h-full"} ${dark ? "bg-[#060d18]" : "bg-sand"}`}
-        style={fullscreen ? { paddingTop: "var(--nav-height)" } : undefined}
-      >
-        {!fullscreen && (
-          <div className="flex items-center gap-2 px-3 py-2.5 border-b flex-shrink-0" style={glass}>
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <button onClick={handleAddPinClick} className={`${toolBtn} bg-jade text-white border-jade hover:bg-jade-light`}>+ Add Pin</button>
-              <button onClick={handleLocate} disabled={locating} className={`${toolBtn} disabled:opacity-50 ${tracking ? btnActive : btnBase}`}>
-                {locating ? "⏳" : "📍"} {locating ? "Locating…" : tracking ? "Stop GPS" : "Find Me"}
-              </button>
-              <button onClick={handleFollowToggle} className={`${toolBtn} ${following ? btnActive : btnBase}`}>
-                🎯 {following ? "Following" : "Follow"}
-              </button>
-              <button onClick={handleFullscreen} className={`${toolBtn} ${btnBase}`}>⛶ Full Screen</button>
-              <button onClick={() => setDark((d) => !d)} className={`${toolBtn} ${btnBase}`}>{dark ? "☀️" : "🌙"}</button>
-              <button onClick={() => setShowCategoryMenu((v) => !v)} className={`${toolBtn} ${showCategoryMenu ? btnActive : btnBase}`}>☰ Layers</button>
+      <div className={`relative h-full w-full ${dark ? "bg-[#060d18]" : "bg-sand"}`}>
+        <div ref={mapContainerRef} className="absolute inset-0" />
+
+        <div className="absolute left-3 right-3 top-3 z-[1000] flex items-center gap-2">
+          {mode === "DRIVE" ? (
+            <div className={`flex items-center gap-2 px-3 py-2 ${floating} ${dark ? "text-white" : "text-foreground"}`} style={panel}>
+              <span className="text-xs font-extrabold">Drive</span>
+              <span className={`text-[10px] ${textMuted}`}>{locating ? "Finding GPS" : following ? "Tracking" : tracking ? "Paused" : "No GPS"}</span>
             </div>
-            <span className={`ml-auto text-[10px] font-semibold whitespace-nowrap ${textMuted}`}>{filteredCount} {filteredCount === 1 ? "pin" : "pins"}</span>
-          </div>
-        )}
+          ) : (
+            <div className={`flex-1 flex items-center gap-2 px-3 py-2 ${floating}`} style={panel}>
+              <span className="text-sm">🔎</span>
+              <input
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Search Baja411"
+                className={`w-full bg-transparent text-sm outline-none ${dark ? "text-white placeholder-white/40" : "text-foreground placeholder-muted"}`}
+              />
+              {search && <button onClick={() => setSearch("")} className={`text-xs font-bold ${textMuted}`}>Clear</button>}
+            </div>
+          )}
 
-        {!fullscreen && searchBox}
-        {!fullscreen && categoryPanel}
-
-        <div className="flex-1 min-h-0 relative">
-          <div ref={mapContainerRef} style={{ height: "100%", width: "100%" }} />
+          <button onClick={mode === "DRIVE" ? switchToPlan : switchToDrive} className={`px-4 py-2 text-xs font-extrabold ${floating} ${dark ? "text-white" : "text-foreground"}`} style={panel}>
+            {mode === "DRIVE" ? "Plan" : "Drive"}
+          </button>
         </div>
 
-        {fullscreen && searchBox}
-        {fullscreen && categoryPanel}
+        <div className="absolute right-3 bottom-20 z-[1000] flex flex-col gap-2">
+          {mode === "PLAN" && (
+            <button onClick={() => setShowCategoryMenu((v) => !v)} className={`w-11 h-11 text-lg ${floating}`} style={panel} aria-label="Layers">☰</button>
+          )}
+          {mode === "PLAN" && (
+            <button onClick={handleAddPinClick} className="w-11 h-11 rounded-full border shadow-lg bg-jade text-white text-2xl font-light" aria-label="Add pin">+</button>
+          )}
+          <button onClick={recenter} className={`w-11 h-11 text-lg ${floating} ${following ? "text-jade" : ""}`} style={panel} aria-label="Recenter">◎</button>
+        </div>
 
-        {fullscreen && (
-          <div className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2.5 border-t overflow-x-auto" style={glass}>
-            <button onClick={() => setShowCategoryMenu((v) => !v)} className={`${toolBtn} ${showCategoryMenu ? btnActive : btnBase}`}>☰ <span className={`text-[10px] ml-0.5 ${showCategoryMenu ? "text-white/80" : textMuted}`}>{visibleCategories.size}/{CATEGORIES.length}</span></button>
-            <button onClick={handleAddPinClick} className={`${toolBtn} bg-jade text-white border-jade hover:bg-jade-light`}>+ Add Pin</button>
-            <button onClick={handleLocate} disabled={locating} className={`${toolBtn} disabled:opacity-50 ${tracking ? btnActive : btnBase}`}>{locating ? "⏳" : "📍"} {locating ? "…" : tracking ? "Stop" : "Find"}</button>
-            <button onClick={handleFollowToggle} className={`${toolBtn} ${following ? btnActive : btnBase}`}>🎯 {following ? "On" : "Follow"}</button>
-            <button onClick={() => setDark((d) => !d)} className={`${toolBtn} ${btnBase}`}>{dark ? "☀️" : "🌙"}</button>
-            <button onClick={handleFullscreen} className={`${toolBtn} ${btnBase} ml-auto`}>⛶ Exit</button>
-          </div>
-        )}
-
-        {!fullscreen && (
-          <div className="flex-shrink-0 border-t overflow-x-auto" style={glass}>
-            <div className="flex gap-1.5 px-3 py-2 w-max">
-              {(CATEGORIES as unknown as string[]).map((cat) => {
-                const on = visibleCategories.has(cat);
+        {mode === "PLAN" && showCategoryMenu && (
+          <div className="absolute left-3 right-3 bottom-4 z-[1000] rounded-2xl border shadow-xl p-3" style={panel}>
+            <div className="flex items-center justify-between mb-3">
+              <p className={`text-xs font-extrabold ${textPrimary}`}>Show pins</p>
+              <div className="flex gap-3">
+                <button onClick={() => setVisibleCategories(new Set(CATEGORIES as unknown as string[]))} className="text-xs font-bold text-jade">All</button>
+                <button onClick={() => setVisibleCategories(new Set())} className={`text-xs font-bold ${textMuted}`}>None</button>
+                <button onClick={() => setDark((v) => !v)} className={`text-xs font-bold ${textMuted}`}>{dark ? "Light" : "Dark"}</button>
+              </div>
+            </div>
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {(CATEGORIES as unknown as string[]).map((category) => {
+                const on = visibleCategories.has(category);
                 return (
-                  <button key={cat} onClick={() => toggleCategory(cat)} className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors whitespace-nowrap border ${on ? "bg-jade text-white border-jade" : dark ? "bg-white/8 border-white/10 text-white/35" : "bg-white/60 border-black/8 text-foreground/35"}`}>
-                    {CATEGORY_EMOJI[cat]} {CATEGORY_LABELS[cat]}
+                  <button key={category} onClick={() => toggleCategory(category)} className={`px-3 py-2 rounded-full border text-xs font-bold whitespace-nowrap ${on ? "bg-jade text-white border-jade" : dark ? "bg-white/10 border-white/10 text-white/45" : "bg-white border-black/10 text-muted"}`}>
+                    {CATEGORY_EMOJI[category]} {CATEGORY_LABELS[category]}
                   </button>
                 );
               })}
             </div>
           </div>
         )}
+
+        {mode === "PLAN" && search && (
+          <div className={`absolute left-4 bottom-20 z-[1000] px-3 py-2 rounded-full text-xs font-bold border shadow-lg ${textPrimary}`} style={panel}>
+            {visiblePins.length} result{visiblePins.length === 1 ? "" : "s"}
+          </div>
+        )}
       </div>
 
       {selectedPin && (
-        <div className="fixed inset-x-0 bottom-0 z-[200000] px-3 pb-3 sm:px-5 sm:pb-5 pointer-events-none">
-          <div className="pointer-events-auto max-w-xl mx-auto rounded-2xl border shadow-2xl p-5" style={glassStyle(dark)}>
+        <div className="fixed inset-x-0 bottom-0 z-[200000] px-3 pb-3 pointer-events-none">
+          <div className="pointer-events-auto max-w-md mx-auto rounded-2xl border shadow-2xl p-4" style={panelStyle(dark)}>
             <div className="flex items-start gap-3">
               <span className="text-2xl">{CATEGORY_EMOJI[selectedPin.category] ?? "📍"}</span>
               <div className="min-w-0 flex-1">
                 <p className={`text-[10px] font-bold uppercase tracking-widest ${textMuted}`}>{CATEGORY_LABELS[selectedPin.category] ?? selectedPin.category}</p>
-                <h2 className={`font-extrabold text-lg leading-tight ${textPrimary}`}>{selectedPin.title}</h2>
-                {selectedPin.description && <p className={`text-sm mt-2 leading-relaxed ${textMuted}`}>{selectedPin.description}</p>}
-                <div className={`text-xs mt-3 flex flex-wrap gap-3 ${textMuted}`}>
-                  <span>📍 {selectedPin.lat.toFixed(4)}, {selectedPin.lng.toFixed(4)}</span>
-                  <span>👤 {selectedPin.author?.name ?? "Community"}</span>
-                  <span>✅ Approved</span>
-                </div>
-                <div className="flex gap-2 mt-4">
-                  <a href={`https://www.google.com/maps/dir/?api=1&destination=${selectedPin.lat},${selectedPin.lng}`} target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-full bg-jade text-white text-xs font-bold hover:bg-jade-light transition-colors">Directions</a>
-                  <button onClick={() => setSelectedPin(null)} className={`px-4 py-2 rounded-full text-xs font-bold border ${btnBase}`}>Close</button>
+                <h2 className={`font-extrabold text-base leading-tight ${textPrimary}`}>{selectedPin.title}</h2>
+                {selectedPin.description && <p className={`text-sm mt-1 leading-relaxed ${textMuted}`}>{selectedPin.description}</p>}
+                <div className="flex gap-2 mt-3">
+                  <a href={`https://www.google.com/maps/dir/?api=1&destination=${selectedPin.lat},${selectedPin.lng}`} target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-full bg-jade text-white text-xs font-bold">Directions</a>
+                  <button onClick={() => setSelectedPin(null)} className={`px-4 py-2 rounded-full text-xs font-bold border ${dark ? "border-white/10 text-white/70" : "border-black/10 text-muted"}`}>Close</button>
                 </div>
               </div>
               <button onClick={() => setSelectedPin(null)} className={`text-xl leading-none ${textMuted}`}>×</button>
@@ -422,46 +481,31 @@ export default function MapClient() {
       )}
 
       {showAddModal && !pendingLatLng && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[200000] flex items-center gap-3 rounded-2xl shadow-2xl px-5 py-3.5 border" style={glassStyle(dark)}>
+        <div className="fixed bottom-20 left-1/2 z-[200000] flex -translate-x-1/2 items-center gap-3 rounded-2xl border px-5 py-3 shadow-2xl" style={panelStyle(dark)}>
           <span className="text-xl">📌</span>
-          <span className={`text-sm font-semibold ${dark ? "text-white/90" : "text-foreground"}`}>Tap the map to place your pin</span>
-          <button onClick={() => setShowAddModal(false)} className={`ml-2 text-xl leading-none ${dark ? "text-white/40" : "text-muted"}`}>×</button>
+          <span className={`text-sm font-semibold ${textPrimary}`}>Tap the map</span>
+          <button onClick={() => setShowAddModal(false)} className={`text-xl leading-none ${textMuted}`}>×</button>
         </div>
       )}
 
       {showAddModal && pendingLatLng && (
-        <div className="fixed inset-0 z-[200000] flex items-end sm:items-center justify-center sm:p-4" style={{ background: "rgba(6,13,24,0.65)" }} onClick={(e) => { if (e.target === e.currentTarget) setShowAddModal(false); }}>
-          <div className="rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-md p-6 max-h-[90vh] overflow-y-auto border" style={glassStyle(dark)}>
+        <div className="fixed inset-0 z-[200000] flex items-end sm:items-center justify-center sm:p-4" style={{ background: "rgba(6,13,24,0.65)" }} onClick={(event) => { if (event.target === event.currentTarget) setShowAddModal(false); }}>
+          <div className="w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl border p-6 shadow-2xl max-h-[90vh] overflow-y-auto" style={panelStyle(dark)}>
             <div className="flex items-center justify-between mb-5">
-              <h2 className={`font-bold text-lg ${textPrimary}`}>Add a Pin</h2>
+              <h2 className={`font-bold text-lg ${textPrimary}`}>Add pin</h2>
               <button onClick={() => setShowAddModal(false)} className={`text-xl leading-none ${textMuted}`}>×</button>
             </div>
-            <div className="rounded-xl px-4 py-3 mb-5 text-sm flex items-center gap-2.5 bg-jade/15 text-jade">
-              <span>✅</span>
-              <span>Location set: <strong>{pendingLatLng[0].toFixed(4)}, {pendingLatLng[1].toFixed(4)}</strong></span>
-              <button type="button" onClick={() => setPendingLatLng(null)} className="ml-auto text-xs underline opacity-70">Change</button>
-            </div>
             <form onSubmit={handleSubmitPin} className="space-y-4">
-              <div>
-                <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${textMuted}`}>Title <span className="text-sunset">*</span></label>
-                <input type="text" value={formTitle} onChange={(e) => setFormTitle(e.target.value)} required placeholder="e.g. Playa Balandra" className={`w-full px-4 py-2.5 rounded-xl border text-sm focus:outline-none transition-colors ${dark ? "bg-white/8 border-white/10 text-white placeholder-white/25 focus:border-jade/60" : "bg-white border-border text-foreground focus:border-jade/60"}`} />
-              </div>
-              <div>
-                <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${textMuted}`}>Description</label>
-                <textarea value={formDescription} onChange={(e) => setFormDescription(e.target.value)} placeholder="What should people know?" rows={3} className={`w-full px-4 py-2.5 rounded-xl border text-sm focus:outline-none transition-colors resize-none ${dark ? "bg-white/8 border-white/10 text-white placeholder-white/25 focus:border-jade/60" : "bg-white border-border text-foreground focus:border-jade/60"}`} />
-              </div>
-              <div>
-                <label className={`block text-xs font-semibold mb-1.5 uppercase tracking-wide ${textMuted}`}>Category <span className="text-sunset">*</span></label>
-                <select value={formCategory} onChange={(e) => setFormCategory(e.target.value)} className={`w-full px-4 py-2.5 rounded-xl border text-sm focus:outline-none transition-colors ${dark ? "bg-[#0f1824] border-white/10 text-white focus:border-jade/60" : "bg-white border-border text-foreground focus:border-jade/60"}`}>
-                  {(CATEGORIES as unknown as string[]).map((cat) => <option key={cat} value={cat}>{CATEGORY_EMOJI[cat]} {CATEGORY_LABELS[cat]}</option>)}
-                </select>
-              </div>
+              <input type="text" value={formTitle} onChange={(event) => setFormTitle(event.target.value)} required placeholder="Name this spot" className={`w-full px-4 py-3 rounded-xl border text-sm outline-none ${dark ? "bg-white/10 border-white/10 text-white placeholder-white/30" : "bg-white border-black/10 text-foreground"}`} />
+              <textarea value={formDescription} onChange={(event) => setFormDescription(event.target.value)} placeholder="Useful details" rows={3} className={`w-full px-4 py-3 rounded-xl border text-sm outline-none resize-none ${dark ? "bg-white/10 border-white/10 text-white placeholder-white/30" : "bg-white border-black/10 text-foreground"}`} />
+              <select value={formCategory} onChange={(event) => setFormCategory(event.target.value)} className={`w-full px-4 py-3 rounded-xl border text-sm outline-none ${dark ? "bg-[#0f1824] border-white/10 text-white" : "bg-white border-black/10 text-foreground"}`}>
+                {(CATEGORIES as unknown as string[]).map((category) => <option key={category} value={category}>{CATEGORY_EMOJI[category]} {CATEGORY_LABELS[category]}</option>)}
+              </select>
               {submitError && <p className="text-xs text-red-400 bg-red-500/10 rounded-lg px-3 py-2">{submitError}</p>}
-              <div className="flex gap-3 pt-1">
-                <button type="button" onClick={() => setShowAddModal(false)} className={`flex-1 px-4 py-2.5 rounded-xl border text-sm font-semibold transition-colors ${dark ? "border-white/10 text-white/60 hover:text-white" : "border-border text-muted hover:text-foreground"}`}>Cancel</button>
-                <button type="submit" disabled={submitting} className="flex-1 px-4 py-2.5 rounded-xl bg-jade text-white text-sm font-semibold hover:bg-jade-light transition-colors disabled:opacity-50">{submitting ? "Submitting…" : "Submit Pin"}</button>
-              </div>
-              <p className={`text-xs text-center ${textMuted}`}>Pins are reviewed before appearing on the map.</p>
+              <button type="submit" disabled={submitting} className="w-full px-4 py-3 rounded-xl bg-jade text-white text-sm font-bold disabled:opacity-50">
+                {submitting ? "Submitting" : "Submit pin"}
+              </button>
+              <p className={`text-xs text-center ${textMuted}`}>Pins are reviewed before appearing.</p>
             </form>
           </div>
         </div>
