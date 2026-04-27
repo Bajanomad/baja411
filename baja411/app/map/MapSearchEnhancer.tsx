@@ -173,22 +173,22 @@ function ensureCompassControl() {
   let button = document.getElementById(COMPASS_BUTTON_ID) as HTMLButtonElement | null;
 
   if (!button) {
-    button = document.createElement("button");
-    button.id = COMPASS_BUTTON_ID;
-    button.type = "button";
-    button.title = "Compass";
-    button.setAttribute("aria-label", "Enable drive compass");
-    button.innerHTML = "<span style='display:block;transform-origin:center;'>🧭</span>";
-    styleCompassButton(button);
+    const compassButton = document.createElement("button");
+    compassButton.id = COMPASS_BUTTON_ID;
+    compassButton.type = "button";
+    compassButton.title = "Compass";
+    compassButton.setAttribute("aria-label", "Enable drive compass");
+    compassButton.innerHTML = "<span style='display:block;transform-origin:center;'>🧭</span>";
+    styleCompassButton(compassButton);
 
-    button.addEventListener("click", async () => {
+    compassButton.addEventListener("click", async () => {
       const OrientationEvent = window.DeviceOrientationEvent as DeviceOrientationEventWithPermission | undefined;
       driveCompassActive = true;
       localStorage.setItem(COMPASS_ACTIVE_KEY, "1");
-      button?.classList.add("map-compass-active");
-      button.style.background = "rgba(42, 122, 90, 0.96)";
+      compassButton.classList.add("map-compass-active");
+      compassButton.style.background = "rgba(42, 122, 90, 0.96)";
 
-      const needle = button.firstElementChild as HTMLElement | null;
+      const needle = compassButton.firstElementChild as HTMLElement | null;
       if (needle) needle.style.filter = "brightness(0) invert(1)";
 
       if (OrientationEvent && typeof OrientationEvent.requestPermission === "function") {
@@ -207,7 +207,8 @@ function ensureCompassControl() {
 
     window.addEventListener("deviceorientationabsolute", updateCompassAndMap, true);
     window.addEventListener("deviceorientation", updateCompassAndMap, true);
-    document.querySelector(".relative.h-full.w-full.overflow-hidden")?.appendChild(button);
+    document.querySelector(".relative.h-full.w-full.overflow-hidden")?.appendChild(compassButton);
+    button = compassButton;
   }
 
   const driveVisible = isDriveModeVisible();
