@@ -1,20 +1,21 @@
 import { NextResponse } from "next/server";
+import { PinCategory } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 export const revalidate = 60;
 
-const PIN_CATEGORIES = new Set([
-  "BOONDOCKING",
-  "BEACH",
-  "WATER_FILL",
-  "DUMP_STATION",
-  "MECHANIC",
-  "FUEL",
-  "TRAILHEAD",
-  "FISHING",
-  "MARKET",
-  "OTHER",
+const PIN_CATEGORIES = new Set<PinCategory>([
+  PinCategory.BOONDOCKING,
+  PinCategory.BEACH,
+  PinCategory.WATER_FILL,
+  PinCategory.DUMP_STATION,
+  PinCategory.MECHANIC,
+  PinCategory.FUEL,
+  PinCategory.TRAILHEAD,
+  PinCategory.FISHING,
+  PinCategory.MARKET,
+  PinCategory.OTHER,
 ]);
 
 function isFiniteNumber(value: unknown): value is number {
@@ -30,6 +31,10 @@ function parseCoordinate(value: unknown) {
 function cleanText(value: unknown, maxLength: number) {
   if (typeof value !== "string") return "";
   return value.trim().slice(0, maxLength);
+}
+
+function isPinCategory(value: unknown): value is PinCategory {
+  return typeof value === "string" && PIN_CATEGORIES.has(value as PinCategory);
 }
 
 export async function GET() {
@@ -83,7 +88,7 @@ export async function POST(req: Request) {
   const description = cleanText(data.description, 800);
   const lat = parseCoordinate(data.lat);
   const lng = parseCoordinate(data.lng);
-  const category = typeof data.category === "string" ? data.category : "";
+  const category = data.category;
 
   if (!title) {
     return NextResponse.json({ error: "Title is required" }, { status: 400 });
@@ -97,7 +102,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Longitude is invalid" }, { status: 400 });
   }
 
-  if (!PIN_CATEGORIES.has(category)) {
+  if (!isPinCategory(category)) {
     return NextResponse.json({ error: "Category is invalid" }, { status: 400 });
   }
 
