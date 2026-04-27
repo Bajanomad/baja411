@@ -462,6 +462,39 @@ export default function MapClientMapLibre() {
   }, [visiblePins]);
 
   useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const next: [number, number] = [location.lon, location.lat];
+    const hasGpsCenter = location.source === "gps";
+    if (hasGpsCenter) latestLocationRef.current = next;
+
+    if (!locationMarkerRef.current) {
+      locationMarkerRef.current = new maplibregl.Marker({
+        element: createLocationMarkerElement(),
+        anchor: "center",
+      })
+        .setLngLat(next)
+        .addTo(map);
+    } else {
+      locationMarkerRef.current.setLngLat(next);
+    }
+
+    if (modeRef.current !== "DRIVE") return;
+
+    const shouldRecenter = followRef.current || (hasGpsCenter && !tracking);
+    if (!shouldRecenter) return;
+
+    map.easeTo({
+      center: next,
+      zoom: hasGpsCenter ? 14 : 13,
+      bearing: headingRef.current ?? map.getBearing(),
+      duration: 650,
+      essential: true,
+    });
+  }, [location.lat, location.lon, location.source, tracking]);
+
+  useEffect(() => {
     const placing = showAddModal && !pendingLatLng;
     addModeRef.current = placing;
     const map = mapRef.current;
@@ -485,7 +518,7 @@ export default function MapClientMapLibre() {
   function startTracking() {
     if (!navigator.geolocation || watchIdRef.current !== null) return;
     setLocating(true);
-    setFollowing(true);
+    setFollowing(location.source === "gps" || latestLocationRef.current !== null);
 
     let firstFix = true;
     watchIdRef.current = navigator.geolocation.watchPosition(
@@ -521,6 +554,7 @@ export default function MapClientMapLibre() {
 
         setLocating(false);
         setTracking(true);
+        setFollowing(true);
       },
       () => {
         setLocating(false);
@@ -536,15 +570,17 @@ export default function MapClientMapLibre() {
       startTracking();
     }
 
-    const current = latestLocationRef.current ?? [location.lon, location.lat];
+    const gpsCenter = latestLocationRef.current;
+    const current: [number, number] = gpsCenter ?? [location.lon, location.lat];
+    const hasGpsCenter = gpsCenter !== null || location.source === "gps";
     const map = mapRef.current;
-    if (!current || !map) return;
+    if (!map) return;
 
     safeClearTimeout(snapBackTimerRef);
-    setFollowing(true);
+    setFollowing(hasGpsCenter);
     map.easeTo({
       center: current,
-      zoom: Math.max(map.getZoom(), 14),
+      zoom: hasGpsCenter ? 14 : 13,
       bearing: modeRef.current === "DRIVE" ? headingRef.current ?? map.getBearing() : map.getBearing(),
       duration: 650,
       essential: true,
