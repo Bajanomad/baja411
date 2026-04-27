@@ -8,6 +8,7 @@ const TOWN_SUGGESTIONS = [
   "El Pescadero",
   "Cerritos",
   "Cabo San Lucas",
+  "San Jose del Cabo",
   "San José del Cabo",
   "Loreto",
   "Los Barriles",
