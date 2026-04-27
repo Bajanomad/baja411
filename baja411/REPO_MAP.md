@@ -2,7 +2,7 @@
 
 This file is the first-stop context file for future AI/code sessions. Read this before making changes.
 
-## Important root detail
+## Root rule
 
 The GitHub repository is `Bajanomad/baja411`, but the actual Next.js app is nested inside:
 
@@ -10,15 +10,32 @@ The GitHub repository is `Bajanomad/baja411`, but the actual Next.js app is nest
 baja411/
 ```
 
-Do not look for `app/page.tsx` at the repository root. The working app paths begin under `baja411/`.
+Do not look for `app/page.tsx` at the repository root. App paths begin under `baja411/`.
 
-## Verified app stack
+## Product rule
+
+Think in this order before changing anything:
+
+1. User need first
+2. CEO/business strategy second
+3. Engineering execution third
+
+Current product direction:
+
+```txt
+GPS first when available.
+Todos Santos fallback when GPS is denied, unavailable, or not yet granted.
+Keep users inside Baja 411 whenever possible.
+External links are attribution/source fallback, not the primary UX.
+```
+
+## Verified stack
 
 From `baja411/package.json`:
 
 - Next.js 16.2.4
 - React 19.2.4
-- TypeScript
+- TypeScript strict mode
 - Tailwind CSS 4
 - Prisma 7.8.0
 - PostgreSQL adapter
@@ -46,78 +63,99 @@ From `baja411/tsconfig.json`:
 }
 ```
 
-This means imports resolve from the nested `baja411/` folder.
+Imports resolve from the nested `baja411/` folder.
 
-Examples:
+Example:
 
 ```ts
 import Nav from "@/components/Nav";
-import { db } from "@/lib/db";
 ```
 
-## Verified hierarchy
+means:
 
-This is the verified working structure discovered through GitHub fetches and direct file reads:
+```txt
+baja411/components/Nav.tsx
+```
+
+## Current architecture map
 
 ```txt
 Bajanomad/baja411
 └── baja411/
     ├── app/
     │   ├── admin/
-    │   │   └── page.tsx
     │   ├── api/
-    │   │   └── admin/
-    │   │       └── emails/
+    │   │   ├── satellite/route.ts
+    │   │   └── weather/storm-status/route.ts
+    │   ├── businesses/
     │   ├── map/
-    │   │   └── page.tsx
-    │   ├── weather/
-    │   │   └── page.tsx
+    │   │   ├── page.tsx
+    │   │   ├── MapLoader.tsx
+    │   │   └── MapSearchEnhancer.tsx
+    │   ├── weather/page.tsx
     │   ├── layout.tsx
     │   ├── page.tsx
     │   └── globals.css
     ├── components/
+    │   ├── LocationProvider.tsx
+    │   ├── MapClientMapLibre.tsx
+    │   ├── BusinessDirectoryClient.tsx
+    │   ├── HomeWeatherStrip.tsx
     │   ├── Nav.tsx
+    │   ├── Footer.tsx
     │   ├── ConditionalFooter.tsx
+    │   ├── PageHero.tsx
     │   ├── HeroCanvas.tsx
     │   ├── HeroWaves.tsx
     │   ├── WaveDivider.tsx
-    │   ├── ScrollReveal.tsx
-    │   ├── HomeWeatherStrip.tsx
-    │   └── PageHero.tsx
+    │   └── ScrollReveal.tsx
+    ├── data/
     ├── lib/
-    │   ├── auth.ts
-    │   └── db.ts
     ├── prisma/
-    │   └── schema.prisma
     ├── vendor/
     ├── package.json
     ├── next.config.ts
     └── tsconfig.json
 ```
 
-There may be additional files and nested routes. Verify before editing.
+Verify exact files before editing. GitHub connector fetches can truncate large files.
 
-## Current page/routing notes
-
-### Home
+## Global location system
 
 Path:
 
 ```txt
-baja411/app/page.tsx
+baja411/components/LocationProvider.tsx
 ```
 
-Current homepage uses:
+`LocationProvider` wraps the whole app in `app/layout.tsx`.
 
-- `HeroCanvas`
-- `HeroWaves`
-- `WaveDivider`
-- `ScrollReveal`
-- `HomeWeatherStrip`
+It exposes:
 
-It includes the main hero, Open Map button, Weather button, Drive Mode section, and Plan Mode section.
+```ts
+useBajaLocation()
+```
 
-### Layout
+Behavior:
+
+```txt
+Default location: Todos Santos
+If stored GPS exists: load from localStorage
+If browser permission is granted: refresh GPS
+If user taps Use GPS: request current position
+If GPS fails: keep fallback
+```
+
+Todos Santos fallback:
+
+```txt
+lat: 23.4464
+lon: -110.2249
+```
+
+Known issue: stored GPS can be stale until refreshed. Later add freshness logic if needed.
+
+## Layout
 
 Path:
 
@@ -125,15 +163,42 @@ Path:
 baja411/app/layout.tsx
 ```
 
-The root layout:
+Layout:
 
-- Imports `./globals.css`
-- Uses `Plus_Jakarta_Sans`
-- Mounts `Nav`
-- Wraps pages in `<main className="flex-1">`
-- Mounts `ConditionalFooter`
+```tsx
+<LocationProvider>
+  <Nav />
+  <main className="flex-1">{children}</main>
+  <ConditionalFooter />
+</LocationProvider>
+```
 
-### Nav
+## Home page
+
+Path:
+
+```txt
+baja411/app/page.tsx
+```
+
+Homepage is separate from internal `PageHero`. It uses:
+
+- `HeroCanvas`
+- `HeroWaves`
+- `WaveDivider`
+- `ScrollReveal`
+- `HomeWeatherStrip`
+
+Current primary CTAs:
+
+```txt
+Open Map
+Weather
+```
+
+Known issue: `HomeWeatherStrip` was hardcoded to Todos Santos coordinates and should use `LocationProvider`.
+
+## Navigation
 
 Path:
 
@@ -141,122 +206,264 @@ Path:
 baja411/components/Nav.tsx
 ```
 
-Current nav links are controlled by a `links` array.
+Current nav links:
 
-Current verified links:
-
-```ts
-const links = [
-  { href: "/map", label: "Map" },
-  { href: "/weather", label: "Weather" },
-  { href: "/news", label: "News" },
-];
+```txt
+Map
+Businesses
+Weather
+News
 ```
 
-To add the business directory to desktop and mobile nav, add:
+Logo click behavior:
 
-```ts
-{ href: "/businesses", label: "Businesses" }
-```
+- On `/`, scrolls to top.
+- Else routes to `/` and scrolls to top.
 
-### Map
+## Footer
 
 Path:
 
 ```txt
-baja411/app/map/page.tsx
+baja411/components/Footer.tsx
 ```
 
-The map route is a fixed full-screen view below the nav. It loads `MapLoader` inside `Suspense`.
+Current footer is hidden on `/map` by `ConditionalFooter`.
 
-Future business directory map links should likely route to:
+Known issue: footer should include Businesses because nav does.
 
-```txt
-/map?pin=PIN_ID
-```
+Footer currently says `Made in La Paz, BCS, México`. Consider changing later if Todos Santos becomes the public anchor.
 
-or, if using business IDs first:
-
-```txt
-/map?business=BUSINESS_SLUG
-```
-
-Preferred future route:
-
-```txt
-/map?pin=PIN_ID
-```
-
-### Weather
+## PageHero
 
 Path:
+
+```txt
+baja411/components/PageHero.tsx
+```
+
+Now a compact internal banner. It intentionally avoids giant hero images on internal pages.
+
+Known cleanup: props still include `image`, `alt`, and `pageBg`, but these are no longer used.
+
+## Weather system
+
+Page:
 
 ```txt
 baja411/app/weather/page.tsx
 ```
 
-Client page using:
-
-- `PageHero`
-- `ScrollReveal`
-- collapsible weather panels
-- Windy embeds
-- NOAA/NHC imagery through `/api/satellite`
-
-### Admin
-
-Path:
+APIs:
 
 ```txt
-baja411/app/admin/page.tsx
+baja411/app/api/weather/storm-status/route.ts
+baja411/app/api/satellite/route.ts
 ```
 
-Current admin imports:
+Weather page uses `useBajaLocation()`.
+
+Behavior:
+
+```txt
+GPS available -> Forecast/Rain centered on user
+No GPS -> Forecast/Rain centered on Todos Santos
+```
+
+Weather UI is button-panel based:
+
+```txt
+Forecast
+Rain
+Storms
+Satellite
+```
+
+Storm status route fetches the NHC widget HTML server-side, strips text, and classifies:
+
+```txt
+low      -> no tropical cyclones found
+monitor  -> uncertain / source unavailable
+alert    -> hurricane / tropical storm / tropical cyclone terms found
+```
+
+Product rule: do not make the main storm flow send users out of Baja 411. If no storms, show a simple internal tile. If storms exist, surface internal storm tools/images where possible.
+
+Known weather issues:
+
+- Storm status should auto-refresh every 5 to 10 minutes later.
+- API wording should avoid telling users to leave for NHC as the primary action.
+- If alert state shows the NHC iframe, it will still look ugly. Prefer clean proxied images/data later.
+
+Satellite proxy:
+
+```txt
+baja411/app/api/satellite/route.ts
+```
+
+Allowed hosts:
+
+```txt
+cdn.star.nesdis.noaa.gov
+www.nhc.noaa.gov
+www.ospo.noaa.gov
+```
+
+This supports in-app NOAA/NHC imagery without sending users away.
+
+## Map system
+
+Map shell:
+
+```txt
+baja411/app/map/page.tsx
+```
+
+Dynamic loader:
+
+```txt
+baja411/app/map/MapLoader.tsx
+```
+
+Enhancer:
+
+```txt
+baja411/app/map/MapSearchEnhancer.tsx
+```
+
+Main map:
+
+```txt
+baja411/components/MapClientMapLibre.tsx
+```
+
+Map route is fixed full-screen below the nav using:
+
+```txt
+top: var(--nav-height)
+height: calc(100dvh - var(--nav-height))
+```
+
+`MapLoader` disables SSR for MapLibre and locks page/body scroll.
+
+### MapClientMapLibre responsibilities
+
+- MapLibre map initialization
+- Carto raster tile style
+- dark/light tile toggle
+- Drive/Plan mode
+- geolocation watchPosition tracking
+- recenter
+- location marker
+- pin fetch/render
+- category filtering
+- search submit logic
+- add pin modal and submit flow
+- selected pin UI
+
+Known issue: the map currently uses its own GPS logic and is not yet fully wired to `LocationProvider`.
+
+Current generic map center found in reviewed code:
 
 ```ts
-import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { redirect } from "next/navigation";
-import PinsAdmin from "./PinsAdmin";
-import EmailsAdmin from "./EmailsAdmin";
+const MAP_CENTER: LngLatLike = [-110.0, 23.5];
 ```
 
-Admin currently checks for a signed-in user and requires `ADMIN` role. It includes Pin Moderation and Subscribers sections.
-
-Future business moderation should probably extend this admin pattern instead of creating a separate disconnected admin system.
-
-## Styling notes
-
-Path:
+This should become provider-driven:
 
 ```txt
-baja411/app/globals.css
+GPS from LocationProvider if available
+Todos Santos fallback if not
 ```
 
-Theme tokens currently include:
+Recenter should use best available location:
 
-- `background`
-- `foreground`
-- `jade`
-- `jade-light`
-- `jade-dim`
-- `sunset`
-- `sunset-dim`
-- `sand`
-- `night`
-- `muted`
-- `border`
+```txt
+live tracking -> latest GPS
+no tracking -> LocationProvider location
+fallback -> Todos Santos
+```
 
-Useful shared classes:
+### MapSearchEnhancer warning
 
-- `label-tag`
-- `reveal`
-- `reveal-delay-1`
-- `reveal-delay-2`
-- `reveal-delay-3`
-- `reveal-delay-4`
+Despite the name, `MapSearchEnhancer.tsx` does more than search:
 
-Business directory pages should reuse this existing design system.
+- collapsible search UI
+- search suggestions
+- GPS/recenter button enhancement
+- heading rotation button
+- device orientation permission
+- MapLibre `easeTo` monkey patch
+- heading cadence timer
+
+This file patches `maplibregl.Map.prototype.easeTo` and strips normal `bearing` values so heading rotation is controlled separately.
+
+Do not casually edit heading/bearing logic. Map rotation currently has two brains:
+
+```txt
+MapClientMapLibre.tsx orientation listener
+MapSearchEnhancer.tsx orientation/rotation patch
+```
+
+Long-term cleanup: move enhancer behavior into React map component. Not urgent, but document before changing.
+
+### Map CSS warnings
+
+`globals.css` contains map behavior, not just styles.
+
+It hides the Drive status pill:
+
+```css
+div.absolute.bottom-5.left-3.z-\[1000\].rounded-full {
+  display: none !important;
+}
+```
+
+It also controls the collapsible Plan search classes:
+
+```txt
+.map-plan-search
+.map-plan-search-open
+.map-search-suggestions
+```
+
+Need to add collapsed attribution CSS so MapLibre attribution loads as a small info button instead of spreading across the bottom.
+
+## Business directory
+
+Current direction: user utility first, not paid business sales first.
+
+User problem:
+
+People in Baja need to quickly find food, fuel, mechanics, water, propane, medical help, rentals, tours, supplies, and other services without digging through stale Facebook posts, dead links, or random guesswork.
+
+Core user flow:
+
+```txt
+Search directory -> find useful business -> call/WhatsApp/directions -> later open exact Baja 411 map pin
+```
+
+Known pieces:
+
+- `/businesses`
+- `/businesses/[slug]`
+- `components/BusinessDirectoryClient.tsx`
+- `data/businesses.ts`
+- `lib/business-directory.ts`
+
+Known next business layer:
+
+```txt
+last verified
+needs update
+report bad info
+suggest correction
+community verified
+admin moderation
+map pin linking
+```
+
+Do not start with payments. Build usefulness, coverage, and trust first.
 
 ## Prisma/database notes
 
@@ -281,209 +488,38 @@ Existing models include:
 - `Review`
 - `Report`
 
-Existing business directory schema:
-
-```prisma
-model Business {
-  id           String           @id @default(cuid())
-  name         String
-  category     BusinessCategory
-  town         Town
-  address      String?
-  phone        String?
-  website      String?
-  description  String?
-  photos       String[]
-  lat          Float?
-  lng          Float?
-  status       PinStatus        @default(PENDING)
-  authorId     String
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
-  lastVerified DateTime?
-
-  author       User             @relation(fields: [authorId], references: [id])
-  reviews      Review[]
-  reports      Report[]
-}
-```
-
-Existing business categories:
-
-```prisma
-enum BusinessCategory {
-  RESTAURANT
-  BAR
-  BAKERY
-  BREWERY
-  HOTEL
-  RENTAL
-  MECHANIC
-  TIRE_SHOP
-  FUEL
-  MEDICAL
-  DENTAL
-  PHARMACY
-  GROCERY
-  OTHER
-}
-```
-
-Existing towns:
-
-```prisma
-enum Town {
-  CERRITOS
-  PESCADERO
-  TODOS_SANTOS
-  LA_PAZ
-  CABO_SAN_LUCAS
-  SAN_JOSE_DEL_CABO
-  LORETO
-  OTHER
-}
-```
-
-## Business directory product direction
-
-Always think in this order:
-
-1. User need first
-2. CEO/business strategy second
-3. Engineering execution third
-
-The business directory is for users, not for selling businesses yet.
-
-User problem:
-
-People in Baja need to quickly find food, fuel, mechanics, water, propane, medical help, rentals, tours, real estate, supplies, and other local services without digging through stale Facebook posts, dead links, or random guesswork.
-
-Core user flow:
-
-```txt
-Search directory -> find useful business -> call/WhatsApp/directions -> later open exact Baja 411 map pin
-```
-
-Recommended first route:
-
-```txt
-/businesses
-```
-
-Recommended future routes:
-
-```txt
-/businesses/[slug]
-/api/businesses
-/api/businesses/suggest
-/admin/businesses
-/map?pin=PIN_ID
-```
-
-Recommended build sequence:
-
-1. Create visible `/businesses` landing/directory page with static data.
-2. Add nav link to `components/Nav.tsx`.
-3. Add a simple static data file such as `baja411/data/businesses.ts`.
-4. Add search/filter UI on the client or simple server-rendered filter structure.
-5. Add detail route `/businesses/[slug]`.
-6. Wire to Prisma/API once the front-end shape is proven.
-7. Add real businesses.
-8. Link approved businesses to map pins.
-
-Do not start by building payments or paid placement. Build usefulness and directory inventory first.
-
-## Future business to map relationship
-
-Current `Business` has optional `lat` and `lng`, but no direct `mapPinId` relation.
-
-Possible future choices:
+Business has optional coordinates already. Future choice:
 
 ### Option A: Business as its own map layer
 
-Keep coordinates on `Business` and render business pins directly from business records.
-
-Simpler.
+Render business pins directly from business records.
 
 ### Option B: Business links to MapPin
 
-Add a nullable relation later:
+Add `mapPinId` later if every map item should be a `MapPin`.
 
-```prisma
-mapPinId String?
-mapPin   MapPin? @relation(fields: [mapPinId], references: [id])
-```
+Do not migrate until map/directory behavior is settled.
 
-Cleaner if all map items should be `MapPin` records.
+## Current phase-one checklist
 
-Do not migrate this until the directory page and map behavior are clear.
+Safe foundation fixes:
 
-## Suggested first business directory files
-
-Create:
-
-```txt
-baja411/app/businesses/page.tsx
-baja411/data/businesses.ts
-```
-
-Then update:
-
-```txt
-baja411/components/Nav.tsx
-```
-
-First version should include:
-
-- Hero explaining why the directory is useful
-- Search input UI
-- Category chips
-- Town chips
-- Static seeded business cards
-- Call / Website / Directions actions
-- Disabled or future-state `View on Map` button when no pin exists
-- Suggest Business CTA
-
-Suggested page headline:
-
-```txt
-Find Local Businesses in Baja Sur
-```
-
-Suggested supporting copy:
-
-```txt
-Need food, fuel, repairs, supplies, rentals, medical help, or local services? Baja 411 helps you search useful businesses across Cerritos, El Pescadero, Todos Santos, La Paz, Cabo, and the Baja corridor. The directory starts here, and soon listings will connect directly to map pins so you can find the place and guide yourself there.
-```
-
-## GitHub connector notes for future AI sessions
-
-If directory listing is unavailable, use GitHub `fetch` on tree URLs as a workaround.
-
-Examples:
-
-```txt
-https://github.com/Bajanomad/baja411/tree/main/baja411
-https://github.com/Bajanomad/baja411/tree/main/baja411/app
-https://github.com/Bajanomad/baja411/tree/main/baja411/app/api
-https://github.com/Bajanomad/baja411/tree/main/baja411/components
-https://github.com/Bajanomad/baja411/tree/main/baja411/lib
-https://github.com/Bajanomad/baja411/tree/main/baja411/prisma
-```
-
-Use direct file fetches for exact content:
-
-```txt
-baja411/app/page.tsx
-baja411/app/layout.tsx
-baja411/components/Nav.tsx
-baja411/app/globals.css
-baja411/prisma/schema.prisma
-baja411/package.json
-baja411/tsconfig.json
-baja411/next.config.ts
-```
+1. Add collapsed MapLibre attribution CSS.
+2. Wire `HomeWeatherStrip` to `LocationProvider`.
+3. Clean storm-status wording so it does not tell users to leave as the main action.
+4. Add Businesses to footer.
+5. Keep map location provider wiring as the next focused phase.
 
 ## Working rule
 
-Do not make repo-level assumptions from the repository root. The app is nested. Start from `baja411/REPO_MAP.md`, then inspect the exact files you plan to modify.
+No full-file rewrites on giant files unless the full file is visible.
+
+Before changing a system:
+
+```txt
+Read the file.
+Understand who owns the behavior.
+Patch the smallest safe part.
+Do not stack new behavior on mystery behavior.
+Update this repo map when architecture changes.
+```
