@@ -32,6 +32,7 @@ const CATEGORY_SUGGESTIONS = [
 ];
 
 const SUGGESTIONS = [...TOWN_SUGGESTIONS, ...CATEGORY_SUGGESTIONS];
+const DRIVE_STATUS_WORDS = ["Tracking", "Finding GPS", "Paused", "Location off"];
 
 function normalize(value: string) {
   return value
@@ -45,6 +46,23 @@ function setReactInputValue(input: HTMLInputElement, value: string) {
   const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
   setter?.call(input, value);
   input.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+function moveDriveStatus() {
+  const candidates = Array.from(document.querySelectorAll<HTMLElement>("div.absolute.bottom-5.left-3.z-\\[1000\\]"));
+
+  candidates.forEach((element) => {
+    const text = element.textContent ?? "";
+    if (!DRIVE_STATUS_WORDS.some((word) => text.includes(word))) return;
+
+    element.classList.add("map-drive-status-chip");
+    element.style.top = "72px";
+    element.style.bottom = "auto";
+    element.style.left = "12px";
+    element.style.right = "auto";
+    element.style.padding = "9px 13px";
+    element.style.maxWidth = "160px";
+  });
 }
 
 export default function MapSearchEnhancer() {
@@ -126,18 +144,18 @@ export default function MapSearchEnhancer() {
     }
 
     const observer = new MutationObserver(() => {
-      if (attach()) observer.disconnect();
+      attach();
+      moveDriveStatus();
     });
 
     timer = window.setInterval(() => {
-      if (attach() && timer !== null) {
-        window.clearInterval(timer);
-        timer = null;
-      }
+      attach();
+      moveDriveStatus();
     }, 250);
 
-    observer.observe(document.body, { childList: true, subtree: true });
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
     attach();
+    moveDriveStatus();
 
     return () => {
       if (timer !== null) window.clearInterval(timer);
