@@ -23,20 +23,20 @@ export default function PageHero({
       <ParallaxImage
         src={image}
         alt={alt}
-        height="480px"
-        strength={0.3}
-        overlay="linear-gradient(180deg, rgba(6,13,24,0.55) 0%, rgba(6,13,24,0.3) 50%, rgba(6,13,24,0.6) 100%)"
+        height="340px"
+        strength={0.22}
+        overlay="linear-gradient(180deg, rgba(6,13,24,0.72) 0%, rgba(6,13,24,0.42) 52%, rgba(6,13,24,0.78) 100%)"
       >
-        <div className="text-center px-5 max-w-3xl mx-auto pb-16 md:pb-20">
-          <span className="label-tag mb-4 block">{eyebrow}</span>
+        <div className="mx-auto max-w-3xl px-5 pb-10 text-center md:pb-12">
+          <span className="label-tag mb-3 block">{eyebrow}</span>
           <h1
-            className="font-extrabold text-white leading-tight drop-shadow-lg"
-            style={{ fontSize: "clamp(2.2rem, 6vw, 4.5rem)" }}
+            className="font-extrabold leading-tight text-white drop-shadow-lg"
+            style={{ fontSize: "clamp(2rem, 5vw, 3.75rem)" }}
           >
             {title}
           </h1>
           {subtitle && (
-            <p className="text-white/70 mt-4 text-lg drop-shadow max-w-xl mx-auto">
+            <p className="mx-auto mt-3 max-w-xl text-base text-white/70 drop-shadow md:text-lg">
               {subtitle}
             </p>
           )}
