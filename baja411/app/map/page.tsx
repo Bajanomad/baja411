@@ -15,7 +15,6 @@ export default function MapPage() {
         top: "var(--nav-height)",
         height: "calc(100dvh - var(--nav-height))",
         overscrollBehavior: "none",
-        touchAction: "none",
       }}
     >
       <MapLoader />
