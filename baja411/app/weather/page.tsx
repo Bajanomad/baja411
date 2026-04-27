@@ -89,46 +89,46 @@ function WeatherPanel({
   }
 
   return (
-    <section className={`overflow-hidden rounded-3xl border border-border bg-white shadow-sm reveal ${delayClass}`}>
+    <section className={`overflow-hidden rounded-3xl border border-white/10 bg-white/[0.055] text-white shadow-2xl shadow-black/20 backdrop-blur reveal ${delayClass}`}>
       <button
         type="button"
         onClick={toggleOpen}
         aria-expanded={open}
-        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition hover:bg-sand/60"
+        className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left transition hover:bg-white/[0.04]"
       >
         <div>
           <span className="label-tag mb-2 block">{label}</span>
-          <h2 className="text-xl font-extrabold text-foreground">{title}</h2>
-          <p className="mt-1 text-sm text-muted">{description}</p>
+          <h2 className="text-xl font-extrabold text-white">{title}</h2>
+          <p className="mt-1 text-sm leading-relaxed text-white/55">{description}</p>
         </div>
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-sand text-xl font-black text-foreground">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/10 bg-white/[0.07] text-xl font-black text-white">
           {open ? "−" : "+"}
         </span>
       </button>
 
-      {open && hasOpened && <div className="border-t border-border p-5">{children}</div>}
+      {open && hasOpened && <div className="border-t border-white/10 p-4 sm:p-5">{children}</div>}
     </section>
   );
 }
 
 function NhcWidgetCard() {
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-border px-5 py-4">
+    <div className="overflow-hidden rounded-2xl border border-white/10 bg-night shadow-sm">
+      <div className="flex items-center justify-between gap-4 border-b border-white/10 px-5 py-4">
         <div>
-          <h3 className="text-sm font-semibold text-foreground">NHC Tropical Cyclone Widget</h3>
-          <p className="mt-0.5 text-xs text-muted">Official National Hurricane Center widget</p>
+          <h3 className="text-sm font-semibold text-white">NHC Tropical Cyclone Widget</h3>
+          <p className="mt-0.5 text-xs text-white/50">Official National Hurricane Center widget</p>
         </div>
         <a
           href="https://www.nhc.noaa.gov/cyclones/"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs font-extrabold text-jade hover:underline"
+          className="shrink-0 rounded-full bg-jade px-3 py-2 text-xs font-extrabold text-white hover:bg-jade-light"
         >
           Open NHC
         </a>
       </div>
-      <div className="flex justify-center bg-sand p-4">
+      <div className="flex justify-center bg-white p-3 sm:p-4">
         <iframe
           id="nhc"
           src="https://www.nhc.noaa.gov/widgets/nhc_widget.shtml"
@@ -149,38 +149,38 @@ function WeatherImageCard({ src, alt, label, subLabel }: WeatherImage) {
   const [error, setError] = useState(false);
 
   return (
-    <div className="group overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-border px-5 py-4">
+    <div className="group overflow-hidden rounded-2xl border border-white/10 bg-night shadow-sm">
+      <div className="flex items-center justify-between gap-4 border-b border-white/10 px-5 py-4">
         <div>
-          <h3 className="text-sm font-semibold text-foreground">{label}</h3>
-          <p className="mt-0.5 text-xs text-muted">{subLabel}</p>
+          <h3 className="text-sm font-semibold text-white">{label}</h3>
+          <p className="mt-0.5 text-xs text-white/50">{subLabel}</p>
         </div>
         {!loaded && !error && (
-          <span className="flex items-center gap-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-muted">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-muted/50" />
+          <span className="flex items-center gap-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-white/45">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white/35" />
             Loading
           </span>
         )}
         {loaded && (
-          <span className="flex items-center gap-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-jade">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-jade" />
+          <span className="flex items-center gap-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-jade-light">
+            <span className="h-1.5 w-1.5 rounded-full bg-jade-light" />
             Source
           </span>
         )}
       </div>
 
-      <div className="relative bg-black/[0.03]" style={{ minHeight: loaded ? 0 : "200px" }}>
+      <div className="relative bg-black" style={{ minHeight: loaded ? 0 : "200px" }}>
         {!loaded && !error && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
             <div className="h-10 w-10 animate-spin rounded-full border-2 border-jade border-t-transparent" />
-            <p className="text-xs text-muted">Fetching weather data…</p>
+            <p className="text-xs text-white/50">Fetching weather data…</p>
           </div>
         )}
 
         {error && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-            <p className="text-xs text-muted">Image unavailable</p>
-            <a href={src} target="_blank" rel="noopener noreferrer" className="text-xs text-jade hover:underline">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
+            <p className="text-xs text-white/55">Image unavailable</p>
+            <a href={src} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-jade-light hover:underline">
               View source →
             </a>
           </div>
@@ -190,7 +190,7 @@ function WeatherImageCard({ src, alt, label, subLabel }: WeatherImage) {
         <img
           src={proxied(src)}
           alt={alt}
-          className={`w-full object-cover transition-opacity duration-500 group-hover:scale-105 ${loaded ? "opacity-100" : "opacity-0"}`}
+          className={`w-full object-cover transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
           onLoad={() => setLoaded(true)}
           onError={() => setError(true)}
         />
@@ -220,10 +220,10 @@ export default function WeatherPage() {
         eyebrow="Windy maps · La Paz, BCS"
         title="Weather Tools"
         subtitle="Wind, rain, forecast, satellite imagery, and storm tools for the Baja corridor."
-        pageBg="#FAFAF7"
+        pageBg="#060d18"
       />
 
-      <div className="bg-sand px-5 pb-16">
+      <div className="bg-night px-5 pb-16">
         <div className="mx-auto max-w-5xl space-y-6">
           <WeatherPanel
             label="Forecast"
@@ -239,6 +239,7 @@ export default function WeatherPage() {
               title="7-day weather forecast"
               loading="lazy"
             />
+            <p className="mt-3 text-xs text-white/45">Source: Windy.com embedded forecast.</p>
           </WeatherPanel>
 
           <WeatherPanel
@@ -250,11 +251,12 @@ export default function WeatherPage() {
             <iframe
               src="https://embed.windy.com/embed2.html?lat=23.446&lon=-110.261&detailLat=23.446&detailLon=-110.261&width=100%25&height=520&zoom=8&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=now&type=map&location=coordinates&detail=&metricWind=kt&metricTemp=%C2%B0F&radarRange=-1"
               className="w-full rounded-2xl border-0"
-              style={{ height: "520px" }}
+              style={{ height: "min(520px, 72vh)" }}
               title="Live wind and rain map"
               allowFullScreen
               loading="lazy"
             />
+            <p className="mt-3 text-xs text-white/45">Source: Windy.com live map embed.</p>
           </WeatherPanel>
 
           <WeatherPanel
@@ -263,8 +265,8 @@ export default function WeatherPage() {
             description="Official NHC tropical cyclone widget plus NOAA/NHC products for quick checks."
             delayClass="reveal-delay-2"
           >
-            <p className="mb-5 text-xs text-muted">
-              Includes the official National Hurricane Center widget, Gulf of California sea surface temperature, and Pacific surface analysis. Use the NHC link for the source page.
+            <p className="mb-5 text-xs leading-relaxed text-white/50">
+              Official storm products from NOAA and the National Hurricane Center. Use the NHC button when you need the source page directly.
             </p>
             <div className="mb-5">
               <NhcWidgetCard />
@@ -278,19 +280,19 @@ export default function WeatherPage() {
             description="Heavy animated satellite widgets. Keep these closed until you actually need them."
             delayClass="reveal-delay-2"
           >
-            <p className="mb-5 text-xs text-muted">
+            <p className="mb-5 text-xs leading-relaxed text-white/50">
               These NOAA GOES-19 loops can take a while on cell service. They only start loading after this panel opens.
             </p>
             <WeatherImageGrid images={satelliteImages} />
           </WeatherPanel>
 
-          <p className="text-center text-xs text-muted">
+          <p className="text-center text-xs text-white/40">
             Weather imagery sourced from{" "}
-            <a href="https://www.noaa.gov" target="_blank" rel="noopener noreferrer" className="text-jade hover:underline">
+            <a href="https://www.noaa.gov" target="_blank" rel="noopener noreferrer" className="text-jade-light hover:underline">
               NOAA
             </a>{" "}
             and the{" "}
-            <a href="https://www.nhc.noaa.gov" target="_blank" rel="noopener noreferrer" className="text-jade hover:underline">
+            <a href="https://www.nhc.noaa.gov" target="_blank" rel="noopener noreferrer" className="text-jade-light hover:underline">
               National Hurricane Center
             </a>.
           </p>
