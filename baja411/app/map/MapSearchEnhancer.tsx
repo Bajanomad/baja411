@@ -297,7 +297,6 @@ function ensureRotationToggle() {
     return;
   }
 
-  if (bajaWindow().__baja411HeadingActive === true && !isGpsFollowing()) disableHeadingRotation(button);
   syncRotationButton(button);
 }
 
