@@ -33,6 +33,16 @@ const CATEGORY_SUGGESTIONS = [
 
 const SUGGESTIONS = [...TOWN_SUGGESTIONS, ...CATEGORY_SUGGESTIONS];
 const DRIVE_STATUS_WORDS = ["Tracking", "Finding GPS", "Paused", "Location off"];
+const COMPASS_BUTTON_ID = "baja411-drive-compass-button";
+const COMPASS_PERMISSION_KEY = "baja411-compass-enabled";
+
+type DeviceOrientationEventWithPermission = typeof DeviceOrientationEvent & {
+  requestPermission?: () => Promise<"granted" | "denied">;
+};
+
+type DeviceOrientationEventWithCompass = DeviceOrientationEvent & {
+  webkitCompassHeading?: number;
+};
 
 function normalize(value: string) {
   return value
@@ -42,10 +52,25 @@ function normalize(value: string) {
     .trim();
 }
 
+function normalizeDegrees(value: number) {
+  return ((value % 360) + 360) % 360;
+}
+
+function getHeading(event: DeviceOrientationEventWithCompass) {
+  if (typeof event.webkitCompassHeading === "number") return normalizeDegrees(event.webkitCompassHeading);
+  if (typeof event.alpha === "number") return normalizeDegrees(360 - event.alpha);
+  return null;
+}
+
 function setReactInputValue(input: HTMLInputElement, value: string) {
   const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
   setter?.call(input, value);
   input.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+function isDriveModeVisible() {
+  const candidates = Array.from(document.querySelectorAll<HTMLElement>("div.absolute.bottom-5.left-3.z-\\[1000\\]"));
+  return candidates.some((element) => DRIVE_STATUS_WORDS.some((word) => (element.textContent ?? "").includes(word)));
 }
 
 function moveDriveStatus() {
@@ -63,6 +88,75 @@ function moveDriveStatus() {
     element.style.padding = "9px 13px";
     element.style.maxWidth = "160px";
   });
+}
+
+function styleCompassButton(button: HTMLButtonElement) {
+  button.style.position = "absolute";
+  button.style.top = "72px";
+  button.style.right = "12px";
+  button.style.zIndex = "1500";
+  button.style.width = "52px";
+  button.style.height = "52px";
+  button.style.borderRadius = "999px";
+  button.style.border = "1px solid rgba(15, 23, 42, 0.14)";
+  button.style.background = "rgba(255, 255, 255, 0.96)";
+  button.style.boxShadow = "0 14px 34px rgba(15, 23, 42, 0.18)";
+  button.style.backdropFilter = "blur(18px)";
+  button.style.webkitBackdropFilter = "blur(18px)";
+  button.style.display = "flex";
+  button.style.alignItems = "center";
+  button.style.justifyContent = "center";
+  button.style.fontSize = "25px";
+  button.style.lineHeight = "1";
+  button.style.cursor = "pointer";
+  button.style.userSelect = "none";
+  button.style.touchAction = "manipulation";
+}
+
+function ensureCompassControl() {
+  let button = document.getElementById(COMPASS_BUTTON_ID) as HTMLButtonElement | null;
+
+  if (!button) {
+    button = document.createElement("button");
+    button.id = COMPASS_BUTTON_ID;
+    button.type = "button";
+    button.title = "Compass";
+    button.setAttribute("aria-label", "Enable drive compass");
+    button.innerHTML = "<span style='display:block;transform-origin:center;'>🧭</span>";
+    styleCompassButton(button);
+
+    button.addEventListener("click", async () => {
+      const OrientationEvent = window.DeviceOrientationEvent as DeviceOrientationEventWithPermission | undefined;
+      button?.classList.add("map-compass-active");
+
+      if (OrientationEvent && typeof OrientationEvent.requestPermission === "function") {
+        try {
+          const result = await OrientationEvent.requestPermission();
+          if (result === "granted") localStorage.setItem(COMPASS_PERMISSION_KEY, "1");
+        } catch {
+          // Browser said nope. Keep the button, do not nag.
+        }
+      } else {
+        localStorage.setItem(COMPASS_PERMISSION_KEY, "1");
+      }
+
+      document.querySelector<HTMLButtonElement>('button[aria-label="Recenter"]')?.click();
+    });
+
+    window.addEventListener("deviceorientationabsolute", updateCompassNeedle, true);
+    window.addEventListener("deviceorientation", updateCompassNeedle, true);
+    document.querySelector(".relative.h-full.w-full.overflow-hidden")?.appendChild(button);
+  }
+
+  button.hidden = !isDriveModeVisible();
+}
+
+function updateCompassNeedle(event: DeviceOrientationEvent) {
+  const button = document.getElementById(COMPASS_BUTTON_ID);
+  const needle = button?.firstElementChild as HTMLElement | null;
+  const heading = getHeading(event as DeviceOrientationEventWithCompass);
+  if (!needle || heading === null) return;
+  needle.style.transform = `rotate(${-heading}deg)`;
 }
 
 export default function MapSearchEnhancer() {
@@ -146,20 +240,26 @@ export default function MapSearchEnhancer() {
     const observer = new MutationObserver(() => {
       attach();
       moveDriveStatus();
+      ensureCompassControl();
     });
 
     timer = window.setInterval(() => {
       attach();
       moveDriveStatus();
+      ensureCompassControl();
     }, 250);
 
     observer.observe(document.body, { childList: true, subtree: true, characterData: true });
     attach();
     moveDriveStatus();
+    ensureCompassControl();
 
     return () => {
       if (timer !== null) window.clearInterval(timer);
       observer.disconnect();
+      window.removeEventListener("deviceorientationabsolute", updateCompassNeedle, true);
+      window.removeEventListener("deviceorientation", updateCompassNeedle, true);
+      document.getElementById(COMPASS_BUTTON_ID)?.remove();
       cleanup?.();
     };
   }, []);
