@@ -1,15 +1,9 @@
 import Link from "next/link";
 
-const explore = [
+const links = [
   { href: "/map", label: "Interactive Map" },
   { href: "/weather", label: "Weather" },
   { href: "/news", label: "Local News" },
-  { href: "/calendar", label: "Events" },
-];
-
-const community = [
-  { href: "/classifieds", label: "Classifieds" },
-  { href: "/directory", label: "Business Directory" },
   { href: "/signin", label: "Sign In" },
 ];
 
@@ -31,45 +25,27 @@ export default function Footer() {
         }}
       />
 
-      <div className="relative mx-auto max-w-7xl px-5 pb-10 pt-14">
-        <div className="grid grid-cols-2 gap-10 border-b border-white/[0.07] pb-12 md:grid-cols-4">
-          <div className="col-span-2">
+      <div className="relative mx-auto max-w-7xl px-5 pb-10 pt-12">
+        <div className="flex flex-col gap-8 border-b border-white/[0.07] pb-10 md:flex-row md:items-start md:justify-between">
+          <div>
             <Link href="/" className="mb-4 inline-block">
               <span className="text-2xl font-extrabold tracking-tight text-white">
                 BAJA <span className="text-sunset">411</span>
               </span>
             </Link>
-            <p className="mb-4 max-w-xs text-sm leading-relaxed text-white/50">
-              Community-driven local knowledge for Baja California Sur. Weather, maps, events, listings, and local resources in one place.
+            <p className="max-w-sm text-sm leading-relaxed text-white/50">
+              Community-driven local knowledge for Baja California Sur. Maps, weather, news, and road intel in one clean place.
             </p>
-            <p className="text-xs tracking-wide text-white/25">Cerritos · Pescadero · Todos Santos · La Paz · Cabo</p>
+            <p className="mt-4 text-xs tracking-wide text-white/25">Cerritos · Pescadero · Todos Santos · La Paz · Cabo</p>
           </div>
 
-          <div>
-            <p className="mb-5 text-[10px] font-bold uppercase tracking-[0.14em] text-white/30">Explore</p>
-            <ul className="space-y-3">
-              {explore.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-white/50 transition-colors hover:text-white">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <p className="mb-5 text-[10px] font-bold uppercase tracking-[0.14em] text-white/30">Community</p>
-            <ul className="space-y-3">
-              {community.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-white/50 transition-colors hover:text-white">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <nav className="flex flex-wrap gap-x-5 gap-y-3 md:justify-end">
+            {links.map((link) => (
+              <Link key={link.href} href={link.href} className="text-sm font-semibold text-white/50 transition-colors hover:text-white">
+                {link.label}
+              </Link>
+            ))}
+          </nav>
         </div>
 
         <div className="flex flex-col items-center justify-between gap-3 pt-8 text-xs text-white/25 sm:flex-row">
