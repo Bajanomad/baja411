@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useEffect } from "react";
 
 const MapClient = dynamic(() => import("@/components/MapClientMapLibre"), {
   ssr: false,
@@ -14,9 +15,40 @@ const MapClient = dynamic(() => import("@/components/MapClientMapLibre"), {
   ),
 });
 
+function useMapPageScrollLock() {
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    const previousHtmlOverflow = html.style.overflow;
+    const previousBodyOverflow = body.style.overflow;
+    const previousBodyPosition = body.style.position;
+    const previousBodyWidth = body.style.width;
+    const previousBodyHeight = body.style.height;
+    const previousBodyOverscroll = body.style.overscrollBehavior;
+
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    body.style.position = "fixed";
+    body.style.width = "100%";
+    body.style.height = "100%";
+    body.style.overscrollBehavior = "none";
+
+    return () => {
+      html.style.overflow = previousHtmlOverflow;
+      body.style.overflow = previousBodyOverflow;
+      body.style.position = previousBodyPosition;
+      body.style.width = previousBodyWidth;
+      body.style.height = previousBodyHeight;
+      body.style.overscrollBehavior = previousBodyOverscroll;
+    };
+  }, []);
+}
+
 export default function MapLoader() {
+  useMapPageScrollLock();
+
   return (
-    <div className="relative h-full w-full">
+    <div className="relative h-full w-full overflow-hidden">
       <MapClient />
     </div>
   );
