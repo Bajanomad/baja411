@@ -81,3 +81,16 @@ export async function getDirectoryBusinesses(): Promise<Business[]> {
     return seedBusinesses;
   }
 }
+
+export async function getDirectoryBusinessBySlug(slug: string): Promise<Business | null> {
+  const businesses = await getDirectoryBusinesses();
+  return businesses.find((business) => business.slug === slug) ?? null;
+}
+
+export async function getRelatedDirectoryBusinesses(business: Business): Promise<Business[]> {
+  const businesses = await getDirectoryBusinesses();
+  return businesses
+    .filter((item) => item.id !== business.id)
+    .filter((item) => item.category === business.category || item.town === business.town)
+    .slice(0, 3);
+}
