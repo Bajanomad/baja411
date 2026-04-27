@@ -50,6 +50,7 @@ type RotationPatch = {
 
 type BajaWindow = Window & {
   __baja411HeadingActive?: boolean;
+  __baja411InternalRecenter?: boolean;
   __baja411RotationPatch?: RotationPatch;
   __baja411SmoothedHeading?: number | null;
   __baja411LastHeadingUpdate?: number;
@@ -77,7 +78,7 @@ function headingDifference(from: number, to: number) {
 
 function smoothHeading(current: number | null, next: number) {
   if (current === null) return normalizeDegrees(next);
-  return normalizeDegrees(current + headingDifference(current, next) * 0.16);
+  return normalizeDegrees(current + headingDifference(current, next) * 0.22);
 }
 
 function getHeading(event: DeviceOrientationEventWithCompass) {
@@ -160,10 +161,16 @@ function isGpsFollowing() {
   return Boolean(recenterButton?.className.includes("text-jade"));
 }
 
-function ensureGpsFollow() {
+function forceGpsRecenter() {
+  const win = bajaWindow();
   const recenterButton = document.querySelector<HTMLButtonElement>('button[aria-label="Recenter"]');
-  if (!recenterButton || isGpsFollowing()) return;
+  if (!recenterButton) return;
+
+  win.__baja411InternalRecenter = true;
   recenterButton.click();
+  window.setTimeout(() => {
+    win.__baja411InternalRecenter = false;
+  }, 150);
 }
 
 function syncRotationButton(button: HTMLButtonElement) {
@@ -209,15 +216,15 @@ function disableHeadingRotation(button?: HTMLButtonElement | null) {
 
 function applyLiveHeading(rawHeading: number) {
   const win = bajaWindow();
-  if (win.__baja411HeadingActive !== true || !isDriveModeActive() || !isGpsFollowing()) return;
+  if (win.__baja411HeadingActive !== true || !isDriveModeActive()) return;
 
   const now = performance.now();
   const lastUpdate = win.__baja411LastHeadingUpdate ?? 0;
-  if (now - lastUpdate < 110) return;
+  if (now - lastUpdate < 85) return;
 
   const previous = win.__baja411SmoothedHeading ?? null;
   const smoothed = smoothHeading(previous, rawHeading);
-  if (previous !== null && Math.abs(headingDifference(previous, smoothed)) < 1.1) return;
+  if (previous !== null && Math.abs(headingDifference(previous, smoothed)) < 0.8) return;
 
   win.__baja411SmoothedHeading = smoothed;
   win.__baja411LastHeadingUpdate = now;
@@ -225,7 +232,7 @@ function applyLiveHeading(rawHeading: number) {
   const patch = installRotationPatch();
   patch.maps.forEach((map) => {
     try {
-      patch.originalEaseTo.call(map, { bearing: smoothed, duration: 140, essential: true });
+      patch.originalEaseTo.call(map, { bearing: smoothed, duration: 90, essential: true });
     } catch {
       patch.maps.delete(map);
     }
@@ -258,7 +265,7 @@ async function enableHeadingRotation(button: HTMLButtonElement) {
   win.__baja411LastHeadingUpdate = 0;
   syncRotationButton(button);
   refreshHeadingListeners();
-  ensureGpsFollow();
+  forceGpsRecenter();
 }
 
 function ensureRotationToggle() {
@@ -311,6 +318,9 @@ function attachGpsToggle() {
   button.addEventListener(
     "click",
     (event) => {
+      const win = bajaWindow();
+      if (win.__baja411InternalRecenter === true) return;
+
       const isFollowing = button.className.includes("text-jade");
       if (!isFollowing) return;
 
@@ -419,6 +429,7 @@ export default function MapSearchEnhancer() {
     }, 250);
 
     bajaWindow().__baja411HeadingActive = false;
+    bajaWindow().__baja411InternalRecenter = false;
     refreshHeadingListeners();
     observer.observe(document.body, { childList: true, subtree: true, characterData: true });
     attachSearch();
