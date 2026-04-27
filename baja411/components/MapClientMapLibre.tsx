@@ -3,6 +3,7 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibregl, { type LngLatLike, type StyleSpecification } from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent } from "react";
+import { useBajaLocation } from "@/components/LocationProvider";
 
 interface Pin {
   id: string;
@@ -93,7 +94,7 @@ const TOWNS = [
   { name: "Miraflores", aliases: ["miraflores"], lat: 23.3695, lng: -109.7748, zoom: 13 },
 ];
 
-const MAP_CENTER: LngLatLike = [-110.0, 23.5];
+const TODOS_SANTOS_CENTER: LngLatLike = [-110.2249, 23.4464];
 const MAP_DARK_KEY = "baja411-map-dark";
 const CARTO_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
 
@@ -261,6 +262,8 @@ function safeClearTimeout(timer: React.MutableRefObject<number | null>) {
 }
 
 export default function MapClientMapLibre() {
+  const { location } = useBajaLocation();
+  const providerCenter: [number, number] = [location.lon, location.lat];
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
@@ -328,8 +331,8 @@ export default function MapClientMapLibre() {
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
       style: createRasterStyle(initialDark),
-      center: MAP_CENTER,
-      zoom: 8,
+      center: providerCenter,
+      zoom: location.source === "gps" ? 14 : 13,
       attributionControl: false,
       dragRotate: true,
       pitchWithRotate: true,
@@ -532,10 +535,9 @@ export default function MapClientMapLibre() {
   function recenter() {
     if (!tracking) {
       startTracking();
-      return;
     }
 
-    const current = latestLocationRef.current;
+    const current = latestLocationRef.current ?? [location.lon, location.lat];
     const map = mapRef.current;
     if (!current || !map) return;
 
