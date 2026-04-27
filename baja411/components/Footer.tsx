@@ -2,6 +2,7 @@ import Link from "next/link";
 
 const links = [
   { href: "/map", label: "Interactive Map" },
+  { href: "/businesses", label: "Businesses" },
   { href: "/weather", label: "Weather" },
   { href: "/news", label: "Local News" },
   { href: "/signin", label: "Sign In" },
@@ -34,9 +35,10 @@ export default function Footer() {
               </span>
             </Link>
             <p className="max-w-sm text-sm leading-relaxed text-white/50">
-              Community-driven local knowledge for Baja California Sur. Maps, weather, news, and road intel in one clean place.
+              Community-driven local knowledge for Baja California Sur. Maps, weather, news, businesses, and road intel in one clean place.
             </p>
-            <p className="mt-4 text-xs tracking-wide text-white/25">Cerritos · Pescadero · Todos Santos · La Paz · Cabo</p>
+            <p className="mt-4 text-xs font-extrabold uppercase tracking-[0.16em] text-sunset/80">Curated locally. Updated often.</p>
+            <p className="mt-3 text-xs tracking-wide text-white/25">Cerritos · Pescadero · Todos Santos · La Paz · Cabo</p>
           </div>
 
           <nav className="flex flex-wrap gap-x-5 gap-y-3 md:justify-end">
@@ -50,7 +52,7 @@ export default function Footer() {
 
         <div className="flex flex-col items-center justify-between gap-3 pt-8 text-xs text-white/25 sm:flex-row">
           <p>© {new Date().getFullYear()} Baja 411</p>
-          <p>Made in La Paz, BCS, México</p>
+          <p>Made in Baja Sur, México</p>
         </div>
       </div>
     </footer>
