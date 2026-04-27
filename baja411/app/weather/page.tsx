@@ -7,12 +7,20 @@ import { useBajaLocation } from "@/components/LocationProvider";
 
 type StormLevel = "low" | "monitor" | "alert";
 type WeatherPanelKey = "forecast" | "rain" | "storms" | "satellite";
+type SatelliteKey = "mex-ir" | "eep-ir" | "mex-color" | "eep-color";
 
 interface StormResponse {
   level: StormLevel;
   headline: string;
   body?: string;
   checkedAt: string;
+}
+
+interface SatelliteProduct {
+  key: SatelliteKey;
+  label: string;
+  detail: string;
+  src: string;
 }
 
 const statusDot: Record<StormLevel, string> = {
@@ -28,12 +36,43 @@ const quickActions: { key: WeatherPanelKey; icon: string; label: string }[] = [
   { key: "satellite", icon: "🛰️", label: "Satellite" },
 ];
 
+const satelliteProducts: SatelliteProduct[] = [
+  {
+    key: "mex-ir",
+    label: "Mexico IR",
+    detail: "Best quick cloud check",
+    src: "https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/mex/13/GOES19-MEX-13-1000x1000.gif",
+  },
+  {
+    key: "eep-ir",
+    label: "East Pacific IR",
+    detail: "Storms forming offshore",
+    src: "https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/eep/13/GOES19-EEP-13-900x540.gif",
+  },
+  {
+    key: "mex-color",
+    label: "Mexico Color",
+    detail: "Daylight visual view",
+    src: "https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/mex/GEOCOLOR/GOES19-MEX-GEOCOLOR-1000x1000.gif",
+  },
+  {
+    key: "eep-color",
+    label: "Pacific Color",
+    detail: "Daylight ocean view",
+    src: "https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/eep/GEOCOLOR/GOES19-EEP-GEOCOLOR-900x540.gif",
+  },
+];
+
 function windyForecastSrc(lat: number, lon: number) {
   return `https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=100%25&height=210&zoom=8&level=surface&overlay=wind&menu=&message=false&marker=false&calendar=7&pressure=false&type=forecast&location=coordinates&detail=true&metricWind=kt&metricTemp=%C2%B0F&radarRange=-1`;
 }
 
 function windyRainSrc(lat: number, lon: number) {
   return `https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=100%25&height=520&zoom=8&level=surface&overlay=rain&product=ecmwf&menu=&message=false&marker=false&calendar=now&type=map&location=coordinates&detail=false&metricWind=kt&metricTemp=%C2%B0F&radarRange=-1`;
+}
+
+function proxied(src: string) {
+  return `/api/satellite?url=${encodeURIComponent(src)}`;
 }
 
 function PanelShell({ title, kicker, children }: { title: string; kicker: string; children: React.ReactNode }) {
@@ -84,7 +123,7 @@ function StormsPanel({ status }: { status: StormResponse | null }) {
   const hasStorms = level === "alert";
 
   return (
-    <PanelShell title="Storms" kicker="NHC signal">
+    <PanelShell title="Storms" kicker="Current storm check">
       <div className="rounded-2xl border border-white/10 bg-night/60 p-4">
         <div className="flex items-start gap-3">
           <span className={`mt-1 h-3 w-3 shrink-0 rounded-full ${statusDot[level]}`} />
@@ -95,7 +134,7 @@ function StormsPanel({ status }: { status: StormResponse | null }) {
             <p className="mt-2 text-sm leading-relaxed text-white/62">
               {hasStorms
                 ? "Storm activity is showing in the current signal. Storm details will surface here."
-                : "No tropical cyclones are showing in the current NHC widget signal. If conditions change, storm tools will appear here."}
+                : "No tropical cyclones are showing right now. If conditions change, storm tools will appear here."}
             </p>
           </div>
         </div>
@@ -123,25 +162,79 @@ function StormsPanel({ status }: { status: StormResponse | null }) {
 }
 
 function SatellitePanel() {
+  const [activeKey, setActiveKey] = useState<SatelliteKey>("mex-ir");
+  const activeProduct = satelliteProducts.find((product) => product.key === activeKey) ?? satelliteProducts[0];
+
   return (
     <PanelShell title="Satellite" kicker="GOES-19">
-      <div className="grid gap-4">
-        <SatelliteImage label="Mexico Sector · Infrared" src="https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/mex/13/GOES19-MEX-13-1000x1000.gif" />
-        <SatelliteImage label="East Pacific · Infrared" src="https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/eep/13/GOES19-EEP-13-900x540.gif" />
+      <div className="rounded-2xl border border-white/10 bg-night/60 p-3">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {satelliteProducts.map((product) => (
+            <button
+              key={product.key}
+              type="button"
+              onClick={() => setActiveKey(product.key)}
+              className={`rounded-2xl border px-3 py-3 text-left transition ${
+                activeKey === product.key
+                  ? "border-jade bg-jade/20 text-white"
+                  : "border-white/10 bg-black/30 text-white/70 hover:bg-white/[0.06]"
+              }`}
+            >
+              <span className="block text-xs font-extrabold">{product.label}</span>
+              <span className="mt-1 block text-[0.65rem] leading-snug text-white/45">{product.detail}</span>
+            </button>
+          ))}
+        </div>
+
+        <SatelliteImage key={activeProduct.key} product={activeProduct} />
+
+        <p className="mt-3 text-xs leading-relaxed text-white/45">
+          Satellite loops can be heavy on cell service. Pick one view at a time so the page does not choke itself like an overpacked pickup.
+        </p>
       </div>
-      <p className="mt-3 text-xs text-white/45">Satellite loops can be heavy on cell service.</p>
     </PanelShell>
   );
 }
 
-function SatelliteImage({ label, src }: { label: string; src: string }) {
+function SatelliteImage({ product }: { product: SatelliteProduct }) {
+  const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
+
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-black">
-      <div className="border-b border-white/10 px-4 py-3">
-        <p className="text-sm font-bold text-white">{label}</p>
+    <div className="mt-3 overflow-hidden rounded-2xl border border-white/10 bg-black">
+      <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
+        <div>
+          <p className="text-sm font-bold text-white">{product.label}</p>
+          <p className="mt-0.5 text-xs text-white/45">{product.detail}</p>
+        </div>
+        {!loaded && !failed && <span className="text-[0.65rem] font-extrabold uppercase tracking-[0.14em] text-white/35">Loading</span>}
+        {loaded && <span className="text-[0.65rem] font-extrabold uppercase tracking-[0.14em] text-jade-light">Live</span>}
+        {failed && <span className="text-[0.65rem] font-extrabold uppercase tracking-[0.14em] text-red-300">Failed</span>}
       </div>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={`/api/satellite?url=${encodeURIComponent(src)}`} alt={label} className="w-full" loading="lazy" />
+
+      <div className="relative min-h-[240px] bg-black sm:min-h-[360px]">
+        {!loaded && !failed && (
+          <div className="absolute inset-0 grid place-items-center">
+            <div className="h-10 w-10 animate-spin rounded-full border-2 border-jade border-t-transparent" />
+          </div>
+        )}
+
+        {failed && (
+          <div className="absolute inset-0 flex items-center justify-center p-6 text-center text-sm text-white/50">
+            Satellite image is not loading right now. Try another view.
+          </div>
+        )}
+
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={proxied(product.src)}
+          alt={product.label}
+          className={`w-full transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
+          loading="lazy"
+          onLoad={() => setLoaded(true)}
+          onError={() => setFailed(true)}
+        />
+      </div>
     </div>
   );
 }
