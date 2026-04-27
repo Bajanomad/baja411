@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Business, BusinessCategory, BusinessTown } from "@/data/businesses";
 
@@ -165,19 +166,21 @@ export default function BusinessDirectoryClient({
             return (
               <article key={business.id} className="rounded-3xl border border-border bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
                 <div className="flex items-start justify-between gap-4">
-                  <div>
+                  <Link href={`/businesses/${business.slug}`} className="min-w-0 flex-1">
                     <p className="text-xs font-bold text-sunset">{business.category}</p>
-                    <h3 className="mt-1 text-xl font-extrabold text-foreground">{business.name}</h3>
+                    <h3 className="mt-1 text-xl font-extrabold text-foreground transition hover:text-jade">{business.name}</h3>
                     <p className="mt-1 text-xs font-semibold text-muted">
                       {business.town}{business.area ? ` · ${business.area}` : ""}
                     </p>
-                  </div>
+                  </Link>
                   <span className="rounded-full bg-sand px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-muted">
                     {business.mapPinId ? "Mapped" : "Map soon"}
                   </span>
                 </div>
 
-                <p className="mt-4 text-sm leading-relaxed text-muted">{business.description}</p>
+                <Link href={`/businesses/${business.slug}`} className="mt-4 block text-sm leading-relaxed text-muted hover:text-foreground">
+                  {business.description}
+                </Link>
 
                 <div className="mt-4 flex flex-wrap gap-2">
                   {business.tags.slice(0, 4).map((tag) => (
@@ -188,6 +191,9 @@ export default function BusinessDirectoryClient({
                 </div>
 
                 <div className="mt-5 flex flex-wrap gap-2">
+                  <Link href={`/businesses/${business.slug}`} className="rounded-full bg-night px-4 py-2 text-xs font-extrabold text-white">
+                    Details
+                  </Link>
                   {call ? (
                     <a href={call} className="rounded-full bg-jade px-4 py-2 text-xs font-extrabold text-white">
                       Call
@@ -203,8 +209,8 @@ export default function BusinessDirectoryClient({
                   <a href={directionsUrl(business)} target="_blank" rel="noopener noreferrer" className="rounded-full border border-border px-4 py-2 text-xs font-extrabold text-foreground">
                     Directions
                   </a>
-                  <a href={business.mapPinId ? `/map?pin=${business.mapPinId}` : "#directory"} className="rounded-full border border-border px-4 py-2 text-xs font-extrabold text-muted">
-                    {business.mapPinId ? "View on Map" : "Map Pin Coming Soon"}
+                  <a href={business.mapPinId ? `/map?pin=${business.mapPinId}` : `/businesses/${business.slug}`} className="rounded-full border border-border px-4 py-2 text-xs font-extrabold text-muted">
+                    {business.mapPinId ? "View on Map" : "Map Pending"}
                   </a>
                 </div>
               </article>
