@@ -1,51 +1,20 @@
-import ParallaxImage from "@/components/ParallaxImage";
-import WaveDivider from "@/components/WaveDivider";
-
 interface PageHeroProps {
   image: string;
   alt: string;
   eyebrow: string;
   title: string;
   subtitle?: string;
-  pageBg?: string; // wave divider fades into this color
+  pageBg?: string;
 }
 
-export default function PageHero({
-  image,
-  alt,
-  eyebrow,
-  title,
-  subtitle,
-  pageBg = "#FAFAF7",
-}: PageHeroProps) {
+export default function PageHero({ eyebrow, title, subtitle }: PageHeroProps) {
   return (
-    <div className="relative">
-      <ParallaxImage
-        src={image}
-        alt={alt}
-        height="340px"
-        strength={0.22}
-        overlay="linear-gradient(180deg, rgba(6,13,24,0.72) 0%, rgba(6,13,24,0.42) 52%, rgba(6,13,24,0.78) 100%)"
-      >
-        <div className="mx-auto max-w-3xl px-5 pb-10 text-center md:pb-12">
-          <span className="label-tag mb-3 block">{eyebrow}</span>
-          <h1
-            className="font-extrabold leading-tight text-white drop-shadow-lg"
-            style={{ fontSize: "clamp(2rem, 5vw, 3.75rem)" }}
-          >
-            {title}
-          </h1>
-          {subtitle && (
-            <p className="mx-auto mt-3 max-w-xl text-base text-white/70 drop-shadow md:text-lg">
-              {subtitle}
-            </p>
-          )}
-        </div>
-      </ParallaxImage>
-
-      <div className="absolute bottom-0 left-0 right-0 z-10">
-        <WaveDivider fill={pageBg} />
+    <section className="border-b border-white/10 bg-night px-4 py-8 text-white sm:px-5 sm:py-10">
+      <div className="mx-auto max-w-5xl">
+        <span className="label-tag mb-2 block">{eyebrow}</span>
+        <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl">{title}</h1>
+        {subtitle && <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/60 sm:text-base">{subtitle}</p>}
       </div>
-    </div>
+    </section>
   );
 }
