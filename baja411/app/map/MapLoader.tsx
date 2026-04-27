@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import MapCompassOverlay from "./MapCompassOverlay";
 
 const MapClient = dynamic(() => import("@/components/MapClient"), {
   ssr: false,
@@ -18,5 +19,10 @@ const MapClient = dynamic(() => import("@/components/MapClient"), {
 });
 
 export default function MapLoader() {
-  return <MapClient />;
+  return (
+    <div className="relative h-full w-full">
+      <MapClient />
+      <MapCompassOverlay />
+    </div>
+  );
 }
