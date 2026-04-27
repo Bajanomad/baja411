@@ -240,16 +240,19 @@ export default function MapSearchEnhancer() {
       const form = input?.closest("form") as HTMLFormElement | null;
       if (!input || !form || form.dataset.searchEnhanced === "1") return false;
 
-      form.dataset.searchEnhanced = "1";
-      form.classList.add("map-plan-search");
+      const searchInput = input;
+      const searchForm = form;
+
+      searchForm.dataset.searchEnhanced = "1";
+      searchForm.classList.add("map-plan-search");
 
       const panel = document.createElement("div");
       panel.className = "map-search-suggestions";
       panel.hidden = true;
-      form.appendChild(panel);
+      searchForm.appendChild(panel);
 
       function showSuggestions() {
-        const query = normalize(input.value);
+        const query = normalize(searchInput.value);
         const matches = SUGGESTIONS.filter((item) => normalize(item).startsWith(query) || normalize(item).includes(query)).slice(0, 5);
         panel.innerHTML = "";
 
@@ -265,9 +268,9 @@ export default function MapSearchEnhancer() {
           button.textContent = match;
           button.addEventListener("pointerdown", (event) => {
             event.preventDefault();
-            setReactInputValue(input, match);
+            setReactInputValue(searchInput, match);
             panel.hidden = true;
-            window.setTimeout(() => form.requestSubmit(), 0);
+            window.setTimeout(() => searchForm.requestSubmit(), 0);
           });
           panel.appendChild(button);
         });
@@ -276,33 +279,33 @@ export default function MapSearchEnhancer() {
       }
 
       function openSearch() {
-        form.classList.add("map-plan-search-open");
-        window.setTimeout(() => input.focus(), 60);
+        searchForm.classList.add("map-plan-search-open");
+        window.setTimeout(() => searchInput.focus(), 60);
       }
 
       function maybeCloseSearch() {
         window.setTimeout(() => {
-          if (form.contains(document.activeElement) || input.value.trim()) return;
-          form.classList.remove("map-plan-search-open");
+          if (searchForm.contains(document.activeElement) || searchInput.value.trim()) return;
+          searchForm.classList.remove("map-plan-search-open");
           panel.hidden = true;
         }, 120);
       }
 
-      form.addEventListener("click", openSearch);
-      input.addEventListener("focus", openSearch);
-      input.addEventListener("input", showSuggestions);
-      input.addEventListener("blur", maybeCloseSearch);
-      form.addEventListener("focusout", maybeCloseSearch);
+      searchForm.addEventListener("click", openSearch);
+      searchInput.addEventListener("focus", openSearch);
+      searchInput.addEventListener("input", showSuggestions);
+      searchInput.addEventListener("blur", maybeCloseSearch);
+      searchForm.addEventListener("focusout", maybeCloseSearch);
 
       cleanup = () => {
-        form.removeEventListener("click", openSearch);
-        input.removeEventListener("focus", openSearch);
-        input.removeEventListener("input", showSuggestions);
-        input.removeEventListener("blur", maybeCloseSearch);
-        form.removeEventListener("focusout", maybeCloseSearch);
+        searchForm.removeEventListener("click", openSearch);
+        searchInput.removeEventListener("focus", openSearch);
+        searchInput.removeEventListener("input", showSuggestions);
+        searchInput.removeEventListener("blur", maybeCloseSearch);
+        searchForm.removeEventListener("focusout", maybeCloseSearch);
         panel.remove();
-        form.classList.remove("map-plan-search", "map-plan-search-open");
-        delete form.dataset.searchEnhanced;
+        searchForm.classList.remove("map-plan-search", "map-plan-search-open");
+        delete searchForm.dataset.searchEnhanced;
       };
 
       return true;
