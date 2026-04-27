@@ -57,6 +57,33 @@ body {
   inset: 0 !important;
 }
 
+/* Keep map attribution available without letting it sprawl across the map. */
+.maplibregl-ctrl-attrib {
+  max-width: 34px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  border-radius: 999px !important;
+  transition: max-width 180ms ease, border-radius 180ms ease;
+}
+
+.maplibregl-ctrl-attrib.maplibregl-compact-show {
+  max-width: calc(100vw - 24px) !important;
+  white-space: normal !important;
+  border-radius: 8px !important;
+}
+
+.maplibregl-ctrl-attrib:not(.maplibregl-compact-show) .maplibregl-ctrl-attrib-inner {
+  display: none !important;
+}
+
+.maplibregl-ctrl-attrib.maplibregl-compact-show .maplibregl-ctrl-attrib-inner {
+  display: block !important;
+}
+
+.maplibregl-ctrl-attrib-button {
+  display: block !important;
+}
+
 /* Hide redundant Drive status pill: no Paused, no Tracking, no dot. */
 div.absolute.bottom-5.left-3.z-\[1000\].rounded-full {
   display: none !important;
