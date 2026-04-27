@@ -186,24 +186,26 @@ function ensureRotationToggle() {
 
   let button = document.getElementById(ROTATION_BUTTON_ID) as HTMLButtonElement | null;
   if (!button) {
-    button = document.createElement("button");
-    button.id = ROTATION_BUTTON_ID;
-    button.type = "button";
-    styleRotationButton(button);
+    const rotationButton = document.createElement("button");
+    rotationButton.id = ROTATION_BUTTON_ID;
+    rotationButton.type = "button";
+    styleRotationButton(rotationButton);
 
-    button.addEventListener("click", async (event) => {
+    rotationButton.addEventListener("click", async (event) => {
+      const targetButton = event.currentTarget as HTMLButtonElement;
       event.preventDefault();
       event.stopPropagation();
 
       if (bajaWindow().__baja411HeadingActive === true) {
-        disableHeadingRotation(button);
+        disableHeadingRotation(targetButton);
         return;
       }
 
-      await enableHeadingRotation(button);
+      await enableHeadingRotation(targetButton);
     });
 
-    document.querySelector(".relative.h-full.w-full.overflow-hidden")?.appendChild(button);
+    document.querySelector(".relative.h-full.w-full.overflow-hidden")?.appendChild(rotationButton);
+    button = rotationButton;
   }
 
   const driveActive = isDriveModeActive();
