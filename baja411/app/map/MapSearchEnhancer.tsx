@@ -1,5 +1,6 @@
 "use client";
 
+import maplibregl from "maplibre-gl";
 import { useEffect } from "react";
 
 const TOWN_SUGGESTIONS = [
@@ -32,6 +33,25 @@ const CATEGORY_SUGGESTIONS = [
 ];
 
 const SUGGESTIONS = [...TOWN_SUGGESTIONS, ...CATEGORY_SUGGESTIONS];
+const ROTATION_BUTTON_ID = "baja411-drive-rotation-button";
+
+type DeviceOrientationEventWithPermission = typeof DeviceOrientationEvent & {
+  requestPermission?: () => Promise<"granted" | "denied">;
+};
+
+type RotationPatch = {
+  maps: Set<maplibregl.Map>;
+  originalEaseTo: maplibregl.Map["easeTo"];
+};
+
+type BajaWindow = Window & {
+  __baja411HeadingActive?: boolean;
+  __baja411RotationPatch?: RotationPatch;
+};
+
+function bajaWindow() {
+  return window as BajaWindow;
+}
 
 function normalize(value: string) {
   return value
@@ -49,6 +69,152 @@ function setReactInputValue(input: HTMLInputElement, value: string) {
 
 function removeOldCompassControl() {
   document.getElementById("baja411-drive-compass-button")?.remove();
+}
+
+function installRotationPatch() {
+  const win = bajaWindow();
+  if (win.__baja411RotationPatch) return win.__baja411RotationPatch;
+
+  const proto = maplibregl.Map.prototype;
+  const originalEaseTo = proto.easeTo;
+  const patch: RotationPatch = {
+    maps: new Set<maplibregl.Map>(),
+    originalEaseTo,
+  };
+
+  proto.easeTo = function patchedEaseTo(this: maplibregl.Map, ...args: Parameters<maplibregl.Map["easeTo"]>) {
+    patch.maps.add(this);
+    const [options, eventData] = args;
+
+    if (!win.__baja411HeadingActive && options && typeof options === "object" && "bearing" in options) {
+      const nextOptions = { ...options };
+      delete nextOptions.bearing;
+      return originalEaseTo.call(this, nextOptions, eventData);
+    }
+
+    return originalEaseTo.call(this, ...args);
+  } as maplibregl.Map["easeTo"];
+
+  win.__baja411RotationPatch = patch;
+  return patch;
+}
+
+function resetMapBearing() {
+  const patch = bajaWindow().__baja411RotationPatch;
+  if (!patch) return;
+
+  patch.maps.forEach((map) => {
+    try {
+      patch.originalEaseTo.call(map, { bearing: 0, duration: 350, essential: true });
+    } catch {
+      patch.maps.delete(map);
+    }
+  });
+}
+
+async function requestHeadingPermission() {
+  const OrientationEvent = window.DeviceOrientationEvent as DeviceOrientationEventWithPermission | undefined;
+  if (!OrientationEvent || typeof OrientationEvent.requestPermission !== "function") return true;
+
+  try {
+    const result = await OrientationEvent.requestPermission();
+    return result === "granted";
+  } catch {
+    return false;
+  }
+}
+
+function isDriveModeActive() {
+  const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>("button"));
+  const driveButton = buttons.find((button) => button.textContent?.trim() === "Drive");
+  return Boolean(driveButton?.className.includes("bg-jade"));
+}
+
+function syncRotationButton(button: HTMLButtonElement) {
+  const active = bajaWindow().__baja411HeadingActive === true;
+  button.style.background = active ? "rgba(42, 122, 90, 0.96)" : "rgba(255, 255, 255, 0.96)";
+  button.style.color = active ? "#fff" : "#111827";
+  button.setAttribute("aria-label", active ? "Disable heading rotation" : "Enable heading rotation");
+}
+
+function styleRotationButton(button: HTMLButtonElement) {
+  button.style.position = "absolute";
+  button.style.right = "12px";
+  button.style.bottom = "76px";
+  button.style.zIndex = "1500";
+  button.style.width = "52px";
+  button.style.height = "52px";
+  button.style.borderRadius = "999px";
+  button.style.border = "1px solid rgba(15, 23, 42, 0.14)";
+  button.style.boxShadow = "0 14px 34px rgba(15, 23, 42, 0.18)";
+  button.style.backdropFilter = "blur(18px)";
+  button.style.setProperty("-webkit-backdrop-filter", "blur(18px)");
+  button.style.display = "flex";
+  button.style.alignItems = "center";
+  button.style.justifyContent = "center";
+  button.style.fontSize = "24px";
+  button.style.lineHeight = "1";
+  button.style.cursor = "pointer";
+  button.style.userSelect = "none";
+  button.style.touchAction = "manipulation";
+  button.textContent = "↻";
+  button.title = "Heading rotation";
+  syncRotationButton(button);
+}
+
+function disableHeadingRotation(button?: HTMLButtonElement | null) {
+  bajaWindow().__baja411HeadingActive = false;
+  resetMapBearing();
+  if (button) syncRotationButton(button);
+}
+
+async function enableHeadingRotation(button: HTMLButtonElement) {
+  const granted = await requestHeadingPermission();
+  if (!granted) {
+    disableHeadingRotation(button);
+    return;
+  }
+
+  bajaWindow().__baja411HeadingActive = true;
+  syncRotationButton(button);
+  document.querySelector<HTMLButtonElement>('button[aria-label="Recenter"]')?.click();
+}
+
+function ensureRotationToggle() {
+  installRotationPatch();
+  removeOldCompassControl();
+
+  let button = document.getElementById(ROTATION_BUTTON_ID) as HTMLButtonElement | null;
+  if (!button) {
+    button = document.createElement("button");
+    button.id = ROTATION_BUTTON_ID;
+    button.type = "button";
+    styleRotationButton(button);
+
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (bajaWindow().__baja411HeadingActive === true) {
+        disableHeadingRotation(button);
+        return;
+      }
+
+      await enableHeadingRotation(button);
+    });
+
+    document.querySelector(".relative.h-full.w-full.overflow-hidden")?.appendChild(button);
+  }
+
+  const driveActive = isDriveModeActive();
+  button.hidden = !driveActive;
+
+  if (!driveActive) {
+    disableHeadingRotation(button);
+    return;
+  }
+
+  syncRotationButton(button);
 }
 
 function attachGpsToggle() {
@@ -157,25 +323,28 @@ export default function MapSearchEnhancer() {
     }
 
     const observer = new MutationObserver(() => {
-      removeOldCompassControl();
       attachSearch();
       attachGpsToggle();
+      ensureRotationToggle();
     });
 
     timer = window.setInterval(() => {
-      removeOldCompassControl();
       attachSearch();
       attachGpsToggle();
+      ensureRotationToggle();
     }, 250);
 
+    bajaWindow().__baja411HeadingActive = false;
     observer.observe(document.body, { childList: true, subtree: true, characterData: true });
-    removeOldCompassControl();
     attachSearch();
     attachGpsToggle();
+    ensureRotationToggle();
 
     return () => {
       if (timer !== null) window.clearInterval(timer);
       observer.disconnect();
+      disableHeadingRotation(document.getElementById(ROTATION_BUTTON_ID) as HTMLButtonElement | null);
+      document.getElementById(ROTATION_BUTTON_ID)?.remove();
       removeOldCompassControl();
       cleanup?.();
     };
