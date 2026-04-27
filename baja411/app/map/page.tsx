@@ -10,8 +10,13 @@ export const metadata: Metadata = {
 export default function MapPage() {
   return (
     <div
-      className="flex flex-col"
-      style={{ height: "calc(100vh - var(--nav-height))", marginTop: "var(--nav-height)" }}
+      className="fixed inset-x-0 bottom-0 overflow-hidden"
+      style={{
+        top: "var(--nav-height)",
+        height: "calc(100dvh - var(--nav-height))",
+        overscrollBehavior: "none",
+        touchAction: "none",
+      }}
     >
       <MapLoader />
     </div>
