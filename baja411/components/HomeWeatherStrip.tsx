@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useBajaLocation } from "@/components/LocationProvider";
 
 interface CurrentWeather {
   temperature_2m: number;
@@ -8,29 +9,47 @@ interface CurrentWeather {
   wind_speed_10m: number;
 }
 
-const OPEN_METEO_URL =
-  "https://api.open-meteo.com/v1/forecast" +
-  "?latitude=23.446&longitude=-110.223" +
-  "&current=temperature_2m,relative_humidity_2m,wind_speed_10m" +
-  "&temperature_unit=fahrenheit&wind_speed_unit=kn" +
-  "&timezone=America%2FMazatlan";
-
 const fallbackStats = [
   { label: "Temp", icon: "🌡️", value: null as string | null, unit: "F" },
   { label: "Wind", icon: "💨", value: null as string | null, unit: "kt" },
   { label: "Humidity", icon: "💧", value: null as string | null, unit: "%" },
 ];
 
+function openMeteoUrl(lat: number, lon: number) {
+  return (
+    "https://api.open-meteo.com/v1/forecast" +
+    `?latitude=${lat}&longitude=${lon}` +
+    "&current=temperature_2m,relative_humidity_2m,wind_speed_10m" +
+    "&temperature_unit=fahrenheit&wind_speed_unit=kn" +
+    "&timezone=America%2FMazatlan"
+  );
+}
+
 export default function HomeWeatherStrip() {
+  const { location } = useBajaLocation();
   const [current, setCurrent] = useState<CurrentWeather | null>(null);
   const [error, setError] = useState(false);
 
+  const url = useMemo(() => openMeteoUrl(location.lat, location.lon), [location.lat, location.lon]);
+
   useEffect(() => {
-    fetch(OPEN_METEO_URL)
+    let cancelled = false;
+    setCurrent(null);
+    setError(false);
+
+    fetch(url)
       .then((res) => res.json())
-      .then((data) => setCurrent(data.current ?? null))
-      .catch(() => setError(true));
-  }, []);
+      .then((data) => {
+        if (!cancelled) setCurrent(data.current ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setError(true);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [url]);
 
   const stats = current
     ? [
@@ -41,30 +60,35 @@ export default function HomeWeatherStrip() {
     : fallbackStats;
 
   return (
-    <div className="mt-4 grid max-w-xl grid-cols-3 gap-2 sm:mt-5 sm:gap-3">
-      {stats.map((stat) => (
-        <div
-          key={stat.label}
-          className="min-w-0 rounded-2xl border border-white/14 bg-white/12 px-3 py-2.5 text-white shadow-lg backdrop-blur-md sm:px-4 sm:py-4"
-        >
-          <div className="flex min-w-0 items-center gap-1 text-[10px] font-extrabold leading-none text-white/62 sm:text-xs">
-            <span className="shrink-0 text-sm sm:text-base">{stat.icon}</span>
-            <span className="truncate">{stat.label}</span>
+    <div>
+      <div className="mt-4 grid max-w-xl grid-cols-3 gap-2 sm:mt-5 sm:gap-3">
+        {stats.map((stat) => (
+          <div
+            key={stat.label}
+            className="min-w-0 rounded-2xl border border-white/14 bg-white/12 px-3 py-2.5 text-white shadow-lg backdrop-blur-md sm:px-4 sm:py-4"
+          >
+            <div className="flex min-w-0 items-center gap-1 text-[10px] font-extrabold leading-none text-white/62 sm:text-xs">
+              <span className="shrink-0 text-sm sm:text-base">{stat.icon}</span>
+              <span className="truncate">{stat.label}</span>
+            </div>
+            <div className="mt-2 flex items-end gap-1 sm:mt-3">
+              {stat.value ? (
+                <>
+                  <span className="text-[1.8rem] font-extrabold leading-[0.9] tracking-tight sm:text-4xl">{stat.value}</span>
+                  <span className="pb-0.5 text-xs font-extrabold text-white/58 sm:text-sm">{stat.unit}</span>
+                </>
+              ) : error ? (
+                <span className="text-3xl font-extrabold leading-none text-white/35">—</span>
+              ) : (
+                <div className="h-7 w-12 animate-pulse rounded-full bg-white/15 sm:h-8 sm:w-14" />
+              )}
+            </div>
           </div>
-          <div className="mt-2 flex items-end gap-1 sm:mt-3">
-            {stat.value ? (
-              <>
-                <span className="text-[1.8rem] font-extrabold leading-[0.9] tracking-tight sm:text-4xl">{stat.value}</span>
-                <span className="pb-0.5 text-xs font-extrabold text-white/58 sm:text-sm">{stat.unit}</span>
-              </>
-            ) : error ? (
-              <span className="text-3xl font-extrabold leading-none text-white/35">—</span>
-            ) : (
-              <div className="h-7 w-12 animate-pulse rounded-full bg-white/15 sm:h-8 sm:w-14" />
-            )}
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
+      <p className="mt-2 max-w-xl text-right text-[10px] font-bold uppercase tracking-[0.12em] text-white/35">
+        {location.source === "gps" ? "Your location" : location.label}
+      </p>
     </div>
   );
 }
