@@ -36,6 +36,27 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* MapLibre mobile viewport fix */
+.maplibregl-map,
+.maplibregl-canvas-container,
+.maplibregl-canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.maplibregl-map {
+  position: absolute !important;
+  inset: 0 !important;
+  overflow: hidden !important;
+  touch-action: pan-x pan-y pinch-zoom;
+}
+
+.maplibregl-canvas-container,
+.maplibregl-canvas {
+  position: absolute !important;
+  inset: 0 !important;
+}
+
 /* Animated hero waves */
 @keyframes hero-wave {
   from { transform: translateX(0); }
