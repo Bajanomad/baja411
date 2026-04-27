@@ -158,7 +158,7 @@ function styleCompassButton(button: HTMLButtonElement) {
   button.style.background = "rgba(255, 255, 255, 0.96)";
   button.style.boxShadow = "0 14px 34px rgba(15, 23, 42, 0.18)";
   button.style.backdropFilter = "blur(18px)";
-  button.style.webkitBackdropFilter = "blur(18px)";
+  button.style.setProperty("-webkit-backdrop-filter", "blur(18px)");
   button.style.display = "flex";
   button.style.alignItems = "center";
   button.style.justifyContent = "center";
