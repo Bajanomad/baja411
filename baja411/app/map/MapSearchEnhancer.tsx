@@ -66,7 +66,7 @@ function headingDelta(from: number, to: number) {
 
 function smoothHeading(current: number | null, next: number) {
   if (current === null) return normalizeDegrees(next);
-  return normalizeDegrees(current + headingDelta(current, next) * 0.24);
+  return normalizeDegrees(current + headingDelta(current, next) * 0.18);
 }
 
 function getHeading(event: DeviceOrientationEventWithCompass) {
@@ -132,7 +132,7 @@ function applyMapRotation(heading: number) {
 
   canvasContainer.style.transformOrigin = "center center";
   canvasContainer.style.transform = `scale(1.55) rotate(${-smoothed}deg)`;
-  canvasContainer.style.transition = "transform 90ms linear";
+  canvasContainer.style.transition = "transform 120ms linear";
   canvasContainer.style.willChange = "transform";
 }
 
@@ -145,7 +145,6 @@ function styleCompassButton(button: HTMLButtonElement) {
   button.style.height = "52px";
   button.style.borderRadius = "999px";
   button.style.border = "1px solid rgba(15, 23, 42, 0.14)";
-  button.style.background = "rgba(255, 255, 255, 0.96)";
   button.style.boxShadow = "0 14px 34px rgba(15, 23, 42, 0.18)";
   button.style.backdropFilter = "blur(18px)";
   button.style.setProperty("-webkit-backdrop-filter", "blur(18px)");
@@ -157,6 +156,55 @@ function styleCompassButton(button: HTMLButtonElement) {
   button.style.cursor = "pointer";
   button.style.userSelect = "none";
   button.style.touchAction = "manipulation";
+  syncCompassButtonState(button);
+}
+
+function syncCompassButtonState(button: HTMLButtonElement) {
+  const needle = button.firstElementChild as HTMLElement | null;
+
+  if (driveCompassActive) {
+    button.classList.add("map-compass-active");
+    button.setAttribute("aria-label", "Disable drive compass");
+    button.style.background = "rgba(42, 122, 90, 0.96)";
+    if (needle) needle.style.filter = "brightness(0) invert(1)";
+    return;
+  }
+
+  button.classList.remove("map-compass-active");
+  button.setAttribute("aria-label", "Enable drive compass");
+  button.style.background = "rgba(255, 255, 255, 0.96)";
+  if (needle) {
+    needle.style.filter = "";
+    needle.style.transform = "";
+  }
+}
+
+function disableCompass(button?: HTMLButtonElement | null) {
+  driveCompassActive = false;
+  localStorage.setItem(COMPASS_ACTIVE_KEY, "0");
+  resetMapRotation();
+  if (button) syncCompassButtonState(button);
+}
+
+async function enableCompass(button: HTMLButtonElement) {
+  const OrientationEvent = window.DeviceOrientationEvent as DeviceOrientationEventWithPermission | undefined;
+  driveCompassActive = true;
+  localStorage.setItem(COMPASS_ACTIVE_KEY, "1");
+  syncCompassButtonState(button);
+
+  if (OrientationEvent && typeof OrientationEvent.requestPermission === "function") {
+    try {
+      const result = await OrientationEvent.requestPermission();
+      if (result === "granted") localStorage.setItem(COMPASS_PERMISSION_KEY, "1");
+      if (result !== "granted") disableCompass(button);
+    } catch {
+      disableCompass(button);
+    }
+  } else {
+    localStorage.setItem(COMPASS_PERMISSION_KEY, "1");
+  }
+
+  document.querySelector<HTMLButtonElement>('button[aria-label="Recenter"]')?.click();
 }
 
 function ensureCompassControl() {
@@ -167,32 +215,16 @@ function ensureCompassControl() {
     compassButton.id = COMPASS_BUTTON_ID;
     compassButton.type = "button";
     compassButton.title = "Compass";
-    compassButton.setAttribute("aria-label", "Enable drive compass");
     compassButton.innerHTML = "<span style='display:block;transform-origin:center;'>🧭</span>";
     styleCompassButton(compassButton);
 
     compassButton.addEventListener("click", async () => {
-      const OrientationEvent = window.DeviceOrientationEvent as DeviceOrientationEventWithPermission | undefined;
-      driveCompassActive = true;
-      localStorage.setItem(COMPASS_ACTIVE_KEY, "1");
-      compassButton.classList.add("map-compass-active");
-      compassButton.style.background = "rgba(42, 122, 90, 0.96)";
-
-      const needle = compassButton.firstElementChild as HTMLElement | null;
-      if (needle) needle.style.filter = "brightness(0) invert(1)";
-
-      if (OrientationEvent && typeof OrientationEvent.requestPermission === "function") {
-        try {
-          const result = await OrientationEvent.requestPermission();
-          if (result === "granted") localStorage.setItem(COMPASS_PERMISSION_KEY, "1");
-        } catch {
-          // Browser said nope. Keep the button, do not nag.
-        }
-      } else {
-        localStorage.setItem(COMPASS_PERMISSION_KEY, "1");
+      if (driveCompassActive) {
+        disableCompass(compassButton);
+        return;
       }
 
-      document.querySelector<HTMLButtonElement>('button[aria-label="Recenter"]')?.click();
+      await enableCompass(compassButton);
     });
 
     window.addEventListener("deviceorientationabsolute", updateCompassAndMap, true);
@@ -203,10 +235,10 @@ function ensureCompassControl() {
 
   const driveVisible = isDriveModeVisible();
   button.hidden = !driveVisible;
+  syncCompassButtonState(button);
 
   if (!driveVisible) {
-    driveCompassActive = false;
-    resetMapRotation();
+    disableCompass(button);
   }
 }
 
@@ -216,7 +248,7 @@ function updateCompassAndMap(event: DeviceOrientationEvent) {
   const heading = getHeading(event as DeviceOrientationEventWithCompass);
   if (heading === null) return;
 
-  if (needle) needle.style.transform = `rotate(${-heading}deg)`;
+  if (needle && driveCompassActive) needle.style.transform = `rotate(${-heading}deg)`;
   applyMapRotation(heading);
 }
 
@@ -325,7 +357,7 @@ export default function MapSearchEnhancer() {
       observer.disconnect();
       window.removeEventListener("deviceorientationabsolute", updateCompassAndMap, true);
       window.removeEventListener("deviceorientation", updateCompassAndMap, true);
-      resetMapRotation();
+      disableCompass(document.getElementById(COMPASS_BUTTON_ID) as HTMLButtonElement | null);
       document.getElementById(COMPASS_BUTTON_ID)?.remove();
       cleanup?.();
     };
