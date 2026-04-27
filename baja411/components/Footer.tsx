@@ -7,6 +7,12 @@ const explore = [
   { href: "/calendar", label: "Events" },
 ];
 
+const community = [
+  { href: "/classifieds", label: "Classifieds" },
+  { href: "/directory", label: "Business Directory" },
+  { href: "/signin", label: "Sign In" },
+];
+
 export default function Footer() {
   return (
     <footer className="relative overflow-hidden bg-night text-white/60">
@@ -43,6 +49,19 @@ export default function Footer() {
             <p className="mb-5 text-[10px] font-bold uppercase tracking-[0.14em] text-white/30">Explore</p>
             <ul className="space-y-3">
               {explore.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="text-sm text-white/50 transition-colors hover:text-white">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <p className="mb-5 text-[10px] font-bold uppercase tracking-[0.14em] text-white/30">Community</p>
+            <ul className="space-y-3">
+              {community.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-sm text-white/50 transition-colors hover:text-white">
                     {link.label}
