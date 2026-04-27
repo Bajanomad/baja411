@@ -104,22 +104,19 @@ function moveDriveStatus() {
   });
 }
 
-function mapVisualLayers() {
-  return Array.from(
-    document.querySelectorAll<HTMLElement>(
-      ".maplibregl-canvas-container, .maplibregl-marker"
-    )
-  );
+function mapCanvasContainer() {
+  return document.querySelector<HTMLElement>(".maplibregl-canvas-container");
 }
 
 function resetMapRotation() {
   lastAppliedHeading = null;
-  mapVisualLayers().forEach((element) => {
-    element.style.transform = "";
-    element.style.transformOrigin = "";
-    element.style.transition = "";
-    element.style.willChange = "";
-  });
+  const canvasContainer = mapCanvasContainer();
+  if (!canvasContainer) return;
+
+  canvasContainer.style.transform = "";
+  canvasContainer.style.transformOrigin = "";
+  canvasContainer.style.transition = "";
+  canvasContainer.style.willChange = "";
 }
 
 function applyMapRotation(heading: number) {
@@ -130,20 +127,13 @@ function applyMapRotation(heading: number) {
 
   const smoothed = smoothHeading(lastAppliedHeading, heading);
   lastAppliedHeading = smoothed;
-  const rotation = `rotate(${-smoothed}deg)`;
+  const canvasContainer = mapCanvasContainer();
+  if (!canvasContainer) return;
 
-  const canvasContainer = document.querySelector<HTMLElement>(".maplibregl-canvas-container");
-  if (canvasContainer) {
-    canvasContainer.style.transformOrigin = "center center";
-    canvasContainer.style.transform = `scale(1.55) ${rotation}`;
-    canvasContainer.style.transition = "transform 90ms linear";
-    canvasContainer.style.willChange = "transform";
-  }
-
-  document.querySelectorAll<HTMLElement>(".maplibregl-marker").forEach((marker) => {
-    marker.style.transformOrigin = "center center";
-    marker.style.transform = `${marker.style.transform} rotate(${smoothed}deg)`;
-  });
+  canvasContainer.style.transformOrigin = "center center";
+  canvasContainer.style.transform = `scale(1.55) rotate(${-smoothed}deg)`;
+  canvasContainer.style.transition = "transform 90ms linear";
+  canvasContainer.style.willChange = "transform";
 }
 
 function styleCompassButton(button: HTMLButtonElement) {
