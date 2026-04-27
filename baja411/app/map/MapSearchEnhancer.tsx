@@ -39,6 +39,10 @@ type DeviceOrientationEventWithPermission = typeof DeviceOrientationEvent & {
   requestPermission?: () => Promise<"granted" | "denied">;
 };
 
+type DeviceOrientationEventWithCompass = DeviceOrientationEvent & {
+  webkitCompassHeading?: number;
+};
+
 type RotationPatch = {
   maps: Set<maplibregl.Map>;
   originalEaseTo: maplibregl.Map["easeTo"];
@@ -47,6 +51,8 @@ type RotationPatch = {
 type BajaWindow = Window & {
   __baja411HeadingActive?: boolean;
   __baja411RotationPatch?: RotationPatch;
+  __baja411SmoothedHeading?: number | null;
+  __baja411LastHeadingUpdate?: number;
 };
 
 function bajaWindow() {
@@ -59,6 +65,25 @@ function normalize(value: string) {
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .trim();
+}
+
+function normalizeDegrees(value: number) {
+  return ((value % 360) + 360) % 360;
+}
+
+function headingDifference(from: number, to: number) {
+  return ((to - from + 540) % 360) - 180;
+}
+
+function smoothHeading(current: number | null, next: number) {
+  if (current === null) return normalizeDegrees(next);
+  return normalizeDegrees(current + headingDifference(current, next) * 0.16);
+}
+
+function getHeading(event: DeviceOrientationEventWithCompass) {
+  if (typeof event.webkitCompassHeading === "number") return normalizeDegrees(event.webkitCompassHeading);
+  if (typeof event.alpha === "number") return normalizeDegrees(360 - event.alpha);
+  return null;
 }
 
 function setReactInputValue(input: HTMLInputElement, value: string) {
@@ -130,6 +155,17 @@ function isDriveModeActive() {
   return Boolean(driveButton?.className.includes("bg-jade"));
 }
 
+function isGpsFollowing() {
+  const recenterButton = document.querySelector<HTMLButtonElement>('button[aria-label="Recenter"]');
+  return Boolean(recenterButton?.className.includes("text-jade"));
+}
+
+function ensureGpsFollow() {
+  const recenterButton = document.querySelector<HTMLButtonElement>('button[aria-label="Recenter"]');
+  if (!recenterButton || isGpsFollowing()) return;
+  recenterButton.click();
+}
+
 function syncRotationButton(button: HTMLButtonElement) {
   const active = bajaWindow().__baja411HeadingActive === true;
   button.style.background = active ? "rgba(42, 122, 90, 0.96)" : "rgba(255, 255, 255, 0.96)";
@@ -163,9 +199,50 @@ function styleRotationButton(button: HTMLButtonElement) {
 }
 
 function disableHeadingRotation(button?: HTMLButtonElement | null) {
-  bajaWindow().__baja411HeadingActive = false;
+  const win = bajaWindow();
+  win.__baja411HeadingActive = false;
+  win.__baja411SmoothedHeading = null;
+  win.__baja411LastHeadingUpdate = 0;
   resetMapBearing();
   if (button) syncRotationButton(button);
+}
+
+function applyLiveHeading(rawHeading: number) {
+  const win = bajaWindow();
+  if (win.__baja411HeadingActive !== true || !isDriveModeActive() || !isGpsFollowing()) return;
+
+  const now = performance.now();
+  const lastUpdate = win.__baja411LastHeadingUpdate ?? 0;
+  if (now - lastUpdate < 110) return;
+
+  const previous = win.__baja411SmoothedHeading ?? null;
+  const smoothed = smoothHeading(previous, rawHeading);
+  if (previous !== null && Math.abs(headingDifference(previous, smoothed)) < 1.1) return;
+
+  win.__baja411SmoothedHeading = smoothed;
+  win.__baja411LastHeadingUpdate = now;
+
+  const patch = installRotationPatch();
+  patch.maps.forEach((map) => {
+    try {
+      patch.originalEaseTo.call(map, { bearing: smoothed, duration: 140, essential: true });
+    } catch {
+      patch.maps.delete(map);
+    }
+  });
+}
+
+function handleLiveHeading(event: DeviceOrientationEvent) {
+  const heading = getHeading(event as DeviceOrientationEventWithCompass);
+  if (heading === null) return;
+  applyLiveHeading(heading);
+}
+
+function refreshHeadingListeners() {
+  window.removeEventListener("deviceorientationabsolute", handleLiveHeading, true);
+  window.removeEventListener("deviceorientation", handleLiveHeading, true);
+  window.addEventListener("deviceorientationabsolute", handleLiveHeading, true);
+  window.addEventListener("deviceorientation", handleLiveHeading, true);
 }
 
 async function enableHeadingRotation(button: HTMLButtonElement) {
@@ -175,9 +252,13 @@ async function enableHeadingRotation(button: HTMLButtonElement) {
     return;
   }
 
-  bajaWindow().__baja411HeadingActive = true;
+  const win = bajaWindow();
+  win.__baja411HeadingActive = true;
+  win.__baja411SmoothedHeading = null;
+  win.__baja411LastHeadingUpdate = 0;
   syncRotationButton(button);
-  document.querySelector<HTMLButtonElement>('button[aria-label="Recenter"]')?.click();
+  refreshHeadingListeners();
+  ensureGpsFollow();
 }
 
 function ensureRotationToggle() {
@@ -216,6 +297,7 @@ function ensureRotationToggle() {
     return;
   }
 
+  if (bajaWindow().__baja411HeadingActive === true && !isGpsFollowing()) disableHeadingRotation(button);
   syncRotationButton(button);
 }
 
@@ -237,6 +319,7 @@ function attachGpsToggle() {
       event.stopPropagation();
       event.stopImmediatePropagation();
 
+      disableHeadingRotation(document.getElementById(ROTATION_BUTTON_ID) as HTMLButtonElement | null);
       canvas.dispatchEvent(new Event("touchstart", { bubbles: true, cancelable: true }));
     },
     true
@@ -337,6 +420,7 @@ export default function MapSearchEnhancer() {
     }, 250);
 
     bajaWindow().__baja411HeadingActive = false;
+    refreshHeadingListeners();
     observer.observe(document.body, { childList: true, subtree: true, characterData: true });
     attachSearch();
     attachGpsToggle();
@@ -345,6 +429,8 @@ export default function MapSearchEnhancer() {
     return () => {
       if (timer !== null) window.clearInterval(timer);
       observer.disconnect();
+      window.removeEventListener("deviceorientationabsolute", handleLiveHeading, true);
+      window.removeEventListener("deviceorientation", handleLiveHeading, true);
       disableHeadingRotation(document.getElementById(ROTATION_BUTTON_ID) as HTMLButtonElement | null);
       document.getElementById(ROTATION_BUTTON_ID)?.remove();
       removeOldCompassControl();
