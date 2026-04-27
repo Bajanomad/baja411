@@ -11,6 +11,28 @@ interface WeatherImage {
   subLabel: string;
 }
 
+type StormStatusLevel = "low" | "monitor" | "alert";
+
+const stormStatus: {
+  level: StormStatusLevel;
+  headline: string;
+  body: string;
+  action: string;
+  sourceLabel: string;
+} = {
+  level: "monitor",
+  headline: "Storm status: check NHC before travel.",
+  body: "This page pulls official storm tools into one place, but always confirm active tropical cyclone details with the National Hurricane Center source page before making travel or safety decisions.",
+  action: "Open NHC Source",
+  sourceLabel: "NHC / NOAA source tools",
+};
+
+const statusStyles: Record<StormStatusLevel, string> = {
+  low: "border-jade/35 bg-jade-dim text-jade-light",
+  monitor: "border-sunset/40 bg-sunset-dim text-sunset",
+  alert: "border-red-400/40 bg-red-500/15 text-red-200",
+};
+
 const quickActions = [
   { href: "#forecast", icon: "🌤️", label: "Forecast" },
   { href: "#wind", icon: "💨", label: "Wind" },
@@ -120,26 +142,33 @@ function WeatherPanel({
   );
 }
 
-function WeatherStatusCard() {
+function StormStatusBanner() {
   return (
-    <section className="-mt-6 rounded-3xl border border-white/10 bg-white/[0.07] p-4 text-white shadow-2xl shadow-black/25 backdrop-blur sm:p-5">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className={`rounded-2xl border p-4 ${statusStyles[stormStatus.level]}`}>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <span className="label-tag mb-2 block">Baja weather status</span>
-          <h2 className="text-2xl font-extrabold">Check storm tools before you roll.</h2>
-          <p className="mt-2 text-sm leading-relaxed text-white/55">
-            Forecast, wind, NHC storm widget, and satellite products in one mobile-friendly stack.
-          </p>
+          <p className="text-xs font-extrabold uppercase tracking-[0.18em] opacity-80">Storm status</p>
+          <h3 className="mt-1 text-xl font-extrabold text-white">{stormStatus.headline}</h3>
+          <p className="mt-2 text-sm leading-relaxed text-white/68">{stormStatus.body}</p>
         </div>
         <a
           href="https://www.nhc.noaa.gov/cyclones/"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex shrink-0 items-center justify-center rounded-full bg-jade px-5 py-3 text-sm font-extrabold text-white hover:bg-jade-light"
+          className="inline-flex shrink-0 items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-extrabold text-night"
         >
-          NHC Source
+          {stormStatus.action}
         </a>
       </div>
+      <p className="mt-3 text-xs text-white/45">Source: {stormStatus.sourceLabel}. Status summary is a safety prompt, not an official alert.</p>
+    </div>
+  );
+}
+
+function WeatherStatusCard() {
+  return (
+    <section className="-mt-6 rounded-3xl border border-white/10 bg-white/[0.07] p-4 text-white shadow-2xl shadow-black/25 backdrop-blur sm:p-5">
+      <StormStatusBanner />
       <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {quickActions.map((action) => (
           <a
