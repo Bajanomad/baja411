@@ -4,73 +4,6 @@ import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import MapSearchEnhancer from "./MapSearchEnhancer";
 
-const ORIENTATION_EVENTS = new Set(["deviceorientation", "deviceorientationabsolute"]);
-const PATCH_KEY = "__baja411OrientationGuard";
-
-type WindowAddEventListener = typeof window.addEventListener;
-type WindowRemoveEventListener = typeof window.removeEventListener;
-type AddEventArgs = Parameters<WindowAddEventListener>;
-type RemoveEventArgs = Parameters<WindowRemoveEventListener>;
-
-type OrientationGuard = {
-  originalAddEventListener: WindowAddEventListener;
-  originalRemoveEventListener: WindowRemoveEventListener;
-  count: number;
-};
-
-declare global {
-  interface Window {
-    [PATCH_KEY]?: OrientationGuard;
-  }
-}
-
-function installOrientationGuard() {
-  if (typeof window === "undefined") return () => {};
-
-  const existing = window[PATCH_KEY];
-  if (existing) {
-    existing.count += 1;
-    return () => uninstallOrientationGuard();
-  }
-
-  const originalAddEventListener = window.addEventListener.bind(window) as WindowAddEventListener;
-  const originalRemoveEventListener = window.removeEventListener.bind(window) as WindowRemoveEventListener;
-
-  window[PATCH_KEY] = {
-    originalAddEventListener,
-    originalRemoveEventListener,
-    count: 1,
-  };
-
-  window.addEventListener = function guardedAddEventListener(...args: AddEventArgs) {
-    const [type] = args;
-    if (typeof type === "string" && ORIENTATION_EVENTS.has(type)) return;
-    return originalAddEventListener(...args);
-  } as WindowAddEventListener;
-
-  window.removeEventListener = function guardedRemoveEventListener(...args: RemoveEventArgs) {
-    const [type] = args;
-    if (typeof type === "string" && ORIENTATION_EVENTS.has(type)) return;
-    return originalRemoveEventListener(...args);
-  } as WindowRemoveEventListener;
-
-  return () => uninstallOrientationGuard();
-}
-
-function uninstallOrientationGuard() {
-  if (typeof window === "undefined") return;
-
-  const guard = window[PATCH_KEY];
-  if (!guard) return;
-
-  guard.count -= 1;
-  if (guard.count > 0) return;
-
-  window.addEventListener = guard.originalAddEventListener;
-  window.removeEventListener = guard.originalRemoveEventListener;
-  delete window[PATCH_KEY];
-}
-
 const MapClient = dynamic(() => import("@/components/MapClientMapLibre"), {
   ssr: false,
   loading: () => (
@@ -85,7 +18,6 @@ const MapClient = dynamic(() => import("@/components/MapClientMapLibre"), {
 
 function useMapPageScrollLock() {
   useEffect(() => {
-    const removeOrientationGuard = installOrientationGuard();
     const html = document.documentElement;
     const body = document.body;
     const previousHtmlOverflow = html.style.overflow;
@@ -103,7 +35,6 @@ function useMapPageScrollLock() {
     body.style.overscrollBehavior = "none";
 
     return () => {
-      removeOrientationGuard();
       html.style.overflow = previousHtmlOverflow;
       body.style.overflow = previousBodyOverflow;
       body.style.position = previousBodyPosition;
