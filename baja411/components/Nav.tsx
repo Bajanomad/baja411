@@ -49,19 +49,15 @@ export default function Nav() {
 
   return (
     <nav
-      className="fixed inset-x-0 top-0 z-[100001] border-b border-white/[0.08] bg-night/85 text-white shadow-sm backdrop-blur-md"
+      className="fixed top-0 left-0 right-0 z-[100001] border-b border-white/[0.08] bg-night/85 text-white shadow-sm backdrop-blur-md"
       style={{ height: "var(--nav-height)" }}
     >
-      <div className="mx-auto flex h-full w-full max-w-7xl items-center justify-between px-5 sm:px-6 lg:px-8">
-        <Link
-          href="/"
-          onClick={handleLogoClick}
-          className="shrink-0 text-lg font-extrabold tracking-tight text-white"
-        >
+      <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-5">
+        <Link href="/" onClick={handleLogoClick} className="text-lg font-extrabold tracking-tight text-white">
           BAJA <span className="text-sunset">411</span>
         </Link>
 
-        <div className="hidden items-center justify-center gap-7 md:flex">
+        <div className="hidden items-center gap-7 md:flex">
           {links.map((link) => (
             <Link
               key={link.href}
@@ -77,7 +73,7 @@ export default function Nav() {
 
         <Link
           href="/map"
-          className="hidden shrink-0 rounded-full bg-jade px-4 py-2 text-sm font-extrabold text-white transition-colors hover:bg-jade-light md:inline-flex"
+          className="hidden rounded-full bg-jade px-4 py-2 text-sm font-extrabold text-white transition-colors hover:bg-jade-light md:inline-flex"
         >
           Open Map
         </Link>
@@ -95,7 +91,7 @@ export default function Nav() {
 
           {open && (
             <div
-              className="absolute right-0 top-full mt-2 w-52 max-w-[calc(100vw-2.5rem)] overflow-hidden rounded-2xl border shadow-xl"
+              className="absolute right-0 top-full mt-2 w-52 overflow-hidden rounded-2xl border shadow-xl"
               style={{
                 background: "rgba(9,18,22,0.94)",
                 backdropFilter: "blur(20px)",
