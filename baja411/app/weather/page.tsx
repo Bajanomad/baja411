@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import PageHero from "@/components/PageHero";
 import ScrollReveal from "@/components/ScrollReveal";
+import { useBajaLocation } from "@/components/LocationProvider";
 
 type StormLevel = "low" | "monitor" | "alert";
 type WeatherPanelKey = "forecast" | "rain" | "storms" | "satellite";
@@ -13,8 +14,6 @@ interface StormResponse {
   body?: string;
   checkedAt: string;
 }
-
-const TODOS_SANTOS = { lat: 23.4464, lon: -110.2249 };
 
 const statusDot: Record<StormLevel, string> = {
   low: "bg-jade-light",
@@ -29,12 +28,12 @@ const quickActions: { key: WeatherPanelKey; icon: string; label: string }[] = [
   { key: "satellite", icon: "🛰️", label: "Satellite" },
 ];
 
-function windyForecastSrc() {
-  return `https://embed.windy.com/embed2.html?lat=${TODOS_SANTOS.lat}&lon=${TODOS_SANTOS.lon}&detailLat=${TODOS_SANTOS.lat}&detailLon=${TODOS_SANTOS.lon}&width=100%25&height=210&zoom=8&level=surface&overlay=wind&menu=&message=false&marker=false&calendar=7&pressure=false&type=forecast&location=coordinates&detail=true&metricWind=kt&metricTemp=%C2%B0F&radarRange=-1`;
+function windyForecastSrc(lat: number, lon: number) {
+  return `https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=100%25&height=210&zoom=8&level=surface&overlay=wind&menu=&message=false&marker=false&calendar=7&pressure=false&type=forecast&location=coordinates&detail=true&metricWind=kt&metricTemp=%C2%B0F&radarRange=-1`;
 }
 
-function windyRainSrc() {
-  return `https://embed.windy.com/embed2.html?lat=${TODOS_SANTOS.lat}&lon=${TODOS_SANTOS.lon}&detailLat=${TODOS_SANTOS.lat}&detailLon=${TODOS_SANTOS.lon}&width=100%25&height=520&zoom=8&level=surface&overlay=rain&product=ecmwf&menu=&message=false&marker=false&calendar=now&type=map&location=coordinates&detail=false&metricWind=kt&metricTemp=%C2%B0F&radarRange=-1`;
+function windyRainSrc(lat: number, lon: number) {
+  return `https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=100%25&height=520&zoom=8&level=surface&overlay=rain&product=ecmwf&menu=&message=false&marker=false&calendar=now&type=map&location=coordinates&detail=false&metricWind=kt&metricTemp=%C2%B0F&radarRange=-1`;
 }
 
 function PanelShell({ title, kicker, children }: { title: string; kicker: string; children: React.ReactNode }) {
@@ -49,33 +48,33 @@ function PanelShell({ title, kicker, children }: { title: string; kicker: string
   );
 }
 
-function ForecastPanel() {
+function ForecastPanel({ lat, lon, label }: { lat: number; lon: number; label: string }) {
   return (
-    <PanelShell title="7-Day Forecast" kicker="Todos Santos · Windy">
+    <PanelShell title="7-Day Forecast" kicker={`${label} · Windy`}>
       <iframe
-        src={windyForecastSrc()}
+        src={windyForecastSrc(lat, lon)}
         className="w-full rounded-2xl border-0"
         style={{ height: "210px" }}
-        title="Todos Santos 7-day weather forecast"
+        title={`${label} 7-day weather forecast`}
         loading="lazy"
       />
-      <p className="mt-3 text-xs text-white/45">Forecast defaults to Todos Santos, BCS.</p>
+      <p className="mt-3 text-xs text-white/45">Forecast centered on {label}.</p>
     </PanelShell>
   );
 }
 
-function RainPanel() {
+function RainPanel({ lat, lon, label }: { lat: number; lon: number; label: string }) {
   return (
-    <PanelShell title="Rain Map" kicker="Todos Santos · Live map">
+    <PanelShell title="Rain Map" kicker={`${label} · Live map`}>
       <iframe
-        src={windyRainSrc()}
+        src={windyRainSrc(lat, lon)}
         className="w-full rounded-2xl border-0"
         style={{ height: "min(520px, 72vh)" }}
-        title="Todos Santos rain map"
+        title={`${label} rain map`}
         allowFullScreen
         loading="lazy"
       />
-      <p className="mt-3 text-xs text-white/45">Rain map defaults to Todos Santos, BCS.</p>
+      <p className="mt-3 text-xs text-white/45">Rain map centered on {label}.</p>
     </PanelShell>
   );
 }
@@ -95,8 +94,8 @@ function StormsPanel({ status }: { status: StormResponse | null }) {
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-white/62">
               {hasStorms
-                ? "Storm activity is showing in the current signal. Use the storm tools below and keep checking official updates."
-                : "No tropical cyclones are showing in the current NHC widget signal. If conditions change, this panel will surface the storm tools here."}
+                ? "Storm activity is showing in the current signal. Storm details will surface here."
+                : "No tropical cyclones are showing in the current NHC widget signal. If conditions change, storm tools will appear here."}
             </p>
           </div>
         </div>
@@ -127,14 +126,8 @@ function SatellitePanel() {
   return (
     <PanelShell title="Satellite" kicker="GOES-19">
       <div className="grid gap-4">
-        <SatelliteImage
-          label="Mexico Sector · Infrared"
-          src="https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/mex/13/GOES19-MEX-13-1000x1000.gif"
-        />
-        <SatelliteImage
-          label="East Pacific · Infrared"
-          src="https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/eep/13/GOES19-EEP-13-900x540.gif"
-        />
+        <SatelliteImage label="Mexico Sector · Infrared" src="https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/mex/13/GOES19-MEX-13-1000x1000.gif" />
+        <SatelliteImage label="East Pacific · Infrared" src="https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/eep/13/GOES19-EEP-13-900x540.gif" />
       </div>
       <p className="mt-3 text-xs text-white/45">Satellite loops can be heavy on cell service.</p>
     </PanelShell>
@@ -154,6 +147,7 @@ function SatelliteImage({ label, src }: { label: string; src: string }) {
 }
 
 function WeatherButtons() {
+  const { location, isRequesting, permissionState, requestLocation } = useBajaLocation();
   const [status, setStatus] = useState<StormResponse | null>(null);
   const [activePanel, setActivePanel] = useState<WeatherPanelKey>("forecast");
 
@@ -165,6 +159,7 @@ function WeatherButtons() {
   }, []);
 
   const level = status?.level || "monitor";
+  const locationLabel = location.source === "gps" ? "Your location" : location.label;
 
   return (
     <section className="-mt-2 rounded-3xl border border-white/10 bg-white/[0.07] p-4 text-white shadow-2xl shadow-black/25 backdrop-blur sm:p-5">
@@ -172,10 +167,16 @@ function WeatherButtons() {
         <div className="flex min-w-0 items-center gap-2">
           <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${statusDot[level]}`} />
           <p className="truncate text-xs font-extrabold text-white/75">
-            {status?.headline || "Checking storm status..."}
+            {locationLabel} · {status?.headline || "Checking storm status..."}
           </p>
         </div>
-        <span className="shrink-0 text-xs font-extrabold text-jade-light">Todos Santos</span>
+        {location.source === "fallback" && permissionState !== "denied" ? (
+          <button type="button" onClick={requestLocation} className="shrink-0 text-xs font-extrabold text-jade-light">
+            {isRequesting ? "Locating..." : "Use GPS"}
+          </button>
+        ) : (
+          <span className="shrink-0 text-xs font-extrabold text-jade-light">{location.source === "gps" ? "GPS" : "Todos Santos"}</span>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -185,9 +186,7 @@ function WeatherButtons() {
             key={action.key}
             onClick={() => setActivePanel(action.key)}
             className={`rounded-2xl border p-4 text-center shadow-sm transition ${
-              activePanel === action.key
-                ? "border-jade bg-jade/20 text-white"
-                : "border-white/10 bg-night/65 text-white hover:bg-white/[0.08]"
+              activePanel === action.key ? "border-jade bg-jade/20 text-white" : "border-white/10 bg-night/65 text-white hover:bg-white/[0.08]"
             }`}
           >
             <span className="block text-2xl">{action.icon}</span>
@@ -196,8 +195,8 @@ function WeatherButtons() {
         ))}
       </div>
 
-      {activePanel === "forecast" && <ForecastPanel />}
-      {activePanel === "rain" && <RainPanel />}
+      {activePanel === "forecast" && <ForecastPanel lat={location.lat} lon={location.lon} label={locationLabel} />}
+      {activePanel === "rain" && <RainPanel lat={location.lat} lon={location.lon} label={locationLabel} />}
       {activePanel === "storms" && <StormsPanel status={status} />}
       {activePanel === "satellite" && <SatellitePanel />}
     </section>
@@ -205,6 +204,9 @@ function WeatherButtons() {
 }
 
 export default function WeatherPage() {
+  const { location } = useBajaLocation();
+  const locationLabel = location.source === "gps" ? "Your location" : location.label;
+
   return (
     <>
       <ScrollReveal />
@@ -212,7 +214,7 @@ export default function WeatherPage() {
       <PageHero
         image=""
         alt=""
-        eyebrow="Todos Santos · Weather"
+        eyebrow={`${locationLabel} · Weather`}
         title="Weather Tools"
         subtitle="Forecast, rain, storms, and satellite for Baja Sur."
         pageBg="#060d18"
