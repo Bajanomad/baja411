@@ -159,7 +159,7 @@ div.absolute.bottom-5.left-3.z-\[1000\].rounded-full {
   animation: hero-wave linear infinite;
 }
 
-/* Warm golden-hour tint — slow breathing pulse */
+/* Warm golden-hour tint, slow breathing pulse */
 @keyframes hero-breathe {
   0%, 100% { opacity: 0.75; }
   50%       { opacity: 1;    }
