@@ -57,6 +57,94 @@ body {
   inset: 0 !important;
 }
 
+/* Collapsible predictive Plan search */
+.map-plan-search {
+  position: relative;
+  width: 52px !important;
+  max-width: 52px !important;
+  min-height: 52px;
+  overflow: visible;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  justify-content: center;
+  transition: width 180ms ease, max-width 180ms ease, padding 180ms ease;
+}
+
+.map-plan-search > span:first-child {
+  pointer-events: none;
+  font-size: 18px;
+}
+
+.map-plan-search input,
+.map-plan-search > button {
+  width: 0 !important;
+  min-width: 0 !important;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-4px);
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.map-plan-search-open,
+.map-plan-search:focus-within {
+  width: min(78vw, 380px) !important;
+  max-width: min(78vw, 380px) !important;
+  padding-left: 16px !important;
+  padding-right: 10px !important;
+  justify-content: flex-start;
+}
+
+.map-plan-search-open input,
+.map-plan-search-open > button,
+.map-plan-search:focus-within input,
+.map-plan-search:focus-within > button {
+  width: auto !important;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.map-plan-search-open input,
+.map-plan-search:focus-within input {
+  flex: 1 1 auto;
+}
+
+.map-search-suggestions {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 2000;
+  border-radius: 22px;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.18);
+  overflow: hidden;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.map-search-suggestions[hidden] {
+  display: none;
+}
+
+.map-search-suggestion {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  border: 0;
+  background: transparent;
+  color: #111827;
+  font-size: 14px;
+  font-weight: 800;
+  text-align: left;
+}
+
+.map-search-suggestion:active,
+.map-search-suggestion:hover {
+  background: rgba(42, 122, 90, 0.1);
+}
+
 /* Animated hero waves */
 @keyframes hero-wave {
   from { transform: translateX(0); }
