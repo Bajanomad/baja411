@@ -41,20 +41,20 @@ export default function HomeWeatherStrip() {
     : fallbackStats;
 
   return (
-    <div className="mt-4 grid max-w-xl grid-cols-3 gap-2 sm:mt-5 sm:gap-3">
+    <div className="mx-auto mt-4 grid w-full max-w-xl grid-cols-3 gap-2 sm:mt-5 sm:gap-3 lg:mx-0">
       {stats.map((stat) => (
         <div
           key={stat.label}
-          className="min-w-0 rounded-2xl border border-white/14 bg-white/12 px-3 py-2.5 text-white shadow-lg backdrop-blur-md sm:px-4 sm:py-4"
+          className="min-w-0 rounded-2xl border border-white/14 bg-white/12 px-2.5 py-2.5 text-white shadow-lg backdrop-blur-md sm:px-4 sm:py-4"
         >
-          <div className="flex min-w-0 items-center gap-1 text-[10px] font-extrabold leading-none text-white/62 sm:text-xs">
+          <div className="flex min-w-0 items-center justify-center gap-1 text-[10px] font-extrabold leading-none text-white/62 sm:text-xs lg:justify-start">
             <span className="shrink-0 text-sm sm:text-base">{stat.icon}</span>
             <span className="truncate">{stat.label}</span>
           </div>
-          <div className="mt-2 flex items-end gap-1 sm:mt-3">
+          <div className="mt-2 flex items-end justify-center gap-1 sm:mt-3 lg:justify-start">
             {stat.value ? (
               <>
-                <span className="text-[1.8rem] font-extrabold leading-[0.9] tracking-tight sm:text-4xl">{stat.value}</span>
+                <span className="text-[1.65rem] font-extrabold leading-[0.9] tracking-tight sm:text-4xl">{stat.value}</span>
                 <span className="pb-0.5 text-xs font-extrabold text-white/58 sm:text-sm">{stat.unit}</span>
               </>
             ) : error ? (
