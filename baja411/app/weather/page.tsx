@@ -13,12 +13,6 @@ interface WeatherImage {
 
 const nhcImages: WeatherImage[] = [
   {
-    src: "https://www.nhc.noaa.gov/archive/xgtwo/epac/latest/two_pac_7d0.png",
-    alt: "7-Day Pacific Tropical Weather Outlook",
-    label: "7-Day Pacific Outlook",
-    subLabel: "NHC · Tropical weather",
-  },
-  {
     src: "https://www.ospo.noaa.gov/data/sst/contour/gulfcalf.c.gif",
     alt: "Gulf of California Sea Surface Temperature",
     label: "Gulf of California SST",
@@ -117,6 +111,39 @@ function WeatherPanel({
   );
 }
 
+function NhcWidgetCard() {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
+      <div className="flex items-center justify-between border-b border-border px-5 py-4">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">NHC Tropical Cyclone Widget</h3>
+          <p className="mt-0.5 text-xs text-muted">Official National Hurricane Center widget</p>
+        </div>
+        <a
+          href="https://www.nhc.noaa.gov/cyclones/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs font-extrabold text-jade hover:underline"
+        >
+          Open NHC
+        </a>
+      </div>
+      <div className="flex justify-center bg-sand p-4">
+        <iframe
+          id="nhc"
+          src="https://www.nhc.noaa.gov/widgets/nhc_widget.shtml"
+          title="National Hurricane Center Tropical Cyclone Widget"
+          width="320"
+          height="280"
+          scrolling="no"
+          className="max-w-full rounded-xl border-0 bg-white"
+          loading="lazy"
+        />
+      </div>
+    </div>
+  );
+}
+
 function WeatherImageCard({ src, alt, label, subLabel }: WeatherImage) {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
@@ -137,7 +164,7 @@ function WeatherImageCard({ src, alt, label, subLabel }: WeatherImage) {
         {loaded && (
           <span className="flex items-center gap-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-jade">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-jade" />
-            Live
+            Source
           </span>
         )}
       </div>
@@ -232,13 +259,16 @@ export default function WeatherPage() {
 
           <WeatherPanel
             label="NHC products"
-            title="Pacific Outlook, SST & Surface Analysis"
-            description="Lower weight storm products from NHC and NOAA for quick checks."
+            title="Tropical Cyclones, SST & Surface Analysis"
+            description="Official NHC tropical cyclone widget plus NOAA/NHC products for quick checks."
             delayClass="reveal-delay-2"
           >
             <p className="mb-5 text-xs text-muted">
-              Includes the 7-day Pacific tropical outlook, Gulf of California sea surface temperature, and Pacific surface analysis.
+              Includes the official National Hurricane Center widget, Gulf of California sea surface temperature, and Pacific surface analysis. Use the NHC link for the source page.
             </p>
+            <div className="mb-5">
+              <NhcWidgetCard />
+            </div>
             <WeatherImageGrid images={nhcImages} />
           </WeatherPanel>
 
