@@ -1,7 +1,7 @@
 "use client";
 
 import "maplibre-gl/dist/maplibre-gl.css";
-import maplibregl, { type LngLatLike, type StyleSpecification } from "maplibre-gl";
+import maplibregl, { type StyleSpecification } from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent } from "react";
 import { useBajaLocation } from "@/components/LocationProvider";
 
@@ -94,7 +94,6 @@ const TOWNS = [
   { name: "Miraflores", aliases: ["miraflores"], lat: 23.3695, lng: -109.7748, zoom: 13 },
 ];
 
-const TODOS_SANTOS_CENTER: LngLatLike = [-110.2249, 23.4464];
 const MAP_DARK_KEY = "baja411-map-dark";
 const CARTO_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
 
