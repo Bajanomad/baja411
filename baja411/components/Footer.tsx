@@ -40,7 +40,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="mb-4 max-w-xs text-sm leading-relaxed text-white/50">
-              Community driven local knowledge for Baja California Sur. Weather, maps, events, listings, and local resources in one place.
+              Community-driven local knowledge for Baja California Sur. Weather, maps, events, listings, and local resources in one place.
             </p>
             <p className="text-xs tracking-wide text-white/25">Cerritos · Pescadero · Todos Santos · La Paz · Cabo</p>
           </div>
@@ -73,8 +73,8 @@ export default function Footer() {
         </div>
 
         <div className="flex flex-col items-center justify-between gap-3 pt-8 text-xs text-white/25 sm:flex-row">
-          <p>Copyright {new Date().getFullYear()} Baja 411</p>
-          <p>Made in La Paz, BCS, Mexico</p>
+          <p>© {new Date().getFullYear()} Baja 411</p>
+          <p>Made in La Paz, BCS, México</p>
         </div>
       </div>
     </footer>
