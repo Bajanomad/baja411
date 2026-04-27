@@ -4,6 +4,34 @@ import { db } from "@/lib/db";
 
 export const revalidate = 60;
 
+const PIN_CATEGORIES = new Set([
+  "BOONDOCKING",
+  "BEACH",
+  "WATER_FILL",
+  "DUMP_STATION",
+  "MECHANIC",
+  "FUEL",
+  "TRAILHEAD",
+  "FISHING",
+  "MARKET",
+  "OTHER",
+]);
+
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function parseCoordinate(value: unknown) {
+  if (typeof value === "number") return value;
+  if (typeof value === "string" && value.trim() !== "") return Number(value);
+  return Number.NaN;
+}
+
+function cleanText(value: unknown, maxLength: number) {
+  if (typeof value !== "string") return "";
+  return value.trim().slice(0, maxLength);
+}
+
 export async function GET() {
   try {
     const pins = await db.mapPin.findMany({
@@ -23,7 +51,7 @@ export async function GET() {
 
     return NextResponse.json(pins);
   } catch {
-    return NextResponse.json([]);
+    return NextResponse.json({ error: "Database unavailable", pins: [] }, { status: 503 });
   }
 }
 
@@ -39,20 +67,47 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await req.json();
-  const { title, description, lat, lng, category } = body;
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
 
-  if (!title || lat == null || lng == null || !category) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+  if (!body || typeof body !== "object") {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
+  const data = body as Record<string, unknown>;
+  const title = cleanText(data.title, 100);
+  const description = cleanText(data.description, 800);
+  const lat = parseCoordinate(data.lat);
+  const lng = parseCoordinate(data.lng);
+  const category = typeof data.category === "string" ? data.category : "";
+
+  if (!title) {
+    return NextResponse.json({ error: "Title is required" }, { status: 400 });
+  }
+
+  if (!isFiniteNumber(lat) || lat < -90 || lat > 90) {
+    return NextResponse.json({ error: "Latitude is invalid" }, { status: 400 });
+  }
+
+  if (!isFiniteNumber(lng) || lng < -180 || lng > 180) {
+    return NextResponse.json({ error: "Longitude is invalid" }, { status: 400 });
+  }
+
+  if (!PIN_CATEGORIES.has(category)) {
+    return NextResponse.json({ error: "Category is invalid" }, { status: 400 });
   }
 
   try {
     const pin = await db.mapPin.create({
       data: {
-        title: String(title),
-        description: description ? String(description) : null,
-        lat: Number(lat),
-        lng: Number(lng),
+        title,
+        description: description || null,
+        lat,
+        lng,
         category,
         photos: [],
         status: "PENDING",
