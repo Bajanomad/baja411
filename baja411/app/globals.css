@@ -57,6 +57,16 @@ body {
   inset: 0 !important;
 }
 
+/* Drive status belongs under Drive/Plan, not on top of attribution */
+div.absolute.bottom-5.left-3.z-\[1000\].rounded-full {
+  top: 72px !important;
+  bottom: auto !important;
+  left: 12px !important;
+  right: auto !important;
+  padding: 9px 13px !important;
+  max-width: 160px !important;
+}
+
 /* Collapsible predictive Plan search */
 .map-plan-search {
   position: relative;
