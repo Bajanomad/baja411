@@ -321,32 +321,12 @@ function ensureRotationToggle() {
   syncRotationButton(button);
 }
 
-function attachGpsToggle() {
+function markGpsButton() {
   const button = document.querySelector<HTMLButtonElement>('button[aria-label="Recenter"]');
-  const canvas = document.querySelector<HTMLCanvasElement>(".maplibregl-canvas");
-  if (!button || !canvas || button.dataset.gpsToggleEnhanced === "1") return;
+  if (!button || button.dataset.gpsToggleEnhanced === "1") return;
 
   button.dataset.gpsToggleEnhanced = "1";
-  button.title = "GPS follow";
-
-  button.addEventListener(
-    "click",
-    (event) => {
-      const win = bajaWindow();
-      if (win.__baja411InternalRecenter === true) return;
-
-      const isFollowing = button.className.includes("text-jade");
-      if (!isFollowing) return;
-
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-
-      disableHeadingRotation(document.getElementById(ROTATION_BUTTON_ID) as HTMLButtonElement | null);
-      canvas.dispatchEvent(new Event("touchstart", { bubbles: true, cancelable: true }));
-    },
-    true
-  );
+  button.title = "Center on GPS";
 }
 
 export default function MapSearchEnhancer() {
@@ -433,13 +413,13 @@ export default function MapSearchEnhancer() {
 
     const observer = new MutationObserver(() => {
       attachSearch();
-      attachGpsToggle();
+      markGpsButton();
       ensureRotationToggle();
     });
 
     timer = window.setInterval(() => {
       attachSearch();
-      attachGpsToggle();
+      markGpsButton();
       ensureRotationToggle();
     }, 250);
 
@@ -451,7 +431,7 @@ export default function MapSearchEnhancer() {
     refreshHeadingListeners();
     observer.observe(document.body, { childList: true, subtree: true, characterData: true });
     attachSearch();
-    attachGpsToggle();
+    markGpsButton();
     ensureRotationToggle();
 
     return () => {
