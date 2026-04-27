@@ -7,9 +7,14 @@ import MapSearchEnhancer from "./MapSearchEnhancer";
 const ORIENTATION_EVENTS = new Set(["deviceorientation", "deviceorientationabsolute"]);
 const PATCH_KEY = "__baja411OrientationGuard";
 
+type WindowAddEventListener = typeof window.addEventListener;
+type WindowRemoveEventListener = typeof window.removeEventListener;
+type AddEventArgs = Parameters<WindowAddEventListener>;
+type RemoveEventArgs = Parameters<WindowRemoveEventListener>;
+
 type OrientationGuard = {
-  originalAddEventListener: typeof window.addEventListener;
-  originalRemoveEventListener: typeof window.removeEventListener;
+  originalAddEventListener: WindowAddEventListener;
+  originalRemoveEventListener: WindowRemoveEventListener;
   count: number;
 };
 
@@ -28,8 +33,8 @@ function installOrientationGuard() {
     return () => uninstallOrientationGuard();
   }
 
-  const originalAddEventListener = window.addEventListener.bind(window) as typeof window.addEventListener;
-  const originalRemoveEventListener = window.removeEventListener.bind(window) as typeof window.removeEventListener;
+  const originalAddEventListener = window.addEventListener.bind(window) as WindowAddEventListener;
+  const originalRemoveEventListener = window.removeEventListener.bind(window) as WindowRemoveEventListener;
 
   window[PATCH_KEY] = {
     originalAddEventListener,
@@ -37,15 +42,17 @@ function installOrientationGuard() {
     count: 1,
   };
 
-  window.addEventListener = function guardedAddEventListener(type, listener, options) {
+  window.addEventListener = function guardedAddEventListener(...args: AddEventArgs) {
+    const [type] = args;
     if (typeof type === "string" && ORIENTATION_EVENTS.has(type)) return;
-    return originalAddEventListener(type, listener, options);
-  } as typeof window.addEventListener;
+    return originalAddEventListener(...args);
+  } as WindowAddEventListener;
 
-  window.removeEventListener = function guardedRemoveEventListener(type, listener, options) {
+  window.removeEventListener = function guardedRemoveEventListener(...args: RemoveEventArgs) {
+    const [type] = args;
     if (typeof type === "string" && ORIENTATION_EVENTS.has(type)) return;
-    return originalRemoveEventListener(type, listener, options);
-  } as typeof window.removeEventListener;
+    return originalRemoveEventListener(...args);
+  } as WindowRemoveEventListener;
 
   return () => uninstallOrientationGuard();
 }
