@@ -203,8 +203,6 @@ async function enableCompass(button: HTMLButtonElement) {
   } else {
     localStorage.setItem(COMPASS_PERMISSION_KEY, "1");
   }
-
-  document.querySelector<HTMLButtonElement>('button[aria-label="Recenter"]')?.click();
 }
 
 function ensureCompassControl() {
@@ -218,7 +216,10 @@ function ensureCompassControl() {
     compassButton.innerHTML = "<span style='display:block;transform-origin:center;'>🧭</span>";
     styleCompassButton(compassButton);
 
-    compassButton.addEventListener("click", async () => {
+    compassButton.addEventListener("click", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
       if (driveCompassActive) {
         disableCompass(compassButton);
         return;
