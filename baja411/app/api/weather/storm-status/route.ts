@@ -22,23 +22,23 @@ function classifyStatus(text: string): { level: StormLevel; headline: string; bo
   if (lower.includes("no tropical cyclones") || lower.includes("no active tropical cyclones")) {
     return {
       level: "low",
-      headline: "No tropical cyclones showing on the NHC widget.",
-      body: "Current NHC widget text is not showing active tropical cyclones. Still check the source before travel, boating, or storm decisions.",
+      headline: "No storms showing right now.",
+      body: "No active tropical cyclones are showing in the current storm signal. Storm tools will appear here if conditions change.",
     };
   }
 
   if (lower.includes("hurricane") || lower.includes("tropical storm") || lower.includes("tropical cyclone")) {
     return {
       level: "alert",
-      headline: "NHC widget is showing tropical activity.",
-      body: "Open the official NHC source and check details before travel, driving, boating, or making safety decisions.",
+      headline: "Storm activity detected.",
+      body: "Current storm data is showing tropical activity. Baja 411 will surface storm tools here so users can check conditions without leaving the app.",
     };
   }
 
   return {
     level: "monitor",
-    headline: "Storm status needs source check.",
-    body: "The NHC widget loaded, but Baja 411 could not confidently classify the text. Open the NHC source before making decisions.",
+    headline: "Storm signal needs a closer look.",
+    body: "The storm feed loaded, but Baja 411 could not confidently classify it. Treat conditions as worth monitoring until the next check.",
   };
 }
 
@@ -72,8 +72,8 @@ export async function GET() {
     return NextResponse.json(
       {
         level: "monitor",
-        headline: "Storm status source is unavailable.",
-        body: "Baja 411 could not reach the NHC widget. Open the official NHC source before making weather decisions.",
+        headline: "Storm status is temporarily unavailable.",
+        body: "Baja 411 could not refresh the storm signal. Keep monitoring conditions and try again shortly.",
         source: "National Hurricane Center",
         sourceUrl: "https://www.nhc.noaa.gov/cyclones/",
         checkedAt: new Date().toISOString(),
