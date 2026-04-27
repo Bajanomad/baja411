@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 type PermissionState = "idle" | "requesting" | "active" | "denied" | "unavailable";
 
@@ -28,11 +28,6 @@ function getHeading(event: DeviceOrientationEventWithCompass) {
   return null;
 }
 
-function cardinalDirection(heading: number) {
-  const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
-  return directions[Math.round(heading / 45) % directions.length];
-}
-
 function getDeviceOrientationConstructor() {
   if (typeof window === "undefined" || !("DeviceOrientationEvent" in window)) return null;
   return window.DeviceOrientationEvent as DeviceOrientationEventConstructorWithPermission;
@@ -42,11 +37,6 @@ export default function MapCompassOverlay() {
   const [permission, setPermission] = useState<PermissionState>("idle");
   const [heading, setHeading] = useState<number | null>(null);
   const [needsTap, setNeedsTap] = useState(false);
-
-  const direction = useMemo(() => {
-    if (heading === null) return "N";
-    return cardinalDirection(heading);
-  }, [heading]);
 
   useEffect(() => {
     const OrientationEvent = getDeviceOrientationConstructor();
@@ -68,9 +58,10 @@ export default function MapCompassOverlay() {
     const handleOrientation = (event: DeviceOrientationEvent) => {
       const nextHeading = getHeading(event as DeviceOrientationEventWithCompass);
       if (nextHeading === null) return;
+
       setHeading((current) => {
         if (current === null) return nextHeading;
-        return current * 0.72 + nextHeading * 0.28;
+        return current * 0.78 + nextHeading * 0.22;
       });
       setPermission("active");
     };
@@ -112,37 +103,15 @@ export default function MapCompassOverlay() {
 
   if (permission === "unavailable") return null;
 
-  const displayHeading = heading === null ? "--" : `${Math.round(heading)}°`;
-  const isActive = permission === "active" && heading !== null;
+  const compassRotation = heading ?? 0;
 
   return (
-    <div className="pointer-events-none absolute right-3 top-20 z-[1100] flex flex-col items-end gap-2">
-      <button
-        type="button"
-        onClick={needsTap || permission === "denied" ? requestCompass : undefined}
-        className="pointer-events-auto flex h-16 w-16 flex-col items-center justify-center rounded-full border border-white/20 bg-[#050c16]/92 text-white shadow-2xl backdrop-blur-md"
-        aria-label="Compass heading"
-      >
-        <div className="relative h-8 w-8">
-          <div className="absolute inset-0 rounded-full border border-white/20" />
-          <div
-            className="absolute left-1/2 top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 origin-center rounded-full bg-white/90 transition-transform duration-150"
-            style={{ transform: `translate(-50%, -50%) rotate(${heading ?? 0}deg)` }}
-          >
-            <div className="absolute -top-1 left-1/2 h-0 w-0 -translate-x-1/2 border-x-[5px] border-b-[9px] border-x-transparent border-b-[#E8956D]" />
-          </div>
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[9px] font-extrabold text-white/75">
-            {direction}
-          </span>
-        </div>
-        <span className="mt-1 text-[10px] font-extrabold leading-none text-white/75">{displayHeading}</span>
-      </button>
-
+    <div className="pointer-events-none absolute bottom-20 right-4 z-[1100] flex flex-col items-end gap-2">
       {(needsTap || permission === "denied" || permission === "requesting") && (
         <button
           type="button"
           onClick={requestCompass}
-          className="pointer-events-auto rounded-full border border-white/15 bg-[#050c16]/92 px-3 py-2 text-[10px] font-extrabold text-white shadow-xl backdrop-blur-md"
+          className="pointer-events-auto rounded-full border border-white/15 bg-black/90 px-3 py-2 text-[10px] font-extrabold text-white shadow-xl backdrop-blur-md"
         >
           {permission === "requesting"
             ? "Starting compass"
@@ -152,11 +121,46 @@ export default function MapCompassOverlay() {
         </button>
       )}
 
-      {isActive && (
-        <div className="rounded-full border border-white/15 bg-[#050c16]/82 px-3 py-1 text-[10px] font-extrabold text-white/65 shadow-xl backdrop-blur-md">
-          Heading
+      <button
+        type="button"
+        onClick={needsTap || permission === "denied" ? requestCompass : undefined}
+        aria-label="Compass"
+        className="pointer-events-auto relative flex h-14 w-14 items-center justify-center rounded-full border border-white/20 bg-black/95 shadow-2xl backdrop-blur-md"
+      >
+        <div className="absolute inset-[4px] rounded-full border border-white/20" />
+        <div className="absolute inset-[8px] rounded-full border border-white/10" />
+
+        {Array.from({ length: 24 }).map((_, index) => {
+          const angle = index * 15;
+          const major = index % 3 === 0;
+
+          return (
+            <span
+              key={angle}
+              className="absolute left-1/2 top-1/2 origin-center"
+              style={{ transform: `translate(-50%, -50%) rotate(${angle}deg)` }}
+            >
+              <span
+                className={`block rounded-full bg-white/85 ${major ? "h-[7px] w-[1.5px]" : "h-[4px] w-px"}`}
+                style={{ transform: "translateY(-21px)" }}
+              />
+            </span>
+          );
+        })}
+
+        <span className="absolute top-[6px] left-1/2 -translate-x-1/2 text-[7px] font-black leading-none text-white/90">
+          N
+        </span>
+
+        <div
+          className="absolute left-1/2 top-1/2 h-8 w-4 origin-center transition-transform duration-150 ease-out"
+          style={{ transform: `translate(-50%, -50%) rotate(${compassRotation}deg)` }}
+        >
+          <div className="absolute left-1/2 top-[1px] h-0 w-0 -translate-x-1/2 border-x-[5px] border-b-[13px] border-x-transparent border-b-[#ef4444] drop-shadow" />
+          <div className="absolute bottom-[1px] left-1/2 h-0 w-0 -translate-x-1/2 border-x-[4px] border-t-[10px] border-x-transparent border-t-white/90" />
+          <div className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/80 bg-black" />
         </div>
-      )}
+      </button>
     </div>
   );
 }
