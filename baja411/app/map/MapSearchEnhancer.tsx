@@ -202,6 +202,8 @@ function isDriveModeActive() {
 }
 
 function forceGpsRecenter() {
+  if (!isDriveModeActive()) return;
+
   const win = bajaWindow();
   const recenterButton = document.querySelector<HTMLButtonElement>('button[aria-label="Recenter"]');
   if (!recenterButton) return;
@@ -282,6 +284,8 @@ function applyLiveHeading(rawHeading: number) {
 }
 
 function applyStoredHeading() {
+  if (!isDriveModeActive()) return;
+
   const heading = bajaWindow().__baja411LatestRawHeading;
   if (typeof heading !== "number") return;
   applyLiveHeading(heading);
