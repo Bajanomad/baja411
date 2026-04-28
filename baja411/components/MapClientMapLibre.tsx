@@ -539,6 +539,14 @@ export default function MapClientMapLibre() {
           locationMarkerRef.current.setLngLat(center);
         }
 
+        if (modeRef.current === "PLAN") {
+          firstFix = false;
+          setLocating(false);
+          setTracking(true);
+          setFollowing(false);
+          return;
+        }
+
         if (firstFix || followRef.current) {
           map.easeTo({
             center,
@@ -575,7 +583,8 @@ export default function MapClientMapLibre() {
 
     safeClearTimeout(snapBackTimerRef);
     const hasGpsCenter = location.source === "gps" || latestLocationRef.current !== null;
-    setFollowing(hasGpsCenter);
+    const shouldFollow = modeRef.current === "DRIVE" && hasGpsCenter;
+    setFollowing(shouldFollow);
     map.easeTo({
       center: current,
       zoom: Math.max(map.getZoom(), hasGpsCenter ? 14 : 13),

@@ -3,7 +3,6 @@
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import MapSearchEnhancer from "./MapSearchEnhancer";
-import MapPlanGpsGuard from "./MapPlanGpsGuard";
 
 const MapClient = dynamic(() => import("@/components/MapClientMapLibre"), {
   ssr: false,
@@ -51,7 +50,6 @@ export default function MapLoader() {
 
   return (
     <div className="relative h-full w-full overflow-hidden">
-      <MapPlanGpsGuard />
       <MapClient />
       <MapSearchEnhancer />
     </div>
