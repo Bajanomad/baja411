@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import MapSearchEnhancer from "./MapSearchEnhancer";
 import MapPlanGpsGuard from "./MapPlanGpsGuard";
-import MapPlanZoomControls from "./MapPlanZoomControls";
 
 const MapClient = dynamic(() => import("@/components/MapClientMapLibre"), {
   ssr: false,
@@ -55,7 +54,6 @@ export default function MapLoader() {
       <MapPlanGpsGuard />
       <MapClient />
       <MapSearchEnhancer />
-      <MapPlanZoomControls />
     </div>
   );
 }
