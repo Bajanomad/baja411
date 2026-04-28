@@ -69,8 +69,6 @@ function installInteractionStyles() {
 }
 
 function enableMapInteractions() {
-  const planMode = isPlanModeActive();
-
   knownMaps().forEach((map) => {
     try {
       map.dragPan.enable();
@@ -80,17 +78,6 @@ function enableMapInteractions() {
       map.touchZoomRotate.enable();
       map.keyboard.enable();
       map.getCanvas().style.touchAction = "none";
-
-      if (planMode) {
-        map.touchZoomRotate.disableRotation();
-        map.dragRotate.disable();
-        map.touchPitch.disable();
-        map.easeTo({ pitch: 0, bearing: 0, duration: 0, essential: true });
-      } else {
-        map.touchZoomRotate.enableRotation();
-        map.dragRotate.enable();
-        map.touchPitch.enable();
-      }
     } catch {
       knownMaps().delete(map);
     }
