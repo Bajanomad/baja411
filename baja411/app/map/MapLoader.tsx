@@ -3,7 +3,6 @@
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import MapSearchEnhancer from "./MapSearchEnhancer";
-import MapPlanStabilityPatch from "./MapPlanStabilityPatch";
 
 const MapClient = dynamic(() => import("@/components/MapClientMapLibre"), {
   ssr: false,
@@ -53,7 +52,6 @@ export default function MapLoader() {
     <div className="relative h-full w-full overflow-hidden">
       <MapClient />
       <MapSearchEnhancer />
-      <MapPlanStabilityPatch />
     </div>
   );
 }
