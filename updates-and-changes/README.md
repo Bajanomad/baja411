@@ -1,12 +1,16 @@
 # Baja 411 Updates And Changes
 
-This folder stores durable AI workflow files, task logs, final agent readouts, validation notes, risks, and follow up notes for Baja 411.
+This folder is the durable **Codex / AI Work Log** and workflow record for Baja 411.
 
-The goal is simple:
+It stores durable AI workflow files, task logs, final agent readouts, validation notes, risks, and follow up notes.
+
+## Documentation/workflow-only scope
+
+The purpose of this folder is documentation and workflow continuity.
 
 David should not have to keep repeating the workflow every new session.
 
-David should not have to copy screenshots, paste long terminal readouts, or manually preserve agent summaries.
+David should not have to copy screenshots, terminal output, chat summaries, PR comments, warnings, validation results, commit hashes, or PR links manually.
 
 If an AI agent does important work or says something important at the end of a task, that information belongs in this folder.
 
@@ -20,7 +24,7 @@ Read these first:
 
 ## Task logs
 
-Every Codex or Claude Code task that changes code must create or update a task log in this folder.
+Every Codex or Claude Code task that changes code must create or update a durable task log in this folder.
 
 Use this naming pattern:
 
