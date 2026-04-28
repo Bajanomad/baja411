@@ -36,6 +36,41 @@ const SUGGESTIONS = [...TOWN_SUGGESTIONS, ...CATEGORY_SUGGESTIONS];
 const ROTATION_BUTTON_ID = "baja411-drive-rotation-button";
 const HEADING_CADENCE_MS = 3000;
 
+const SEARCH_ALIASES: Record<string, string> = {
+  lapaz: "La Paz",
+  "la paz": "La Paz",
+  paz: "La Paz",
+  pescadero: "El Pescadero",
+  "el pescadero": "El Pescadero",
+  cerritos: "Cerritos",
+  "playa cerritos": "Cerritos",
+  todos: "Todos Santos",
+  "todos santos": "Todos Santos",
+  cabo: "Cabo San Lucas",
+  "cabo san lucas": "Cabo San Lucas",
+  sanjose: "San José del Cabo",
+  "san jose": "San José del Cabo",
+  "san jose del cabo": "San José del Cabo",
+  sjc: "San José del Cabo",
+  gas: "Gas station",
+  gasolina: "Gas station",
+  gasolinera: "Gas station",
+  pemex: "Gas station",
+  diesel: "Gas station",
+  fuel: "Fuel",
+  agua: "Water fill",
+  water: "Water fill",
+  "water fill": "Water fill",
+  beach: "Beach",
+  playa: "Beach",
+  mecanico: "Mechanic",
+  mechanic: "Mechanic",
+  taller: "Mechanic",
+  mercado: "Market",
+  market: "Market",
+  tienda: "Market",
+};
+
 type DeviceOrientationEventWithPermission = typeof DeviceOrientationEvent & {
   requestPermission?: () => Promise<"granted" | "denied">;
 };
@@ -69,6 +104,13 @@ function normalize(value: string) {
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .trim();
+}
+
+function applySearchAlias(input: HTMLInputElement) {
+  const alias = SEARCH_ALIASES[normalize(input.value)];
+  if (alias && alias !== input.value) {
+    setReactInputValue(input, alias);
+  }
 }
 
 function normalizeDegrees(value: number) {
@@ -368,6 +410,7 @@ export default function MapSearchEnhancer() {
           button.textContent = match;
           button.addEventListener("pointerdown", (event) => {
             event.preventDefault();
+            applySearchAlias(searchInput);
             setReactInputValue(searchInput, match);
             panel.hidden = true;
             window.setTimeout(() => searchForm.requestSubmit(), 0);
@@ -376,6 +419,20 @@ export default function MapSearchEnhancer() {
         });
 
         panel.hidden = false;
+      }
+
+      function submitSearchFromKeyboard(event: KeyboardEvent) {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        applySearchAlias(searchInput);
+        panel.hidden = true;
+        searchInput.blur();
+        window.setTimeout(() => searchForm.requestSubmit(), 0);
+      }
+
+      function normalizeSearchBeforeSubmit() {
+        applySearchAlias(searchInput);
+        panel.hidden = true;
       }
 
       function openSearch() {
@@ -392,6 +449,8 @@ export default function MapSearchEnhancer() {
       }
 
       searchForm.addEventListener("click", openSearch);
+      searchInput.addEventListener("keydown", submitSearchFromKeyboard);
+      searchForm.addEventListener("submit", normalizeSearchBeforeSubmit);
       searchInput.addEventListener("focus", openSearch);
       searchInput.addEventListener("input", showSuggestions);
       searchInput.addEventListener("blur", maybeCloseSearch);
@@ -399,6 +458,8 @@ export default function MapSearchEnhancer() {
 
       cleanup = () => {
         searchForm.removeEventListener("click", openSearch);
+        searchInput.removeEventListener("keydown", submitSearchFromKeyboard);
+        searchForm.removeEventListener("submit", normalizeSearchBeforeSubmit);
         searchInput.removeEventListener("focus", openSearch);
         searchInput.removeEventListener("input", showSuggestions);
         searchInput.removeEventListener("blur", maybeCloseSearch);
