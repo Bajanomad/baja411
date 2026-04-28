@@ -38,15 +38,16 @@ export default function MapPlanZoomControls() {
 
   if (!showControls) return null;
 
-  const zoomBy = (delta: number) => {
+  const zoomIn = () => {
     const activeMap = map ?? getFirstMap();
     if (!activeMap) return;
+    activeMap.zoomIn({ duration: 180, essential: true });
+  };
 
-    activeMap.easeTo({
-      zoom: activeMap.getZoom() + delta,
-      duration: 260,
-      essential: true,
-    });
+  const zoomOut = () => {
+    const activeMap = map ?? getFirstMap();
+    if (!activeMap) return;
+    activeMap.zoomOut({ duration: 180, essential: true });
   };
 
   return (
@@ -58,7 +59,7 @@ export default function MapPlanZoomControls() {
       <button
         type="button"
         aria-label="Zoom in"
-        onClick={() => zoomBy(1)}
+        onClick={zoomIn}
         className="flex h-12 w-12 items-center justify-center text-2xl font-black text-slate-950 active:bg-black/10"
       >
         +
@@ -67,7 +68,7 @@ export default function MapPlanZoomControls() {
       <button
         type="button"
         aria-label="Zoom out"
-        onClick={() => zoomBy(-1)}
+        onClick={zoomOut}
         className="flex h-12 w-12 items-center justify-center text-2xl font-black text-slate-950 active:bg-black/10"
       >
         −
