@@ -405,6 +405,37 @@ export default function MapClientMapLibre() {
   }, [dark]);
 
   useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const next: [number, number] = [location.lon, location.lat];
+    if (location.source === "gps") {
+      latestLocationRef.current = next;
+    }
+
+    if (!locationMarkerRef.current) {
+      locationMarkerRef.current = new maplibregl.Marker({
+        element: createLocationMarkerElement(),
+        anchor: "center",
+      })
+        .setLngLat(next)
+        .addTo(map);
+    } else {
+      locationMarkerRef.current.setLngLat(next);
+    }
+
+    if (modeRef.current === "DRIVE" && (followRef.current || (location.source === "gps" && !tracking))) {
+      map.easeTo({
+        center: next,
+        zoom: Math.max(map.getZoom(), location.source === "gps" ? 14 : 13),
+        bearing: headingRef.current ?? map.getBearing(),
+        duration: 650,
+        essential: true,
+      });
+    }
+  }, [location.lat, location.lon, location.source, tracking]);
+
+  useEffect(() => {
     const handleOrientation = (event: DeviceOrientationEvent) => {
       const nextHeading = getHeading(event as DeviceOrientationEventWithCompass);
       if (nextHeading === null) return;
@@ -485,7 +516,7 @@ export default function MapClientMapLibre() {
   function startTracking() {
     if (!navigator.geolocation || watchIdRef.current !== null) return;
     setLocating(true);
-    setFollowing(true);
+    setFollowing(location.source === "gps" || latestLocationRef.current !== null);
 
     let firstFix = true;
     watchIdRef.current = navigator.geolocation.watchPosition(
@@ -521,6 +552,7 @@ export default function MapClientMapLibre() {
 
         setLocating(false);
         setTracking(true);
+        setFollowing(true);
       },
       () => {
         setLocating(false);
@@ -536,15 +568,17 @@ export default function MapClientMapLibre() {
       startTracking();
     }
 
-    const current = latestLocationRef.current ?? [location.lon, location.lat];
+    const providerLocation: [number, number] = [location.lon, location.lat];
+    const current = latestLocationRef.current ?? providerLocation;
     const map = mapRef.current;
     if (!current || !map) return;
 
     safeClearTimeout(snapBackTimerRef);
-    setFollowing(true);
+    const hasGpsCenter = location.source === "gps" || latestLocationRef.current !== null;
+    setFollowing(hasGpsCenter);
     map.easeTo({
       center: current,
-      zoom: Math.max(map.getZoom(), 14),
+      zoom: Math.max(map.getZoom(), hasGpsCenter ? 14 : 13),
       bearing: modeRef.current === "DRIVE" ? headingRef.current ?? map.getBearing() : map.getBearing(),
       duration: 650,
       essential: true,
