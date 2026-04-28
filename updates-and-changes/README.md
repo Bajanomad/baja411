@@ -32,6 +32,14 @@ Each task log should include:
 
 If validation fails due to missing dependencies or unavailable local tools, state that plainly in the log.
 
+## Workflow/readout rules for AI tools
+
+- Before coding, read the latest relevant logs in this folder and summarize assumptions in the active task log.
+- During coding, append concrete progress notes with exact files changed and why.
+- Before commit/PR, include validation output (or explicit limitation notes) and whether app behavior changed.
+- Keep entries factual and verifiable from repository state, commit history, or PR metadata.
+- Do not record secrets, credentials, or private user data in logs.
+
 ## Scope
 
 This folder is documentation/workflow support only. It should not be used to change product behavior, map logic, or UI directly.
