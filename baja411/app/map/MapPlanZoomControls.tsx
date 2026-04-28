@@ -19,6 +19,10 @@ function isPlanModeActive() {
   return Boolean(planButton?.className.includes("bg-jade"));
 }
 
+function hasMapCanvas() {
+  return Boolean(document.querySelector(".maplibregl-canvas"));
+}
+
 export default function MapPlanZoomControls() {
   const [map, setMap] = useState<maplibregl.Map | null>(null);
   const [showControls, setShowControls] = useState(false);
@@ -26,17 +30,20 @@ export default function MapPlanZoomControls() {
   useEffect(() => {
     const timer = window.setInterval(() => {
       setMap(getFirstMap());
-      setShowControls(isPlanModeActive());
+      setShowControls(isPlanModeActive() && hasMapCanvas());
     }, 300);
 
     return () => window.clearInterval(timer);
   }, []);
 
-  if (!map || !showControls) return null;
+  if (!showControls) return null;
 
   const zoomBy = (delta: number) => {
-    map.easeTo({
-      zoom: map.getZoom() + delta,
+    const activeMap = map ?? getFirstMap();
+    if (!activeMap) return;
+
+    activeMap.easeTo({
+      zoom: activeMap.getZoom() + delta,
       duration: 260,
       essential: true,
     });
@@ -45,7 +52,7 @@ export default function MapPlanZoomControls() {
   return (
     <div
       aria-label="Plan mode zoom controls"
-      className="absolute right-3 z-[1500] flex flex-col overflow-hidden rounded-2xl border border-black/10 bg-white/95 shadow-xl backdrop-blur"
+      className="absolute right-3 z-[2000] flex flex-col overflow-hidden rounded-2xl border border-black/10 bg-white/95 shadow-xl backdrop-blur"
       style={{ bottom: "142px" }}
     >
       <button
