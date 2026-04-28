@@ -1,18 +1,16 @@
 # Baja 411 Updates And Changes
 
-This folder is the durable **Codex / AI Work Log** and workflow record for Baja 411.
+This folder is the durable Codex / AI work-log and workflow record for Baja 411.
 
-It stores durable AI workflow files, task logs, final agent readouts, validation notes, risks, and follow up notes.
+It stores durable workflow files, task logs, final agent readouts, validation notes, risks, and follow-up notes.
 
-## Documentation/workflow-only scope
+## Documentation/workflow scope
 
-The purpose of this folder is documentation and workflow continuity.
-
-David should not have to keep repeating the workflow every new session.
+This folder is for documentation and workflow continuity.
 
 David should not have to copy screenshots, terminal output, chat summaries, PR comments, warnings, validation results, commit hashes, or PR links manually.
 
-If an AI agent does important work or says something important at the end of a task, that information belongs in this folder.
+If an AI agent does important work or says something important during or at the end of a task, that information belongs in this folder.
 
 ## Standing workflow files
 
@@ -51,17 +49,17 @@ If validation failed because dependencies, tools, permissions, or environment ac
 ## Final agent readout
 Copy the final Codex or Claude Code readout here.
 
-This includes summaries, warnings, build results, lint results, risks, follow up notes, PR links, branch names, and commit hashes.
+This includes summaries, warnings, build results, lint results, risks, follow-up notes, PR links, branch names, and commit hashes.
 
 ## Risks and follow up
-List anything uncertain, mobile only, permission dependent, not validated, or needing review.
+List anything uncertain, mobile-only, permission-dependent, not validated, or needing review.
 
 ## PR and commit
 Include PR number, PR link, branch, and commit hash if available.
 
 ## Output capture rule
 
-If Codex or Claude Code says something important on screen, it belongs in the task log too.
+Codex and Claude Code must copy final task readouts into the relevant updates-and-changes markdown log before finishing.
 
 Do not leave important information only in chat, screenshots, terminal output, PR comments, or memory.
 

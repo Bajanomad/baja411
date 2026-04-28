@@ -2,27 +2,25 @@
 
 ## Prompt summary
 
-Create the permanent AI workflow documentation structure for Baja 411.
-
-The goal is to give GPT Chat, Claude AI, Codex, and Claude Code clear standing instructions so David does not have to repeat the workflow every session.
+Create the durable AI workflow documentation structure for Baja 411 so future GPT Chat, Claude AI, Codex, and Claude Code sessions can follow standing instructions from the repository.
 
 ## Files changed
 
 updates-and-changes/README.md
 
-Created the main folder README explaining the purpose of this folder, the task log format, and the output capture rule.
+- Defines durable work-log structure, required sections, and output-capture expectations.
 
 updates-and-changes/README_FOR_GPT_CHAT_AND_CLAUDE_AI.md
 
-Created the planning and review guide for GPT Chat and Claude AI.
+- Defines planning/review role boundaries and decision framework.
 
 updates-and-changes/README_FOR_CODEX_AND_CLAUDE_CODE.md
 
-Created the execution guide for Codex and Claude Code.
+- Defines execution-agent workflow, validation, and logging requirements.
 
 updates-and-changes/2026-04-28-ai-workflow-docs.md
 
-Created this initial documentation task log.
+- Records this workflow-foundation task.
 
 ## Behavior changed
 
@@ -32,46 +30,25 @@ No map behavior changed.
 
 No product UI changed.
 
-This task only adds workflow documentation.
+This task is documentation only.
 
 ## Validation
 
-No build or lint validation required because this task only creates markdown documentation.
+No build/lint validation required because this task only creates/updates markdown documentation.
 
 ## Final agent readout
 
-### Summary
+Original Codex final readout not available from available repo history for the earliest workflow-doc setup commits.
 
-- Created `updates-and-changes/README.md` with standing workflow purpose, task-log structure, and output capture rules.
-- Created `updates-and-changes/README_FOR_GPT_CHAT_AND_CLAUDE_AI.md` with planning/review role guidance for GPT Chat and Claude AI.
-- Created `updates-and-changes/README_FOR_CODEX_AND_CLAUDE_CODE.md` with execution discipline, validation, and work-log requirements for coding agents.
-- Created `updates-and-changes/2026-04-28-ai-workflow-docs.md` as the initial durable task log for this documentation foundation task.
-- Confirmed no source code, product UI, app behavior, or map logic was changed.
+Verified from repo history:
 
-### Validation
-
-- Command run: `git status --short`
-- Result: documentation-only additions under `updates-and-changes/`.
-
-### PR and commit
-
-- PR link: Not returned by the PR tool output in this environment.
-- Commit hash: `7f3b98a`.
-
-### Risks and follow up
-
-- Future coding tasks must consistently maintain `updates-and-changes/` logs and copy final agent readouts into those logs.
+- Workflow documentation files were added under `updates-and-changes/` on 2026-04-28.
+- This folder is intended to preserve final readouts and avoid chat-only output loss.
 
 ## Risks and follow up
 
-Future Codex and Claude Code tasks must actually follow these files.
-
-Future coding tasks must create or update a work log and copy the final readout into that log.
+Future coding tasks must consistently update durable logs and include the final agent readout in-file.
 
 ## PR and commit
 
-PR link: Not returned by the PR tool output in this environment.
-
-Branch: `work`
-
-Commits: `a5bb6b5`, `7f3b98a`, `8107d49`
+PR metadata for earliest workflow-doc introduction is not verified from available repo history in this environment.
