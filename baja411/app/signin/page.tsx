@@ -53,7 +53,7 @@ function SignInForm() {
   }
 
   return (
-    <main className="min-h-screen bg-[#05111d] text-white px-4 py-8 sm:py-12">
+    <main className="min-h-[100svh] bg-[#05111d] text-white px-4 pb-10 pt-[calc(var(--nav-height)+1.5rem)] sm:pb-12 sm:pt-[calc(var(--nav-height)+2rem)]">
       <div className="mx-auto w-full max-w-md">
         <section className="rounded-3xl border border-white/15 bg-[#0a1d2f]/95 p-6 shadow-[0_20px_70px_rgba(0,0,0,0.5)] sm:p-7">
           {submitted ? (
