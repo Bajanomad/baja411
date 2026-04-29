@@ -290,6 +290,7 @@ export default function MapClientMapLibre() {
   const [session, setSession] = useState<{ user?: SessionUser } | null>(null);
   const [mode, setMode] = useState<MapMode>("DRIVE");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showPinWarningModal, setShowPinWarningModal] = useState(false);
   const [pendingLatLng, setPendingLatLng] = useState<[number, number] | null>(null);
   const [locating, setLocating] = useState(false);
   const [tracking, setTracking] = useState(false);
@@ -747,7 +748,7 @@ export default function MapClientMapLibre() {
     });
   }
 
-  function handleAddPinClick() {
+  function continueAddPinFlow() {
     if (!session?.user) {
       window.location.href = "/signin";
       return;
@@ -761,6 +762,10 @@ export default function MapClientMapLibre() {
     setSubmitError("");
     setPendingLatLng(null);
     setShowAddModal(true);
+  }
+
+  function handleAddPinClick() {
+    setShowPinWarningModal(true);
   }
 
   async function handleSubmitPin(event: FormEvent) {
@@ -956,6 +961,30 @@ export default function MapClientMapLibre() {
               </div>
               <button type="button" onClick={() => setSelectedPin(null)} className={`text-xl leading-none ${textMuted}`}>
                 ×
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showPinWarningModal && (
+        <div className="fixed inset-0 z-[200000] flex items-end justify-center sm:items-center sm:p-4" style={{ background: "rgba(6,13,24,0.65)" }} onClick={(event) => { if (event.target === event.currentTarget) setShowPinWarningModal(false); }}>
+          <div className="w-full rounded-t-2xl border p-6 shadow-2xl sm:max-w-md sm:rounded-2xl" style={panelStyle(dark)}>
+            <h2 className={`text-lg font-bold ${textPrimary}`}>Before you add a pin</h2>
+            <p className={`mt-4 whitespace-pre-line text-sm leading-relaxed ${textMuted}`}>Please do not submit pins for surf breaks.\n\nThey will be denied.\n\nRespect local access.</p>
+            <div className="mt-6 flex gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowPinWarningModal(false);
+                  continueAddPinFlow();
+                }}
+                className="flex-1 rounded-full bg-jade px-5 py-3 text-sm font-bold text-white"
+              >
+                I understand
+              </button>
+              <button type="button" onClick={() => setShowPinWarningModal(false)} className={`flex-1 rounded-full border px-5 py-3 text-sm font-bold ${dark ? "border-white/20 text-white" : "border-black/10 text-slate-700"}`}>
+                Cancel
               </button>
             </div>
           </div>
