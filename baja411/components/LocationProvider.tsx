@@ -92,7 +92,10 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const stored = readStoredLocation();
-    if (isFreshGpsLocation(stored) || stored?.source === "fallback") {
+
+    if (stored?.source === "fallback") {
+      setLocation(stored);
+    } else if (isFreshGpsLocation(stored)) {
       setLocation(stored);
     } else {
       setLocation(TODOS_SANTOS);
