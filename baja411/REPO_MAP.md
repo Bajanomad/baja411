@@ -1,10 +1,16 @@
 # Baja 411 Repo Map
 
-This file is the first-stop context file for future AI/code sessions. Read this before making changes.
+This is the first stop context file for future AI and code sessions. Read this before making changes.
 
 ## Root rule
 
-The GitHub repository is `Bajanomad/baja411`, but the actual Next.js app is nested inside:
+The GitHub repository is:
+
+```txt
+Bajanomad/baja411
+```
+
+The actual Next.js app is nested inside:
 
 ```txt
 baja411/
@@ -16,21 +22,21 @@ Do not look for `app/page.tsx` at the repository root. App paths begin under `ba
 
 Think in this order before changing anything:
 
-1. End user need first
-2. CEO/business strategy second
-3. Engineering execution third
+1. End user need
+2. CEO and business strategy
+3. Engineering execution
 
 ## Verified stack
 
 From `baja411/package.json` and `baja411/tsconfig.json`:
 
-- Next.js 16.2.4
-- React 19.2.4
-- TypeScript strict mode
-- Tailwind CSS 4
-- Prisma 7.8.0
-- NextAuth beta vendored under `vendor/`
-- MapLibre GL 5.7.1
+1. Next.js 16.2.4
+2. React 19.2.4
+3. TypeScript strict mode
+4. Tailwind CSS 4
+5. Prisma 7.8.0
+6. NextAuth beta vendored under `vendor/`
+7. MapLibre GL 5.7.1
 
 Path alias:
 
@@ -38,14 +44,28 @@ Path alias:
 "@/*": ["./*"]
 ```
 
-## Directory intake docs
+## Agent and guideline files
 
-Local Directory intake documentation now lives in:
+Shared repo guidelines:
 
-- `DIRECTORY_INTAKE.md`
-- `baja411/data/DIRECTORY_FIELDS.md`
-- `baja411/data/directory-intake-template.csv`
-- `baja411/data/directory-intake-staging.md`
+```txt
+PROJECT_GUIDELINES.md
+```
+
+Codex and OpenAI coding agents:
+
+```txt
+AGENTS.md
+baja411/AGENTS.md
+```
+
+Claude and Claude Code:
+
+```txt
+baja411/CLAUDE.md
+```
+
+Everyone should read this `REPO_MAP.md` first.
 
 ## Current architecture map
 
@@ -58,42 +78,58 @@ Bajanomad/baja411
     │   │   ├── satellite/route.ts
     │   │   └── weather/storm-status/route.ts
     │   ├── businesses/
+    │   ├── emergency/page.tsx
     │   ├── map/
     │   │   ├── page.tsx
     │   │   └── MapLoader.tsx
+    │   ├── rules-permits/page.tsx
     │   ├── weather/page.tsx
     │   ├── layout.tsx
     │   ├── page.tsx
     │   └── globals.css
     ├── components/
+    │   ├── Footer.tsx
+    │   ├── HomeWeatherStrip.tsx
     │   ├── LocationProvider.tsx
     │   ├── MapClientMapLibre.tsx
-    │   ├── HomeWeatherStrip.tsx
-    │   ├── Footer.tsx
+    │   ├── Nav.tsx
     │   └── ...
+    ├── data/
     ├── prisma/
     ├── vendor/
     ├── package.json
     └── tsconfig.json
 ```
 
-`baja411/app/map/MapSearchEnhancer.tsx` is removed and should not be referenced as current architecture.
+`baja411/app/map/MapSearchEnhancer.tsx` was removed and should not be referenced as current architecture. If it reappears, treat it as high risk.
+
+## Current product priorities
+
+1. Keep SOS emergency access clean and reliable.
+2. Protect map behavior.
+3. Keep weather and storm tools useful inside Baja411.
+4. Improve Plan Mode search suggestions when scoped.
+5. Preserve Drive Mode heading, bearing, recenter, and snap back behavior.
+6. Improve Local Directory usefulness with verified data.
+7. Keep navigation and footer clean.
+8. Keep the directory user facing, not sales first.
 
 ## Global location system
 
 `baja411/components/LocationProvider.tsx` wraps the app in `baja411/app/layout.tsx`.
 
 Current status:
-- `HomeWeatherStrip` already uses `LocationProvider`.
-- Weather page already uses `LocationProvider`.
-- `MapClientMapLibre` imports `useBajaLocation` and starts from provider location.
-- `MapClientMapLibre` still also owns its own `geolocation.watchPosition` behavior.
 
-Todos Santos fallback coordinates (current canonical values):
+1. `HomeWeatherStrip` uses `LocationProvider`.
+2. Weather page uses `LocationProvider`.
+3. `MapClientMapLibre` imports `useBajaLocation` and starts from provider location.
+4. `MapClientMapLibre` still owns its own `geolocation.watchPosition` behavior.
+
+Todos Santos fallback coordinates:
 
 ```txt
 lat: 23.4464
-lon: -110.2249
+lon: -110.2265
 ```
 
 ## Map system
@@ -110,11 +146,6 @@ Map loader:
 baja411/app/map/MapLoader.tsx
 ```
 
-`MapLoader` currently:
-- disables SSR for MapLibre client loading
-- renders loading UI while map client hydrates
-- locks page/body scroll for map-page full-screen behavior
-
 Primary map ownership:
 
 ```txt
@@ -122,53 +153,117 @@ baja411/components/MapClientMapLibre.tsx
 ```
 
 `MapClientMapLibre` currently owns:
-- MapLibre initialization
-- Carto raster tile style
-- dark/light map style toggle
-- Drive/Plan mode
-- geolocation `watchPosition` tracking
-- recenter
-- snap-back behavior
-- device orientation heading updates
-- location marker
-- pin fetch/render
-- category filtering
-- search submit logic
-- add pin modal and submit flow
-- selected pin UI
+
+1. MapLibre initialization
+2. Carto raster tile style
+3. Dark and light map style toggle
+4. Drive and Plan mode
+5. Geolocation `watchPosition` tracking
+6. Recenter behavior
+7. Snap back behavior
+8. Device orientation heading updates
+9. Location marker
+10. Pin fetch and render
+11. Category filtering
+12. Search submit logic
+13. Add pin modal and submit flow
+14. Selected pin UI
 
 Risk note:
-`MapClientMapLibre.tsx` is a high-risk file because several map behaviors are currently concentrated in one file.
+
+`MapClientMapLibre.tsx` is high risk because several map behaviors are concentrated in one file.
 
 ## Map search status
 
 Current reality:
-- Plan Mode has search submit logic for towns/categories/pins.
-- Plan Mode search suggestions are not currently implemented as a clean React suggestion UI.
-- Do not reintroduce DOM enhancer hacks.
+
+1. Plan Mode has search submit logic for towns, categories, and pins.
+2. Plan Mode search suggestions are not currently implemented as a clean React suggestion UI.
+3. Do not reintroduce DOM enhancer hacks.
 
 Next safe map task:
-- implement suggestions inside `MapClientMapLibre` or a proper React child component.
 
-## Completed items
+Implement suggestions inside `MapClientMapLibre` or a proper React child component.
 
-- Collapsed MapLibre attribution CSS exists in `baja411/app/globals.css`.
-- `HomeWeatherStrip` uses `LocationProvider`.
-- `Footer` includes Businesses.
-- `MapSearchEnhancer` has been removed.
+## Emergency system
 
-## Current next safe tasks
+Emergency access is a global safety layer, not a directory category.
 
-1. Create root `AGENTS.md`.
-2. Restore Plan Mode search suggestions as clean React behavior inside the map system.
-3. Keep Drive Mode heading/bearing/recenter behavior stable.
-4. Verify GPS, fallback, and recenter behavior on mobile Safari and Android Chrome.
-5. Improve real business directory content and verification fields.
-6. Add `MOBILE_ROADMAP.md` before any mobile architecture work.
-7. Decide whether `/directory` should redirect to `/businesses` or be removed later.
+Emergency route:
 
-## Rules & Permits page
+```txt
+baja411/app/emergency/page.tsx
+```
 
-- New route: `/rules-permits` (`baja411/app/rules-permits/page.tsx`).
-- Uses hardcoded official-source starter cards (fishing, FMM, 911, Ángeles Verdes, pet entry, temporary vehicle import permits).
-- Keep official links and `Last checked` dates current whenever this page is updated.
+SOS access should open the emergency page first and should not auto call emergency services.
+
+Emergency information must be verified before publishing. Do not publish guessed phone numbers or unverified municipal numbers.
+
+## Directory system
+
+Local Directory route:
+
+```txt
+baja411/app/businesses/page.tsx
+```
+
+Local Directory intake docs:
+
+```txt
+DIRECTORY_INTAKE.md
+baja411/data/DIRECTORY_FIELDS.md
+baja411/data/directory-intake-template.csv
+baja411/data/directory-intake-staging.md
+```
+
+Directory rules:
+
+1. Keep main categories light.
+2. Use subcategories and tags for detail.
+3. Build usefulness, trust, verification, corrections, WhatsApp and phone access, hours, service area, and map linking first.
+4. Do not start with payments, ads, or business owner dashboards.
+
+## Weather system
+
+Weather route:
+
+```txt
+baja411/app/weather/page.tsx
+```
+
+Weather support:
+
+```txt
+baja411/components/HomeWeatherStrip.tsx
+baja411/app/api/weather/storm-status/route.ts
+baja411/app/api/satellite/route.ts
+```
+
+Weather should stay useful inside Baja411. Prioritize forecast, rain, storms, satellite, and hurricane tracking.
+
+## Rules and Permits page
+
+Rules route:
+
+```txt
+baja411/app/rules-permits/page.tsx
+```
+
+Rules and regulation explanations belong there. Directory should only include actionable places or services, such as license offices or permit locations.
+
+## Validation
+
+For app changes, agents should attempt:
+
+```bash
+cd baja411 && npm run lint
+cd baja411 && npm run build
+```
+
+Do not claim validation passed unless it actually passed.
+
+If tooling is missing, report:
+
+```txt
+Validation could not complete in this environment because required local tooling was unavailable. This is an environment/tooling failure, not confirmed app breakage.
+```
