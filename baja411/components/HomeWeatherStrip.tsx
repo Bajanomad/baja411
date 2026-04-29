@@ -9,6 +9,8 @@ interface CurrentWeather {
   wind_speed_10m: number;
 }
 
+type WeatherStatus = "ok" | "updating" | "fallback" | "unavailable";
+
 const fallbackStats = [
   { label: "Temp", icon: "🌡️", value: null as string | null, unit: "F" },
   { label: "Wind", icon: "💨", value: null as string | null, unit: "kt" },
@@ -30,6 +32,13 @@ export default function HomeWeatherStrip() {
   const [current, setCurrent] = useState<CurrentWeather | null>(null);
   const [error, setError] = useState(false);
 
+  const isGpsFresh = useMemo(() => {
+    if (location.source !== "gps" || !location.updatedAt) return false;
+    const updatedAt = Date.parse(location.updatedAt);
+    if (!Number.isFinite(updatedAt)) return false;
+    return Date.now() - updatedAt <= 30 * 60 * 1000;
+  }, [location.source, location.updatedAt]);
+
   const url = useMemo(() => openMeteoUrl(location.lat, location.lon), [location.lat, location.lon]);
 
   useEffect(() => {
@@ -40,7 +49,34 @@ export default function HomeWeatherStrip() {
     fetch(url)
       .then((res) => res.json())
       .then((data) => {
-        if (!cancelled) setCurrent(data.current ?? null);
+        if (cancelled) return;
+        const candidate = data?.current;
+        const temp = candidate?.temperature_2m;
+        const humidity = candidate?.relative_humidity_2m;
+        const wind = candidate?.wind_speed_10m;
+        const isValid =
+          Number.isFinite(temp) &&
+          Number.isFinite(humidity) &&
+          Number.isFinite(wind) &&
+          temp >= -20 &&
+          temp <= 130 &&
+          humidity >= 0 &&
+          humidity <= 100 &&
+          wind >= 0 &&
+          wind <= 150;
+
+        if (isValid) {
+          setCurrent({
+            temperature_2m: temp,
+            relative_humidity_2m: humidity,
+            wind_speed_10m: wind,
+          });
+          setError(false);
+          return;
+        }
+
+        setCurrent(null);
+        setError(true);
       })
       .catch(() => {
         if (!cancelled) setError(true);
@@ -58,6 +94,17 @@ export default function HomeWeatherStrip() {
         { label: "Humidity", icon: "💧", value: `${Math.round(current.relative_humidity_2m)}`, unit: "%" },
       ]
     : fallbackStats;
+
+  const status: WeatherStatus = error ? "unavailable" : current ? location.source === "gps" && isGpsFresh ? "ok" : "fallback" : "updating";
+
+  const statusText =
+    status === "ok"
+      ? `Your location · updated ${location.updatedAt ? new Date(location.updatedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "just now"}`
+      : status === "updating"
+        ? "Your location · updating…"
+        : status === "fallback"
+          ? "Todos Santos fallback"
+          : "Weather unavailable";
 
   return (
     <div>
@@ -86,8 +133,8 @@ export default function HomeWeatherStrip() {
           </div>
         ))}
       </div>
-      <p className="mt-2 max-w-xl text-right text-[10px] font-bold uppercase tracking-[0.12em] text-white/35">
-        {location.source === "gps" ? "Your location" : location.label}
+      <p className="mt-2 max-w-xl text-right text-[10px] font-semibold tracking-[0.08em] text-white/55">
+        {statusText}
       </p>
     </div>
   );
