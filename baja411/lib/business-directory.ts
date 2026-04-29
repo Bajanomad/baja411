@@ -55,7 +55,7 @@ function toDirectoryBusiness(business: PrismaBusiness): Business {
     area: business.address ?? undefined,
     description: business.description ?? "Local Baja business listing. Details are being verified.",
     phone: business.phone ?? undefined,
-    whatsapp: business.phone ?? undefined,
+    whatsapp: undefined,
     website: business.website ?? undefined,
     address: business.address ?? undefined,
     tags: buildTags(business, category, town),
