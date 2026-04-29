@@ -5,6 +5,7 @@ const links = [
   { href: "/businesses", label: "Directory" },
   { href: "/weather", label: "Weather" },
   { href: "/news", label: "Local News" },
+  { href: "/rules-permits", label: "Rules & Permits" },
   { href: "/signin", label: "Sign In" },
 ];
 

@@ -111,3 +111,13 @@ Later task should redesign `/signin` visually without changing auth behavior.
 ### Engineering note
 
 Future task should edit only `baja411/app/signin/page.tsx` and related styling if needed. It should not touch NextAuth, Nodemailer, Prisma, database schema, or opt-in behavior unless explicitly requested.
+
+
+## Rules & Permits
+
+Community feedback showed demand for official answers, such as fishing regulations, FMM/visitor permits, licenses, public services, roadside help, and other rules.
+
+The first version adds official-source starter cards for fishing, FMM, emergency number, Ángeles Verdes, pet entry, and temporary vehicle import permits.
+
+Future content must include official source links and last-checked dates.
+Do not publish unsourced legal, immigration, fishing, driving, or government-rule claims.
