@@ -5,3 +5,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 <!-- END:nextjs-agent-rules -->
 
 Read `../PROJECT_GUIDELINES.md` and `REPO_MAP.md` before making code changes.
+
+
+Read `../PROJECT_GUIDELINES.md` and `REPO_MAP.md` before making code changes.
+The root `../AGENTS.md` also applies within this app directory.

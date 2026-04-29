@@ -40,3 +40,8 @@ So imports like `@/components/Nav` resolve from this nested `baja411/` folder.
 ## Before changing code
 
 Agents should read `REPO_MAP.md` first to understand ownership, architecture, and high-risk behavior areas before editing application files.
+
+
+## Scope reminder
+
+This folder is the app project and not repository root. Run app scripts from inside `baja411/`.

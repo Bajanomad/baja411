@@ -105,3 +105,9 @@ Before editing code:
 - GitHub is source of truth.
 - Vercel is deployment path.
 - Be careful with anything affecting builds, environment variables, routes, auth, or database access.
+
+
+## Mobile architecture note
+
+Do not restructure the repo for mobile until there is an approved mobile architecture plan.
+Future mobile structure should likely be `apps/web`, `apps/mobile`, and `packages/shared`.
