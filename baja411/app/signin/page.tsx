@@ -43,149 +43,90 @@ function SignInForm() {
       if (res.ok || res.status === 302 || res.type === "opaqueredirect") {
         setSubmitted(true);
       } else {
-        setError("Something went wrong. Please try again.");
+        setError("Something went wrong. Try again.");
       }
     } catch {
-      setError("Network error. Please try again.");
+      setError("Network error. Check your connection and try again.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center px-4 py-16">
-      {/* Background photo */}
-      <div className="absolute inset-0 z-0">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1800&q=85&fit=crop&crop=center"
-          alt=""
-          className="w-full h-full object-cover"
-          style={{ transform: "scale(1.05)", transformOrigin: "center 55%" }}
-        />
-      </div>
-
-      {/* Overlays */}
-      <div
-        className="absolute inset-0 z-[1]"
-        style={{ background: "linear-gradient(135deg, rgba(4,17,28,0.92) 0%, rgba(4,17,28,0.70) 50%, rgba(4,17,28,0.80) 100%)" }}
-      />
-      <div
-        className="absolute inset-0 z-[1]"
-        style={{ background: "linear-gradient(180deg, rgba(210,110,20,0.12) 0%, transparent 50%)" }}
-      />
-      <div
-        className="absolute inset-0 z-[1] opacity-[0.015] pointer-events-none"
-        style={{
-          backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
-          backgroundSize: "36px 36px",
-        }}
-      />
-
-      {/* Card */}
-      <div className="relative z-10 w-full max-w-md">
-        <div
-          className="rounded-3xl p-8 shadow-2xl"
-          style={{
-            background: "rgba(6,13,24,0.75)",
-            backdropFilter: "blur(24px)",
-            border: "1px solid rgba(255,255,255,0.10)",
-          }}
-        >
+    <main className="min-h-screen bg-[#05111d] text-white px-4 py-8 sm:py-12">
+      <div className="mx-auto w-full max-w-md">
+        <section className="rounded-3xl border border-white/15 bg-[#0a1d2f]/95 p-6 shadow-[0_20px_70px_rgba(0,0,0,0.5)] sm:p-7">
           {submitted ? (
-            <div className="text-center py-6">
-              <div className="text-5xl mb-5">📬</div>
-              <h2 className="text-white font-extrabold text-2xl mb-3">Check your inbox</h2>
-              <p className="text-white/55 text-sm leading-relaxed">
-                We sent a sign-in link to{" "}
-                <span className="text-white/80 font-medium">{email}</span>.<br />
-                Click it to access your Baja 411 account.
-              </p>
-              <p className="text-white/30 text-xs mt-6">
-                No email? Check spam or{" "}
-                <button
-                  onClick={() => setSubmitted(false)}
-                  className="underline hover:text-white/60 transition-colors"
-                >
-                  try again
-                </button>
-                .
-              </p>
+            <div className="space-y-5 text-center">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-jade/20 text-2xl" aria-hidden>
+                📬
+              </div>
+              <div className="space-y-2">
+                <h1 className="text-2xl font-extrabold tracking-tight">Check your inbox</h1>
+                <p className="text-sm leading-relaxed text-white/80">
+                  We sent a secure sign in link to the email address you entered.
+                </p>
+                <p className="text-sm leading-relaxed text-white/70">
+                  Open the email on this device, then tap the link to continue.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSubmitted(false)}
+                className="inline-flex min-h-11 items-center justify-center rounded-xl border border-white/25 px-4 text-sm font-semibold text-white/90 transition hover:bg-white/10"
+              >
+                Try another email
+              </button>
             </div>
           ) : (
             <>
-              {/* Logo */}
-              <div className="text-center mb-7">
-                <div className="text-4xl mb-2">🌊</div>
-                <h1 className="text-white font-extrabold text-2xl tracking-tight">Baja 411</h1>
-                <p className="text-white/35 text-xs mt-1 uppercase tracking-widest font-semibold">
-                  Free · Community · Open
-                </p>
-              </div>
-
-              {/* Tagline */}
-              <div
-                className="rounded-2xl px-5 py-4 mb-7 text-center"
-                style={{ background: "rgba(42,122,90,0.15)", border: "1px solid rgba(42,122,90,0.25)" }}
-              >
-                <p className="text-white font-bold text-base leading-snug mb-2">
-                  Know a great spot?<br />Let the community know.
-                </p>
-                <div className="flex items-center justify-center gap-4 text-white/40 text-xs">
-                  <span>📍 Place pins</span>
-                  <span>✏️ Edit spots</span>
-                  <span>⭐ Rate places</span>
+              <header className="space-y-4">
+                <div className="inline-flex items-center gap-2 rounded-full border border-jade/35 bg-jade/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.15em] text-jade-light">
+                  <span aria-hidden>🧭</span>
+                  Baja411
                 </div>
-              </div>
+                <div className="space-y-2">
+                  <h1 className="text-2xl font-extrabold tracking-tight">Sign in to Baja411</h1>
+                  <p className="text-sm leading-relaxed text-white/80">
+                    Add pins, contribute local intel, and help keep Baja useful.
+                  </p>
+                </div>
+                <p className="rounded-2xl border border-white/12 bg-white/5 px-4 py-3 text-sm leading-relaxed text-white/85">
+                  No password needed. Enter your email and we will send you a secure sign in link.
+                </p>
+              </header>
 
-              {/* Form */}
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-white/40 mb-2 uppercase tracking-wider">
-                    Your email
+              <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+                <div className="space-y-2">
+                  <label htmlFor="signin-email" className="block text-sm font-semibold text-white/95">
+                    Email address
                   </label>
                   <input
+                    id="signin-email"
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-white/25 focus:outline-none transition-colors"
-                    style={{
-                      background: "rgba(255,255,255,0.07)",
-                      border: "1px solid rgba(255,255,255,0.12)",
-                    }}
-                    onFocus={(e) => (e.target.style.borderColor = "rgba(42,122,90,0.7)")}
-                    onBlur={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.12)")}
+                    className="h-12 w-full rounded-xl border border-white/25 bg-[#071424] px-4 text-base text-white placeholder:text-white/45 outline-none transition focus:border-jade-light focus:ring-2 focus:ring-jade/30"
                   />
                 </div>
 
-                {/* Opt-in */}
-                <label className="flex items-start gap-3 cursor-pointer group">
-                  <div className="relative mt-0.5 flex-shrink-0">
-                    <input
-                      type="checkbox"
-                      checked={optIn}
-                      onChange={(e) => setOptIn(e.target.checked)}
-                      className="sr-only peer"
-                    />
-                    <div
-                      className="w-5 h-5 rounded-md border transition-all peer-checked:bg-jade peer-checked:border-jade"
-                      style={{ background: optIn ? undefined : "rgba(255,255,255,0.07)", borderColor: optIn ? undefined : "rgba(255,255,255,0.20)" }}
-                    />
-                    {optIn && (
-                      <svg className="absolute inset-0 m-auto w-3 h-3 text-white pointer-events-none" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M2 6l3 3 5-5" />
-                      </svg>
-                    )}
-                  </div>
-                  <span className="text-xs text-white/45 leading-relaxed group-hover:text-white/60 transition-colors">
-                    Keep me posted on Baja 411 news, new features, and local updates.
+                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
+                  <input
+                    type="checkbox"
+                    checked={optIn}
+                    onChange={(e) => setOptIn(e.target.checked)}
+                    className="mt-0.5 h-5 w-5 rounded border-white/30 bg-transparent text-jade focus:ring-2 focus:ring-jade/40"
+                  />
+                  <span className="text-sm leading-relaxed text-white/80">
+                    Send me Baja411 updates and local feature news.
                   </span>
                 </label>
 
                 {error && (
-                  <p className="text-xs text-red-400 bg-red-500/10 rounded-lg px-3 py-2">
+                  <p className="rounded-xl border border-red-300/30 bg-red-500/12 px-3 py-2 text-sm text-red-200">
                     {error}
                   </p>
                 )}
@@ -193,28 +134,20 @@ function SignInForm() {
                 <button
                   type="submit"
                   disabled={loading || !email}
-                  className="w-full py-3.5 rounded-xl font-bold text-sm text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                  style={{
-                    background: loading ? "rgba(42,122,90,0.6)" : "linear-gradient(135deg, #2A7A5A 0%, #3D9970 100%)",
-                    boxShadow: "0 4px 24px rgba(42,122,90,0.35)",
-                  }}
+                  className="min-h-12 w-full rounded-xl bg-gradient-to-r from-jade to-jade-light px-4 text-base font-bold text-white shadow-[0_8px_28px_rgba(42,122,90,0.4)] transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-45"
                 >
-                  {loading ? "Sending…" : "Send me a sign-in link →"}
+                  {loading ? "Sending sign in link…" : "Send sign in link"}
                 </button>
 
-                <p className="text-center text-white/25 text-xs">
-                  No password needed — just click the link we email you.
+                <p className="text-center text-sm text-white/75">
+                  We only use this to sign you in and manage your Baja411 account.
                 </p>
               </form>
             </>
           )}
-        </div>
-
-        <p className="text-center text-white/20 text-xs mt-6">
-          By signing in you agree to our community guidelines.
-        </p>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }
 
