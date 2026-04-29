@@ -18,6 +18,7 @@ const TODOS_SANTOS: BajaLocation = {
 };
 
 const STORAGE_KEY = "baja411.location";
+const GPS_STALE_MS = 30 * 60 * 1000;
 
 type LocationContextValue = {
   location: BajaLocation;
@@ -39,6 +40,13 @@ function readStoredLocation(): BajaLocation | null {
   } catch {
     return null;
   }
+}
+
+function isFreshGpsLocation(location: BajaLocation | null): location is BajaLocation {
+  if (!location || location.source !== "gps" || !location.updatedAt) return false;
+  const updatedAtMs = Date.parse(location.updatedAt);
+  if (!Number.isFinite(updatedAtMs)) return false;
+  return Date.now() - updatedAtMs <= GPS_STALE_MS;
 }
 
 function storeLocation(location: BajaLocation) {
@@ -84,7 +92,11 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const stored = readStoredLocation();
-    if (stored) setLocation(stored);
+    if (isFreshGpsLocation(stored) || stored?.source === "fallback") {
+      setLocation(stored);
+    } else {
+      setLocation(TODOS_SANTOS);
+    }
 
     if (typeof navigator === "undefined") return;
 
