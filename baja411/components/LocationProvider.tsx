@@ -12,7 +12,7 @@ export type BajaLocation = {
 
 const TODOS_SANTOS: BajaLocation = {
   lat: 23.4464,
-  lon: -110.2249,
+  lon: -110.2265,
   label: "Todos Santos",
   source: "fallback",
 };
