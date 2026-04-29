@@ -1,11 +1,10 @@
 import Link from "next/link";
 
 const links = [
-  { href: "/map", label: "Interactive Map" },
+  { href: "/map", label: "Map" },
   { href: "/businesses", label: "Directory" },
   { href: "/weather", label: "Weather" },
-  { href: "/news", label: "Local News" },
-  { href: "/rules-permits", label: "Rules & Permits" },
+    { href: "/rules-permits", label: "Rules" },
   { href: "/signin", label: "Sign In" },
 ];
 
