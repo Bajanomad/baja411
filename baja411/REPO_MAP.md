@@ -166,3 +166,9 @@ Next safe map task:
 5. Improve real business directory content and verification fields.
 6. Add `MOBILE_ROADMAP.md` before any mobile architecture work.
 7. Decide whether `/directory` should redirect to `/businesses` or be removed later.
+
+## Rules & Permits page
+
+- New route: `/rules-permits` (`baja411/app/rules-permits/page.tsx`).
+- Uses hardcoded official-source starter cards (fishing, FMM, 911, Ángeles Verdes, pet entry, temporary vehicle import permits).
+- Keep official links and `Last checked` dates current whenever this page is updated.

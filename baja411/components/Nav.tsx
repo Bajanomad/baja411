@@ -9,6 +9,7 @@ const links = [
   { href: "/businesses", label: "Directory" },
   { href: "/weather", label: "Weather" },
   { href: "/news", label: "News" },
+  { href: "/rules-permits", label: "Rules" },
 ];
 
 export default function Nav() {
