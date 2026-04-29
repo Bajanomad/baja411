@@ -5,12 +5,12 @@ import PageHero from "@/components/PageHero";
 import ScrollReveal from "@/components/ScrollReveal";
 import { useBajaLocation } from "@/components/LocationProvider";
 
-type StormLevel = "low" | "monitor" | "alert";
+type StormLevel = "low" | "monitor" | "alert" | "unavailable";
 type WeatherPanelKey = "forecast" | "rain" | "storms" | "satellite";
 type SatelliteKey = "mex-ir" | "eep-ir" | "mex-color" | "eep-color";
 
 interface StormResponse {
-  level: StormLevel;
+  level: Exclude<StormLevel, "unavailable">;
   headline: string;
   body?: string;
   checkedAt: string;
@@ -27,6 +27,7 @@ const statusDot: Record<StormLevel, string> = {
   low: "bg-jade-light",
   monitor: "bg-sunset",
   alert: "bg-red-400",
+  unavailable: "bg-white/35",
 };
 
 const quickActions: { key: WeatherPanelKey; icon: string; label: string }[] = [
@@ -118,8 +119,8 @@ function RainPanel({ lat, lon, label }: { lat: number; lon: number; label: strin
   );
 }
 
-function StormsPanel({ status }: { status: StormResponse | null }) {
-  const level = status?.level || "monitor";
+function StormsPanel({ status, unavailable }: { status: StormResponse | null; unavailable: boolean }) {
+  const level: StormLevel = unavailable ? "unavailable" : status?.level || "monitor";
   const hasStorms = level === "alert";
 
   return (
@@ -129,12 +130,14 @@ function StormsPanel({ status }: { status: StormResponse | null }) {
           <span className={`mt-1 h-3 w-3 shrink-0 rounded-full ${statusDot[level]}`} />
           <div>
             <h3 className="text-lg font-extrabold text-white">
-              {hasStorms ? "Storm activity detected" : status?.headline || "No storms showing right now"}
+              {unavailable ? "Storm status unavailable" : hasStorms ? "Storm activity detected" : status?.headline || "No storms showing right now"}
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-white/62">
-              {hasStorms
-                ? "Storm activity is showing in the current signal. Storm details will surface here."
-                : "No tropical cyclones are showing right now. If conditions change, storm tools will appear here."}
+              {unavailable
+                ? "Storm status is not loading right now. Use the rain and satellite tools, and check official sources if weather looks active."
+                : hasStorms
+                  ? "Storm activity is showing in the current signal. Storm details will surface here."
+                  : "No tropical cyclones are showing right now. If conditions change, storm tools will appear here."}
             </p>
           </div>
         </div>
@@ -154,7 +157,7 @@ function StormsPanel({ status }: { status: StormResponse | null }) {
         )}
 
         <p className="mt-3 text-xs text-white/40">
-          Last checked: {status ? new Date(status.checkedAt).toLocaleTimeString() : "checking..."}
+          Last checked: {status ? new Date(status.checkedAt).toLocaleTimeString() : unavailable ? "unavailable" : "checking..."}
         </p>
       </div>
     </PanelShell>
@@ -242,16 +245,23 @@ function SatelliteImage({ product }: { product: SatelliteProduct }) {
 function WeatherButtons() {
   const { location, isRequesting, permissionState, requestLocation } = useBajaLocation();
   const [status, setStatus] = useState<StormResponse | null>(null);
+  const [stormStatusUnavailable, setStormStatusUnavailable] = useState(false);
   const [activePanel, setActivePanel] = useState<WeatherPanelKey>("forecast");
 
   useEffect(() => {
     fetch("/api/weather/storm-status")
-      .then((res) => res.json())
-      .then(setStatus)
-      .catch(() => null);
+      .then((res) => {
+        if (!res.ok) throw new Error("Storm status request failed");
+        return res.json();
+      })
+      .then((nextStatus: StormResponse) => {
+        setStatus(nextStatus);
+        setStormStatusUnavailable(false);
+      })
+      .catch(() => setStormStatusUnavailable(true));
   }, []);
 
-  const level = status?.level || "monitor";
+  const level: StormLevel = stormStatusUnavailable ? "unavailable" : status?.level || "monitor";
   const locationLabel = location.source === "gps" ? "Your location" : location.label;
 
   return (
@@ -260,7 +270,7 @@ function WeatherButtons() {
         <div className="flex min-w-0 items-center gap-2">
           <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${statusDot[level]}`} />
           <p className="truncate text-xs font-extrabold text-white/75">
-            {locationLabel} · {status?.headline || "Checking storm status..."}
+            {locationLabel} · {stormStatusUnavailable ? "Storm status unavailable" : status?.headline || "Checking storm status..."}
           </p>
         </div>
         {location.source === "fallback" && permissionState !== "denied" ? (
@@ -290,7 +300,7 @@ function WeatherButtons() {
 
       {activePanel === "forecast" && <ForecastPanel lat={location.lat} lon={location.lon} label={locationLabel} />}
       {activePanel === "rain" && <RainPanel lat={location.lat} lon={location.lon} label={locationLabel} />}
-      {activePanel === "storms" && <StormsPanel status={status} />}
+      {activePanel === "storms" && <StormsPanel status={status} unavailable={stormStatusUnavailable} />}
       {activePanel === "satellite" && <SatellitePanel />}
     </section>
   );
