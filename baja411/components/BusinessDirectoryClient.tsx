@@ -88,6 +88,9 @@ export default function BusinessDirectoryClient({
             Reset
           </button>
         </div>
+        <p className="mt-4 text-xs font-semibold text-muted">
+          Looking for water, propane, mechanics, clinics, offices, package receiving, or road help? Start here.
+        </p>
 
         <div className="mt-5">
           <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.16em] text-muted">Categories</p>
@@ -152,7 +155,7 @@ export default function BusinessDirectoryClient({
         <div className="mt-8 rounded-3xl border border-border bg-white p-8 text-center shadow-sm">
           <h3 className="text-xl font-extrabold text-foreground">No matches yet.</h3>
           <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-muted">
-            Try another search, clear the filters, or suggest a place that should be added.
+            Try another search, clear the filters, or suggest a useful local resource to add later.
           </p>
           <button type="button" onClick={resetFilters} className="mt-5 rounded-full bg-jade px-5 py-3 text-sm font-extrabold text-white">
             Clear Filters

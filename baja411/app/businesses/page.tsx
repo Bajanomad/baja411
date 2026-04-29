@@ -5,9 +5,9 @@ import { businessCategories, businessTowns } from "@/data/businesses";
 import BusinessDirectoryClient from "@/components/BusinessDirectoryClient";
 
 export const metadata: Metadata = {
-  title: "Local Businesses",
+  title: "Local Directory",
   description:
-    "Find useful businesses and local services across Baja Sur including food, fuel, mechanics, medical help, rentals, supplies, and more.",
+    "Find useful Baja services, offices, resources, and local help fast.",
 };
 
 export default async function BusinessesPage() {
@@ -20,14 +20,14 @@ export default async function BusinessesPage() {
           <div>
             <span className="label-tag mb-4 block">Local directory</span>
             <h1 className="max-w-4xl text-4xl font-extrabold leading-[1.02] md:text-6xl">
-              Find what you need in Baja without digging through internet garbage.
+              Baja411 Local Directory for everyday services, offices, and practical help.
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/65 md:text-lg">
-              Food, fuel, mechanics, supplies, rentals, medical help, and local services across the Baja corridor.
+              Fuel, water, propane, mechanics, medical care, government offices, package receiving, home services, food, and local resources across Baja Sur.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <a href="#directory" className="inline-flex min-h-14 items-center justify-center rounded-full bg-jade px-7 py-3 text-sm font-extrabold text-white">
-                Search Businesses
+                Search Directory
               </a>
               <Link href="/map" className="inline-flex min-h-14 items-center justify-center rounded-full border border-white/15 px-7 py-3 text-sm font-extrabold text-white">
                 Open Map

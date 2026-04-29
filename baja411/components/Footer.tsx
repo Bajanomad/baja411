@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const links = [
   { href: "/map", label: "Interactive Map" },
-  { href: "/businesses", label: "Businesses" },
+  { href: "/businesses", label: "Directory" },
   { href: "/weather", label: "Weather" },
   { href: "/news", label: "Local News" },
   { href: "/signin", label: "Sign In" },
@@ -35,7 +35,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="max-w-sm text-sm leading-relaxed text-white/50">
-              Community-driven local knowledge for Baja California Sur. Maps, weather, news, businesses, and road intel in one clean place.
+              Community-driven local knowledge for Baja California Sur. Maps, weather, news, local directory listings, and road intel in one clean place.
             </p>
             <p className="mt-4 text-xs font-extrabold uppercase tracking-[0.16em] text-sunset/80">Curated locally. Updated often.</p>
             <p className="mt-3 text-xs tracking-wide text-white/25">Cerritos · Pescadero · Todos Santos · La Paz · Cabo</p>
