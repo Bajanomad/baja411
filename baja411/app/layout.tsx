@@ -4,7 +4,6 @@ import "./globals.css";
 import Nav from "@/components/Nav";
 import ConditionalFooter from "@/components/ConditionalFooter";
 import { LocationProvider } from "@/components/LocationProvider";
-import SOSButton from "@/components/SOSButton";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -37,7 +36,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Nav />
           <main className="flex-1">{children}</main>
           <ConditionalFooter />
-          <SOSButton />
         </LocationProvider>
       </body>
     </html>
