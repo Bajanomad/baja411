@@ -30,6 +30,10 @@ const townLabels: Record<PrismaTown, BusinessTown> = {
   OTHER: "Other",
 };
 
+function canUseSeedBusinesses() {
+  return process.env.NODE_ENV !== "production";
+}
+
 function slugify(value: string) {
   return value
     .toLowerCase()
@@ -74,11 +78,11 @@ export async function getDirectoryBusinesses(): Promise<Business[]> {
       orderBy: [{ lastVerified: "desc" }, { updatedAt: "desc" }, { name: "asc" }],
     });
 
-    if (!dbBusinesses.length) return seedBusinesses;
+    if (!dbBusinesses.length) return canUseSeedBusinesses() ? seedBusinesses : [];
     return dbBusinesses.map(toDirectoryBusiness);
   } catch (error) {
-    console.error("Failed to load businesses from database. Falling back to seed businesses.", error);
-    return seedBusinesses;
+    console.error("Failed to load businesses from database.", error);
+    return canUseSeedBusinesses() ? seedBusinesses : [];
   }
 }
 
