@@ -50,7 +50,7 @@ export default function HomePage() {
     <>
       <ScrollReveal />
 
-      <section className="relative min-h-[100svh] overflow-hidden bg-night">
+      <section id="top" className="relative min-h-[100svh] overflow-hidden bg-night">
         <div className="absolute inset-0 z-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
