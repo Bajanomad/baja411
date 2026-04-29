@@ -1,114 +1,137 @@
 # Baja411 Project Guidelines
 
-## Mission
+Baja411 is a map first Baja California Sur field tool for travelers, locals, expats, boondockers, and people who need useful Baja information fast.
 
-Baja411 is a map first Baja California Sur utility app. It is not a generic tourism site. It is a practical field tool.
+## Working order
 
-## Core user value
+Think in this order:
 
-1. Fast map based local information
-2. Drive mode and plan mode map usage
-3. Weather, storms, satellite, and hurricane awareness
-4. Business and service discovery
-5. Community pins and local intel
+1. End user need
+2. CEO and business strategy
+3. Engineering execution
 
-## Thinking order
+Start with why a real person would care.
 
-1. End user need first
-2. CEO and business strategy second
-3. Engineering execution third
+## Stack and deployment
 
-## Agent roles
+Baja411 uses Next.js, React, TypeScript, Tailwind CSS, Prisma, PostgreSQL, NextAuth, MapLibre GL, GitHub, and Vercel.
 
-**ChatGPT:**
-Product strategy, architecture review, Codex prompts, diff review, user experience critique, decision support.
+The actual app is inside:
 
-**Codex:**
-Focused code execution, small safe patches, commits, build fixes, scoped refactors only.
+```txt
+baja411/
+```
 
-**Claude and Claude Code:**
-Deep investigation, careful implementation, code review, and following `AGENTS.md` and `CLAUDE.md`.
+GitHub is the code source of truth.
 
-## Repo structure
+Vercel is the live deployment path.
 
-**Repository:** `Bajanomad/baja411`
+## Workflow model
 
-**Actual app:** `baja411/`
+ChatGPT or Claude is the brains, depending on which chat is being used.
 
-Start every code session by reading:
+The chat assistant handles product strategy, UX review, architecture review, prompt writing, diff review, decision support, and small scoped patches when appropriate.
 
-- `baja411/REPO_MAP.md`
+Codex or Claude Code handles larger repo work, bigger patches, build fixes, validation, and complex implementation.
 
-## Current priority
+Do not have multiple agents rewrite the same area blindly.
 
-The map is the killer feature.
+## Required repo context
 
-Focus areas:
+Everyone should read:
 
-- Plan Mode search suggestions.
-- Drive Mode heading and bearing rotation.
-- Smooth center me behavior.
-- Clean footer and navigation.
-- Weather tools inside Baja411 where possible.
-- Business directory as user utility first.
+1. `baja411/REPO_MAP.md`
+2. The correct agent instruction file when an agent is being used
+3. The exact files being changed
 
-## Map rules
+Codex should read `baja411/AGENTS.md`.
 
-Main map file:
+Claude Code should read `baja411/CLAUDE.md`.
 
-- `baja411/components/MapClientMapLibre.tsx`
+If instructions conflict, stop and report the conflict instead of guessing.
 
-Important support files:
+## Current priorities
 
-- `baja411/app/map/MapLoader.tsx`
-- `baja411/app/map/MapSearchEnhancer.tsx`
-- `baja411/components/LocationProvider.tsx`
+1. Keep SOS emergency access clean and reliable
+2. Protect map behavior
+3. Keep weather and storm tools useful inside Baja411
+4. Improve Plan Mode search suggestions when scoped
+5. Preserve Drive Mode heading, bearing, recenter, and snap back behavior
+6. Improve Local Directory usefulness with verified data
+7. Keep navigation and footer clean
+8. Keep the directory user facing, not sales first
 
-`MapSearchEnhancer` currently controls more than search, including search UI, suggestions, recenter behavior, heading rotation, orientation permission, MapLibre `easeTo` patching, and heading cadence.
+## High risk areas
 
-Do not casually edit bearing or heading logic.
+1. Map behavior
+2. Drive Mode heading and bearing rotation
+3. Recenter behavior
+4. Plan Mode search
+5. GPS and fallback location
+6. Weather and storm tools
+7. SOS emergency access
+8. Auth
+9. Prisma
+10. Vercel and environment variables
 
-Do not add hacky fixes such as MutationObserver behavior, polling loops, injected fake controls, hidden CSS pretending to be architecture, or full file rewrites without reading the whole file.
+## Map rule
 
-## Location rules
+The map is the killer feature. Do not casually change Drive Mode, Plan Mode, heading rotation, recenter, GPS tracking, search, pin rendering, add pin flow, or selected pin behavior.
 
-- Use GPS when available.
-- Fallback to Todos Santos, BCS.
-- Use the existing fallback coordinates from `REPO_MAP.md` unless that file is updated.
+Do not use MutationObserver hacks, polling loops, injected fake buttons, hidden CSS hacks, or broad rewrites.
 
-## Weather rules
+## Emergency rule
 
-- Weather should stay useful inside Baja411.
-- External NOAA or NHC links are fallback and attribution, not the primary user flow.
-- Avoid ugly iframe based UX when cleaner internal proxy or image based options are possible.
+SOS is a global safety layer, not a directory category.
 
-## Business directory rules
+Emergency information must be verified before publishing.
 
-- User utility first.
-- Do not start with payments.
-- Build trust, coverage, verification, corrections, and map linking first.
-- Treat the directory as a broader Local Directory over time. It may include businesses, public services, government offices, emergency resources, utilities, roadside help, marine services, medical resources, and local activity resources.
+Do not publish guessed phone numbers or unverified municipal numbers.
 
-## Coding rules
+## Directory rule
 
-Before editing code:
+Keep main categories light.
 
-- Read the relevant file.
-- Read `REPO_MAP.md`.
-- Understand ownership of the behavior.
-- Patch the smallest safe part.
-- Avoid broad rewrites.
-- Run lint and build when practical.
-- Update `REPO_MAP.md` when architecture changes.
+Use subcategories and tags for detail.
 
-## Deployment rules
+Do not start with payments, ads, or business owner dashboards.
 
-- GitHub is source of truth.
-- Vercel is deployment path.
-- Be careful with anything affecting builds, environment variables, routes, auth, or database access.
+Build usefulness, trust, verification, corrections, WhatsApp and phone access, hours, service area, and map linking first.
 
+## Weather rule
 
-## Mobile architecture note
+Keep weather useful inside Baja411.
 
-Do not restructure the repo for mobile until there is an approved mobile architecture plan.
-Future mobile structure should likely be `apps/web`, `apps/mobile`, and `packages/shared`.
+Prioritize forecast, rain, storms, satellite, and hurricane tracking.
+
+External NOAA or NHC links should not be the primary user flow unless there is no better internal option.
+
+## Location rule
+
+Use GPS when available.
+
+Fallback location is Todos Santos, BCS:
+
+```txt
+lat 23.4464
+lon -110.2265
+```
+
+The app must handle denied, unavailable, stale, or pending GPS gracefully.
+
+## Validation
+
+Agents should attempt:
+
+```bash
+cd baja411 && npm run lint
+cd baja411 && npm run build
+```
+
+Agents must not claim validation passed unless it actually passed.
+
+If tooling is missing, report:
+
+```txt
+Validation could not complete in this environment because required local tooling was unavailable. This is an environment/tooling failure, not confirmed app breakage.
+```
