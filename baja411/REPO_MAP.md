@@ -97,6 +97,7 @@ Bajanomad/baja411
     ├── data/
     ├── prisma/
     ├── vendor/
+    ├── MAP_REGRESSION_CHECKLIST.md
     ├── package.json
     └── tsconfig.json
 ```
@@ -152,6 +153,14 @@ Primary map ownership:
 baja411/components/MapClientMapLibre.tsx
 ```
 
+Map regression checklist:
+
+```txt
+baja411/MAP_REGRESSION_CHECKLIST.md
+```
+
+Use the checklist before and after any map-related change.
+
 `MapClientMapLibre` currently owns:
 
 1. MapLibre initialization
@@ -206,6 +215,8 @@ Local Directory route:
 ```txt
 baja411/app/businesses/page.tsx
 ```
+
+`baja411/app/directory/page.tsx` redirects to `/businesses`.
 
 Local Directory intake docs:
 
