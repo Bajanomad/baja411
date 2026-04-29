@@ -1,44 +1,70 @@
-# Baja411 Agent Instructions
+# Baja411 Root Agent Instructions
 
-The actual Next.js app is nested in:
+The actual app is inside:
 
+```txt
 baja411/
+```
 
-Do not assume the app is at repo root.
+Do not assume app files are at the repository root.
 
-Before code changes, read:
+## Required reading
 
-PROJECT_GUIDELINES.md
-baja411/REPO_MAP.md
-baja411/AGENTS.md
+Before editing code, read:
 
-Core working order:
+1. `baja411/REPO_MAP.md`
+2. `baja411/AGENTS.md` when using Codex or OpenAI coding agents
+3. The exact files being changed
 
-1. End user need first
-2. CEO/business strategy second
-3. Engineering execution third
+If instructions conflict, stop and report the conflict instead of guessing.
 
-Agent role split:
+## Workflow model
 
-ChatGPT handles product strategy, architecture review, Codex prompts, diff review, UX critique, and decision support.
+ChatGPT or Claude is the brains, depending on which chat is being used.
 
-Codex handles focused code execution, small safe patches, commits, build fixes, and scoped refactors only.
+The chat assistant handles product strategy, UX review, architecture review, prompt writing, diff review, decision support, and small scoped patches when appropriate.
 
-Claude and Claude Code handle deep investigation, careful implementation, and code review, following baja411/CLAUDE.md.
+Codex or Claude Code handles larger repo work, bigger patches, build fixes, validation, and complex implementation.
 
-Coding rules:
+Do not have multiple agents rewrite the same area blindly.
 
-Read the relevant file before editing.
+## Working order
+
+Think in this order:
+
+1. End user need
+2. CEO and business strategy
+3. Engineering execution
+
+## Guardrails
+
 Patch the smallest safe part.
-Do not do broad rewrites.
-Do not casually edit map heading, bearing, recenter, Drive Mode, or Plan Mode behavior.
-Do not add MutationObserver hacks, polling loops, injected fake controls, or hidden CSS pretending to be architecture.
-Run lint and build when practical.
-Update baja411/REPO_MAP.md when architecture changes.
-For every code change, create or update a task log in updates-and-changes/.
 
-Deployment rule:
+Avoid broad rewrites.
+
+Do not casually edit map heading, bearing, recenter, Drive Mode, Plan Mode, search, GPS tracking, pin rendering, SOS access, weather, auth, Prisma, or Vercel behavior.
+
+Do not add MutationObserver hacks, polling loops, injected fake controls, hidden CSS hacks, or fake architecture.
+
+Update `baja411/REPO_MAP.md` when architecture changes.
+
+## Validation
+
+For app changes, attempt:
+
+```bash
+cd baja411 && npm run lint
+cd baja411 && npm run build
+```
+
+Do not claim validation passed unless it actually passed.
+
+If tooling is missing, report:
+
+```txt
+Validation could not complete in this environment because required local tooling was unavailable. This is an environment/tooling failure, not confirmed app breakage.
+```
 
 GitHub is source of truth.
-Vercel is deployment path.
-Be careful with builds, routes, auth, env vars, Prisma, and database behavior.
+
+Vercel is the live deployment path.
