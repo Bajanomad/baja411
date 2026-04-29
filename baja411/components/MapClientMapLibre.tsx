@@ -969,21 +969,26 @@ export default function MapClientMapLibre() {
 
       {showPinWarningModal && (
         <div className="fixed inset-0 z-[200000] flex items-end justify-center sm:items-center sm:p-4" style={{ background: "rgba(6,13,24,0.65)" }} onClick={(event) => { if (event.target === event.currentTarget) setShowPinWarningModal(false); }}>
-          <div className="w-full rounded-t-2xl border p-6 shadow-2xl sm:max-w-md sm:rounded-2xl" style={panelStyle(dark)}>
-            <h2 className={`text-lg font-bold ${textPrimary}`}>Before you add a pin</h2>
-            <p className={`mt-4 whitespace-pre-line text-sm leading-relaxed ${textMuted}`}>Please do not submit pins for surf breaks.\n\nThey will be denied.\n\nRespect local access.</p>
-            <div className="mt-6 flex gap-2">
+          <div className="w-full rounded-t-3xl border px-5 pb-5 pt-4 shadow-2xl sm:max-w-sm sm:rounded-3xl sm:px-6 sm:pb-6" style={panelStyle(dark)}>
+            <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-white/20 sm:hidden" />
+            <h2 className={`text-lg font-extrabold tracking-tight ${textPrimary}`}>Before you add a pin</h2>
+            <div className={`mt-3 space-y-3 text-sm leading-relaxed ${textMuted}`}>
+              <p>Please do not submit pins for surf breaks.</p>
+              <p>They will be denied.</p>
+              <p>Respect local access.</p>
+            </div>
+            <div className="mt-6 grid grid-cols-2 gap-2.5">
               <button
                 type="button"
                 onClick={() => {
                   setShowPinWarningModal(false);
                   continueAddPinFlow();
                 }}
-                className="flex-1 rounded-full bg-jade px-5 py-3 text-sm font-bold text-white"
+                className="rounded-full bg-jade px-5 py-3 text-sm font-bold text-white shadow-lg shadow-jade/30"
               >
                 I understand
               </button>
-              <button type="button" onClick={() => setShowPinWarningModal(false)} className={`flex-1 rounded-full border px-5 py-3 text-sm font-bold ${dark ? "border-white/20 text-white" : "border-black/10 text-slate-700"}`}>
+              <button type="button" onClick={() => setShowPinWarningModal(false)} className={`rounded-full border px-5 py-3 text-sm font-bold ${dark ? "border-white/20 bg-white/5 text-white" : "border-black/10 bg-slate-50 text-slate-700"}`}>
                 Cancel
               </button>
             </div>
