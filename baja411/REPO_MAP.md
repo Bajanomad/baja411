@@ -38,6 +38,15 @@ Path alias:
 "@/*": ["./*"]
 ```
 
+## Directory intake docs
+
+Local Directory intake documentation now lives in:
+
+- `DIRECTORY_INTAKE.md`
+- `baja411/data/DIRECTORY_FIELDS.md`
+- `baja411/data/directory-intake-template.csv`
+- `baja411/data/directory-intake-staging.md`
+
 ## Current architecture map
 
 ```txt

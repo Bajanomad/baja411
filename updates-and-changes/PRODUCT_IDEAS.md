@@ -73,3 +73,41 @@ This should not become a Codex task until provider workflow is understood.
 Likely first engineering step later:
 
 Business directory categories and provider detail fields for water/propane, not full scheduling.
+
+---
+
+## Local Directory data intake
+
+Community feedback is already showing strong demand for practical local information.
+This includes water, propane, SAPA, licenses, medical resources, tow trucks, mechanics, package receiving, home services, boat services, and local entertainment.
+The first priority is collecting useful and verified directory data.
+Do not build advanced submission workflows until intake fields are validated.
+Start with manual and CSV intake.
+Later consider a public Suggest a listing form.
+
+## Sign-in page redesign
+
+### Source
+
+User feedback during Baja411 workflow.
+
+### Problem
+
+The sign-in page works but looks weaker than the rest of the current product direction.
+
+### User value
+
+A cleaner sign-in page should make adding pins and contributing feel trustworthy, simple, and app-like.
+
+### Business value
+
+Better sign-in UX supports community contribution, directory growth, map pins, and email opt-in.
+
+### Start simple
+
+Do not redesign now.
+Later task should redesign `/signin` visually without changing auth behavior.
+
+### Engineering note
+
+Future task should edit only `baja411/app/signin/page.tsx` and related styling if needed. It should not touch NextAuth, Nodemailer, Prisma, database schema, or opt-in behavior unless explicitly requested.

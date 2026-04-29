@@ -87,6 +87,7 @@ Do not add hacky fixes such as MutationObserver behavior, polling loops, injecte
 - User utility first.
 - Do not start with payments.
 - Build trust, coverage, verification, corrections, and map linking first.
+- Treat the directory as a broader Local Directory over time. It may include businesses, public services, government offices, emergency resources, utilities, roadside help, marine services, medical resources, and local activity resources.
 
 ## Coding rules
 
