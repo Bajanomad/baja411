@@ -22,6 +22,16 @@ interface SessionUser {
 }
 
 type MapMode = "DRIVE" | "PLAN";
+type SuggestionType = "town" | "category" | "pin";
+
+interface SearchSuggestion {
+  id: string;
+  type: SuggestionType;
+  label: string;
+  detail: string;
+  query: string;
+  pinId?: string;
+}
 
 type DeviceOrientationEventWithCompass = DeviceOrientationEvent & {
   webkitCompassHeading?: number;
@@ -288,6 +298,7 @@ export default function MapClientMapLibre() {
   const [search, setSearch] = useState("");
   const [lastSearchHint, setLastSearchHint] = useState("");
   const [selectedPin, setSelectedPin] = useState<Pin | null>(null);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [visibleCategories, setVisibleCategories] = useState<Set<string>>(
     () => new Set(CATEGORIES as unknown as string[])
   );
@@ -305,6 +316,53 @@ export default function MapClientMapLibre() {
   const visiblePins = useMemo(() => {
     return pins.filter((pin) => visibleCategories.has(pin.category) && pinMatchesSearch(pin, search));
   }, [pins, search, visibleCategories]);
+
+  const searchSuggestions = useMemo(() => {
+    if (mode !== "PLAN") return [] as SearchSuggestion[];
+    const q = normalizeText(search);
+    if (!q) return [] as SearchSuggestion[];
+
+    const towns: SearchSuggestion[] = TOWNS.filter((town) => {
+      const aliases = town.aliases.map(normalizeText);
+      return normalizeText(town.name).includes(q) || aliases.some((alias) => alias.includes(q));
+    })
+      .slice(0, 4)
+      .map((town) => ({
+        id: `town-${town.name}`,
+        type: "town",
+        label: town.name,
+        detail: "Town",
+        query: town.name,
+      }));
+
+    const categories: SearchSuggestion[] = Object.entries(CATEGORY_LABELS)
+      .filter(([category, label]) => {
+        const terms = CATEGORY_SEARCH_TERMS[category] ?? [];
+        return normalizeText(label).includes(q) || terms.some((term) => normalizeText(term).includes(q));
+      })
+      .slice(0, 4)
+      .map(([category, label]) => ({
+        id: `category-${category}`,
+        type: "category",
+        label,
+        detail: "Category",
+        query: label,
+      }));
+
+    const matchingPins: SearchSuggestion[] = visiblePins
+      .filter((pin) => pinMatchesSearch(pin, search))
+      .slice(0, 4)
+      .map((pin) => ({
+        id: `pin-${pin.id}`,
+        type: "pin",
+        label: pin.title,
+        detail: CATEGORY_LABELS[pin.category] ?? pin.category,
+        query: pin.title,
+        pinId: pin.id,
+      }));
+
+    return [...towns, ...categories, ...matchingPins].slice(0, 8);
+  }, [mode, search, visiblePins]);
 
   useEffect(() => {
     followRef.current = following;
@@ -600,6 +658,7 @@ export default function MapClientMapLibre() {
     setSelectedPin(null);
     setSearch("");
     setLastSearchHint("");
+    setShowSuggestions(false);
     recenter();
   }
 
@@ -628,9 +687,8 @@ export default function MapClientMapLibre() {
     map.fitBounds(bounds, { padding: 44, maxZoom: 14, duration: 700 });
   }
 
-  function handleSearchSubmit(event?: FormEvent) {
-    event?.preventDefault();
-    const q = search.trim();
+  function runSearch(query: string) {
+    const q = query.trim();
     const map = mapRef.current;
     if (!q || !map) return;
 
@@ -652,6 +710,32 @@ export default function MapClientMapLibre() {
     const matches = pins.filter((pin) => activeCategories.has(pin.category) && pinMatchesSearch(pin, q));
     fitPins(matches);
     setLastSearchHint(matches.length ? `${matches.length} result${matches.length === 1 ? "" : "s"}` : "No results yet");
+  }
+
+  function handleSearchSubmit(event?: FormEvent) {
+    event?.preventDefault();
+    setShowSuggestions(false);
+    runSearch(search);
+  }
+
+  function applySuggestion(suggestion: SearchSuggestion) {
+    const map = mapRef.current;
+    if (!map) return;
+    setSearch(suggestion.query);
+    setShowSuggestions(false);
+
+    if (suggestion.type === "pin" && suggestion.pinId) {
+      const pin = pins.find((entry) => entry.id === suggestion.pinId);
+      if (pin) {
+        setSelectedPin(pin);
+        setFollowing(false);
+        map.easeTo({ center: [pin.lng, pin.lat], zoom: Math.max(map.getZoom(), 13), duration: 650, essential: true });
+        setLastSearchHint(pin.title);
+        return;
+      }
+    }
+
+    runSearch(suggestion.query);
   }
 
   function toggleCategory(category: string) {
@@ -754,13 +838,14 @@ export default function MapClientMapLibre() {
                   onChange={(event) => {
                     setSearch(event.target.value);
                     setLastSearchHint("");
+                    setShowSuggestions(Boolean(event.target.value.trim()));
                   }}
                   placeholder="Search towns, fuel, water, beaches"
                   enterKeyHint="search"
                   className={`w-full bg-transparent text-base outline-none ${dark ? "text-white placeholder-slate-400" : "text-slate-950 placeholder-slate-500"}`}
                 />
                 {search && (
-                  <button type="button" onClick={() => { setSearch(""); setLastSearchHint(""); }} className={`text-xs font-extrabold ${textMuted}`}>
+                  <button type="button" onClick={() => { setSearch(""); setLastSearchHint(""); setShowSuggestions(false); }} className={`text-xs font-extrabold ${textMuted}`}>
                     Clear
                   </button>
                 )}
@@ -768,6 +853,16 @@ export default function MapClientMapLibre() {
                   Go
                 </button>
               </form>
+            )}
+            {mode === "PLAN" && showSuggestions && searchSuggestions.length > 0 && (
+              <div className="map-search-suggestions max-w-xl">
+                {searchSuggestions.map((suggestion) => (
+                  <button key={suggestion.id} type="button" className="map-search-suggestion" onClick={() => applySuggestion(suggestion)}>
+                    <span>{suggestion.label}</span>
+                    <span className={`ml-2 text-xs font-semibold ${textSoft}`}>{suggestion.detail}</span>
+                  </button>
+                ))}
+              </div>
             )}
           </div>
 
