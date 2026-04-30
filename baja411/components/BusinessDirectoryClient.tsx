@@ -177,7 +177,7 @@ export default function BusinessDirectoryClient({
                     </p>
                   </Link>
                   <span className="rounded-full bg-sand px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-muted">
-                    {business.mapPinId ? "Mapped" : "Map soon"}
+                    {business.mapPinId ? "Mapped" : "Unmapped"}
                   </span>
                 </div>
 
@@ -202,7 +202,7 @@ export default function BusinessDirectoryClient({
                       Call
                     </a>
                   ) : (
-                    <span className="rounded-full bg-sand px-4 py-2 text-xs font-extrabold text-muted">No Phone Yet</span>
+                    <span className="rounded-full bg-sand px-4 py-2 text-xs font-extrabold text-muted">Phone unavailable</span>
                   )}
                   {whatsapp && (
                     <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="rounded-full border border-border px-4 py-2 text-xs font-extrabold text-foreground">
@@ -213,7 +213,7 @@ export default function BusinessDirectoryClient({
                     Directions
                   </a>
                   <a href={business.mapPinId ? `/map?pin=${business.mapPinId}` : `/businesses/${business.slug}`} className="rounded-full border border-border px-4 py-2 text-xs font-extrabold text-muted">
-                    {business.mapPinId ? "View on Map" : "Map Pending"}
+                    {business.mapPinId ? "View on Map" : "Map unavailable"}
                   </a>
                 </div>
               </article>
