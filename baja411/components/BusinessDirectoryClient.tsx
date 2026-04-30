@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import type { FormEvent } from "react";
 import type { Business, BusinessCategory, BusinessTown } from "@/data/businesses";
 
 function matchesSearch(business: Business, query: string) {
@@ -55,6 +56,7 @@ export default function BusinessDirectoryClient({
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<BusinessCategory | "All">("All");
   const [town, setTown] = useState<BusinessTown | "All">("All");
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const filtered = useMemo(() => {
     return businesses.filter((business) => {
@@ -63,6 +65,11 @@ export default function BusinessDirectoryClient({
       return matchesSearch(business, query);
     });
   }, [businesses, category, query, town]);
+
+  function handleSearchSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    searchInputRef.current?.blur();
+  }
 
   function resetFilters() {
     setQuery("");
@@ -73,12 +80,15 @@ export default function BusinessDirectoryClient({
   return (
     <div>
       <div className="rounded-[2rem] border border-border bg-white p-4 shadow-sm md:p-5">
-        <div className="grid gap-3 md:grid-cols-[1fr_auto] md:items-center">
+        <form className="grid gap-3 md:grid-cols-[1fr_auto] md:items-center" onSubmit={handleSearchSubmit}>
           <input
+            ref={searchInputRef}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search tacos, mechanic, propane, dentist, rentals..."
             className="w-full rounded-2xl border border-border bg-sand px-5 py-4 text-sm font-semibold text-foreground shadow-sm focus:outline-none"
+            inputMode="search"
+            enterKeyHint="search"
           />
           <button
             type="button"
@@ -87,7 +97,7 @@ export default function BusinessDirectoryClient({
           >
             Reset
           </button>
-        </div>
+        </form>
         <p className="mt-4 text-xs font-semibold text-muted">
           Looking for water, propane, mechanics, clinics, offices, package receiving, or road help? Start here.
         </p>
