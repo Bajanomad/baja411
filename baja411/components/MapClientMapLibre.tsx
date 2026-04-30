@@ -734,6 +734,32 @@ export default function MapClientMapLibre() {
     map.fitBounds(bounds, { padding: 44, maxZoom: 14, duration: 700 });
   }
 
+  function getSearchReferencePoint(): [number, number] {
+    return latestLocationRef.current ?? providerCenter;
+  }
+
+  function sortPinsByDistance(matches: Pin[]) {
+    const [referenceLng, referenceLat] = getSearchReferencePoint();
+    return [...matches].sort(
+      (a, b) =>
+        distanceKm(referenceLng, referenceLat, a.lng, a.lat) -
+        distanceKm(referenceLng, referenceLat, b.lng, b.lat)
+    );
+  }
+
+  function focusPin(pin: Pin) {
+    const map = mapRef.current;
+    if (!map) return;
+    setSelectedPin(pin);
+    setFollowing(false);
+    map.easeTo({
+      center: [pin.lng, pin.lat],
+      zoom: Math.max(map.getZoom(), 14),
+      duration: 650,
+      essential: true,
+    });
+  }
+
   function runSearch(query: string) {
     const q = query.trim();
     const map = mapRef.current;
@@ -755,8 +781,26 @@ export default function MapClientMapLibre() {
     if (category) setVisibleCategories(activeCategories);
 
     const matches = pins.filter((pin) => activeCategories.has(pin.category) && pinMatchesSearch(pin, q));
-    fitPins(matches);
-    setLastSearchHint(matches.length ? `${matches.length} result${matches.length === 1 ? "" : "s"}` : "No results yet");
+    if (matches.length === 0) {
+      setLastSearchHint("No results yet");
+      return;
+    }
+
+    if (category) {
+      fitPins(matches);
+      setLastSearchHint(`${matches.length} result${matches.length === 1 ? "" : "s"}`);
+      return;
+    }
+
+    if (matches.length === 1) {
+      focusPin(matches[0]);
+      setLastSearchHint(`Showing result: ${matches[0].title}`);
+      return;
+    }
+
+    const [nearestMatch] = sortPinsByDistance(matches);
+    focusPin(nearestMatch);
+    setLastSearchHint(`Showing nearest result: ${nearestMatch.title}`);
   }
 
   function handleSearchSubmit(event?: FormEvent) {
@@ -774,9 +818,7 @@ export default function MapClientMapLibre() {
     if (suggestion.type === "pin" && suggestion.pinId) {
       const pin = pins.find((entry) => entry.id === suggestion.pinId);
       if (pin) {
-        setSelectedPin(pin);
-        setFollowing(false);
-        map.easeTo({ center: [pin.lng, pin.lat], zoom: Math.max(map.getZoom(), 13), duration: 650, essential: true });
+        focusPin(pin);
         setLastSearchHint(pin.title);
         return;
       }
