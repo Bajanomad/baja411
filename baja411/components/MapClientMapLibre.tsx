@@ -751,8 +751,43 @@ export default function MapClientMapLibre() {
 
   function handleSearchSubmit(event?: FormEvent) {
     event?.preventDefault();
+    const query = search.trim();
+    if (!query) return;
+
     setShowSuggestions(false);
-    runSearch(search);
+
+    const map = mapRef.current;
+    if (!map) return;
+
+    const normalizedQuery = normalizeText(query);
+    const matchingPins = pins.filter((pin) => {
+      const normalizedTitle = normalizeText(pin.title);
+      return normalizedTitle === normalizedQuery || normalizedTitle.includes(normalizedQuery);
+    });
+    const exactPin =
+      matchingPins.find((pin) => normalizeText(pin.title) === normalizedQuery) ?? matchingPins[0] ?? null;
+
+    if (exactPin) {
+      setSelectedPin(exactPin);
+      setFollowing(false);
+      safeClearTimeout(snapBackTimerRef);
+      map.easeTo({
+        center: [exactPin.lng, exactPin.lat],
+        zoom: Math.max(map.getZoom(), 13),
+        duration: 650,
+        essential: true,
+      });
+      setLastSearchHint(`Selected ${exactPin.title}`);
+      return;
+    }
+
+    const preferredSuggestion = searchSuggestions[0];
+    if (preferredSuggestion) {
+      applySuggestion(preferredSuggestion);
+      return;
+    }
+
+    runSearch(query);
   }
 
   function applySuggestion(suggestion: SearchSuggestion) {
