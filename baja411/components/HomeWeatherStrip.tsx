@@ -28,7 +28,7 @@ function openMeteoUrl(lat: number, lon: number) {
 }
 
 export default function HomeWeatherStrip() {
-  const { location } = useBajaLocation();
+  const { location, isRequesting, permissionState, requestLocation } = useBajaLocation();
   const [current, setCurrent] = useState<CurrentWeather | null>(null);
   const [error, setError] = useState(false);
 
@@ -101,9 +101,15 @@ export default function HomeWeatherStrip() {
     status === "ok"
       ? `Your location · updated ${location.updatedAt ? new Date(location.updatedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "just now"}`
       : status === "updating"
-        ? "Your location · updating…"
+        ? isRequesting
+          ? "Using GPS · updating…"
+          : "Weather · updating…"
         : status === "fallback"
-          ? "Todos Santos fallback"
+          ? permissionState === "denied"
+            ? "GPS denied · using Todos Santos"
+            : permissionState === "prompt"
+              ? "Using Todos Santos · tap Use GPS"
+              : "Using Todos Santos fallback"
           : "Weather unavailable";
 
   return (
@@ -133,9 +139,14 @@ export default function HomeWeatherStrip() {
           </div>
         ))}
       </div>
-      <p className="mt-2 max-w-xl text-right text-[10px] font-semibold tracking-[0.08em] text-white/55">
-        {statusText}
-      </p>
+      <div className="mt-2 flex max-w-xl items-center justify-end gap-3 text-[10px] font-semibold tracking-[0.08em] text-white/55">
+        <p>{statusText}</p>
+        {location.source === "fallback" && permissionState !== "denied" && (
+          <button type="button" onClick={requestLocation} className="text-jade-light">
+            {isRequesting ? "Locating..." : "Use GPS"}
+          </button>
+        )}
+      </div>
     </div>
   );
 }
