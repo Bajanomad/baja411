@@ -222,6 +222,35 @@ function pinMatchesSearch(pin: Pin, query: string) {
     .includes(q);
 }
 
+function distanceKm(fromLng: number, fromLat: number, toLng: number, toLat: number) {
+  const toRad = (degrees: number) => (degrees * Math.PI) / 180;
+  const earthRadiusKm = 6371;
+  const dLat = toRad(toLat - fromLat);
+  const dLng = toRad(toLng - fromLng);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(fromLat)) * Math.cos(toRad(toLat)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return earthRadiusKm * c;
+}
+
+function formatDistance(distance: number | null) {
+  if (distance === null || !Number.isFinite(distance)) return null;
+  if (distance < 1) {
+    return `${Math.max(1, Math.round(distance * 1000))} m`;
+  }
+  return `${distance.toFixed(1)} km`;
+}
+
+function nearestTownLabel(lng: number, lat: number) {
+  const closestTown = TOWNS.reduce<{ name: string; distance: number } | null>((closest, town) => {
+    const dist = distanceKm(lng, lat, town.lng, town.lat);
+    if (!closest || dist < closest.distance) return { name: town.name, distance: dist };
+    return closest;
+  }, null);
+  return closestTown?.name ?? "Unknown area";
+}
+
 function createEmojiMarkerElement(category: string) {
   const element = document.createElement("button");
   element.type = "button";
@@ -350,17 +379,34 @@ export default function MapClientMapLibre() {
         query: label,
       }));
 
+    const referencePoint = latestLocationRef.current ?? providerCenter;
     const matchingPins: SearchSuggestion[] = visiblePins
       .filter((pin) => pinMatchesSearch(pin, search))
+      .map((pin) => {
+        const categoryLabel = CATEGORY_LABELS[pin.category] ?? pin.category;
+        const townLabel = nearestTownLabel(pin.lng, pin.lat);
+        const distance =
+          referencePoint
+            ? distanceKm(referencePoint[0], referencePoint[1], pin.lng, pin.lat)
+            : null;
+        const formattedDistance = formatDistance(distance);
+        const detail = formattedDistance
+          ? `${categoryLabel} · ${formattedDistance} away · near ${townLabel}`
+          : `${categoryLabel} · near ${townLabel}`;
+
+        return {
+          id: `pin-${pin.id}`,
+          type: "pin" as const,
+          label: pin.title,
+          detail,
+          query: pin.title,
+          pinId: pin.id,
+          distance: distance ?? Number.POSITIVE_INFINITY,
+        };
+      })
+      .sort((a, b) => a.distance - b.distance)
       .slice(0, 4)
-      .map((pin) => ({
-        id: `pin-${pin.id}`,
-        type: "pin",
-        label: pin.title,
-        detail: CATEGORY_LABELS[pin.category] ?? pin.category,
-        query: pin.title,
-        pinId: pin.id,
-      }));
+      .map(({ distance: _distance, ...suggestion }) => suggestion);
 
     return [...towns, ...categories, ...matchingPins].slice(0, 8);
   }, [mode, search, visiblePins]);
@@ -863,8 +909,8 @@ export default function MapClientMapLibre() {
               <div className="map-search-suggestions max-w-xl">
                 {searchSuggestions.map((suggestion) => (
                   <button key={suggestion.id} type="button" className="map-search-suggestion" onClick={() => applySuggestion(suggestion)}>
-                    <span>{suggestion.label}</span>
-                    <span className={`ml-2 text-xs font-semibold ${textSoft}`}>{suggestion.detail}</span>
+                    <span className="block font-semibold">{suggestion.label}</span>
+                    <span className={`mt-1 block text-xs font-semibold ${textSoft}`}>{suggestion.detail}</span>
                   </button>
                 ))}
               </div>
