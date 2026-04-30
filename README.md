@@ -1,32 +1,31 @@
 # Baja411
 
-**Repository:** `Bajanomad/baja411`  
-**Actual app folder:** `baja411/`
+Baja411 is a map-first field utility for Baja California Sur travelers, locals, expats, and overland drivers.
 
-Baja411 is a map-first utility app for Baja California Sur travelers, locals, expats, boondockers, and anyone who needs practical local information quickly.
+## Repository structure
 
-## What Baja411 is for
+This repository is nested:
 
-Baja411 is designed to help people in the field:
+- Repository root: shared documentation, process notes, and planning artifacts.
+- Real app: `baja411/` (Next.js app, routes, components, APIs, and config).
 
-- Find location-based information fast.
-- Use the map while actively traveling.
-- Check weather and storm context inside the app.
-- Discover businesses and local services.
-- Add and use community pins and local intel over time.
+Do not assume app files are at repository root.
 
-## Important repository structure
+## Current product notes (April 2026)
 
-This repository is **nested**. Do **not** assume the Next.js app lives at repository root.
+- Native forecast UI lives in `baja411/app/weather/page.tsx`.
+- Forecast data uses Open-Meteo.
+- Forecast modes include Today, 7 Day, and 16 Day.
+- Windy remains in use for rain, wind, storm, and satellite visual map tools.
+- Do not replace the native forecast panel with the old Windy forecast iframe.
+- Directory search on iPhone dismisses the keyboard on Enter/Search by blurring the real input in `baja411/components/BusinessDirectoryClient.tsx`.
+- Satellite proxy behavior was rolled back to the known working behavior after stricter hardening broke satellite tools.
+- Map behavior remains high risk and should not be casually edited.
+- SOS emergency behavior remains high priority and must stay reliable.
 
-- Repo root: project-level docs and supporting files.
-- App root: `baja411/` (all app code, routes, components, and config).
+## Read before changing anything
 
-## Start here before making changes
-
-1. `baja411/REPO_MAP.md`
-2. `PROJECT_GUIDELINES.md`
-3. `baja411/AGENTS.md`
-4. `baja411/CLAUDE.md`
-
-These files define architecture, workflow expectations, and agent-specific guidance.
+1. `PROJECT_GUIDELINES.md`
+2. `baja411/REPO_MAP.md`
+3. `baja411/AGENTS.md` (Codex/OpenAI coding agents)
+4. `baja411/CLAUDE.md` (Claude/Claude Code)

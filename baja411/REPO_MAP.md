@@ -234,6 +234,10 @@ Directory rules:
 3. Build usefulness, trust, verification, corrections, WhatsApp and phone access, hours, service area, and map linking first.
 4. Do not start with payments, ads, or business owner dashboards.
 
+Directory UX note:
+
+- On iPhone, Enter/Search now dismisses the keyboard by blurring the real input in `components/BusinessDirectoryClient.tsx`.
+
 ## Weather system
 
 Weather route:
@@ -242,6 +246,14 @@ Weather route:
 baja411/app/weather/page.tsx
 ```
 
+Current weather architecture:
+
+1. Forecast is native Baja411 UI inside `app/weather/page.tsx`.
+2. Forecast data source is Open-Meteo.
+3. Forecast modes are Today, 7 Day, and 16 Day.
+4. Windy remains for visual tools: rain, wind, storms, and satellite map layers.
+5. Do not replace the native forecast panel with the old Windy forecast iframe.
+
 Weather support:
 
 ```txt
@@ -249,6 +261,10 @@ baja411/components/HomeWeatherStrip.tsx
 baja411/app/api/weather/storm-status/route.ts
 baja411/app/api/satellite/route.ts
 ```
+
+Satellite note:
+
+- Satellite proxy behavior in `app/api/satellite/route.ts` was rolled back to known working behavior after stricter hardening broke satellite tools.
 
 Weather should stay useful inside Baja411. Prioritize forecast, rain, storms, satellite, and hurricane tracking.
 
