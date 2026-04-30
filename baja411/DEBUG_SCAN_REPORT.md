@@ -1,5 +1,14 @@
 # Baja411 Debug Scan Report
 
+> ⚠️ **Historical Report (Point-in-Time Scan):** This document reflects a static scan performed at a prior point in time and may include stale recommendations. The current source of truth for architecture and implementation guidance is `baja411/REPO_MAP.md`.
+> 
+> Current confirmed direction:
+> - Native forecast UI remains in `baja411/app/weather/page.tsx` using Open-Meteo with Today, 7 Day, and 16 Day modes.
+> - Windy remains for rain, wind, storm, and satellite visual tools; do not replace the native forecast panel with the old Windy forecast iframe.
+> - Directory iPhone Enter/Search keyboard dismissal is fixed in `baja411/components/BusinessDirectoryClient.tsx`.
+> - Previous stricter satellite proxy hardening attempt broke satellite tools and was rolled back to known working behavior.
+> - Do not reapply the same satellite proxy hardening recommendation without a new scoped design and live validation.
+
 ## Executive Summary
 
 The repository is **partially blocked for full validation in this environment** because required local tooling dependencies are missing (`eslint` package and `next` binary are not available). Based on static inspection, the app architecture is coherent but has **moderate operational risk** concentrated in map behavior coupling, weather external-dependency handling, and a few likely stale-documentation/dependency setup gaps.
@@ -45,11 +54,11 @@ Validation could not complete in this environment because required local tooling
    - **Why it matters:** Safety/weather messaging can be noisy or incorrect, impacting trust.
    - **Evidence level:** **Code inspection** (needs runtime sample corpus verification)
 
-3. **Satellite proxy allows arbitrary paths on allowed hosts (medium security hardening gap)**
+3. **Satellite proxy hardening recommendation is now historical (requires redesign before any retry)**
    - **File path:** `baja411/app/api/satellite/route.ts`
    - **Section:** `GET` URL allowlist logic
    - **Observed:** Hostnames are allowlisted, but path-level restriction and response size cap are not enforced.
-   - **Why it matters:** Could be abused for larger payload fetches from allowed hosts, creating avoidable bandwidth/runtime cost.
+   - **Why it matters:** Any stricter hardening must be redesigned and validated live because the previous stricter approach broke satellite tools and was rolled back.
    - **Evidence level:** **Code inspection**
 
 ## Medium Priority Fixes
@@ -109,9 +118,9 @@ Validation could not complete in this environment because required local tooling
    - **Recommendation:** do later (map-sensitive)
    - **Evidence:** confirmed (large multi-responsibility file)
 
-3. **Tighten satellite proxy constraints**
+3. **Satellite proxy hardening requires a new scoped design**
    - **File path:** `baja411/app/api/satellite/route.ts`
-   - **What should change:** Optional path allowlist + content-length guard + strict image content-type enforcement.
+   - **What should change:** Do not reapply prior strict hardening as-is. Define a new scoped design, then validate behavior live to ensure satellite tools keep working.
    - **Why it helps:** Better abuse resistance and operational predictability.
    - **Risk level:** low
    - **Recommendation:** do now
@@ -224,10 +233,10 @@ Conclusion: Directory positioning appears aligned with user-facing priority.
    - **Risk level:** medium
    - **Implement now or wait:** **Wait for explicit approval** (weather safety surface).
 
-4. **Goal:** Harden satellite proxy with stricter constraints.
+4. **Goal:** Plan a new scoped satellite proxy hardening design (historical recommendation updated).
    - **Files involved:** `baja411/app/api/satellite/route.ts`.
    - **Risk level:** low
-   - **Implement now or wait:** **Codex should implement now**.
+   - **Implement now or wait:** **Wait for explicit approval after scoped design and live validation plan**.
 
 5. **Goal:** Unify weather location status logic to reduce drift.
    - **Files involved:** `baja411/components/HomeWeatherStrip.tsx`, `baja411/app/weather/page.tsx`, shared helper.
