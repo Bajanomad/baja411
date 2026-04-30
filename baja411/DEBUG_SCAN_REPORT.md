@@ -123,7 +123,7 @@ Validation could not complete in this environment because required local tooling
    - **What should change:** Do not reapply prior strict hardening as-is. Define a new scoped design, then validate behavior live to ensure satellite tools keep working.
    - **Why it helps:** Better abuse resistance and operational predictability.
    - **Risk level:** low
-   - **Recommendation:** do now
+   - **Recommendation:** wait for explicit scoped design and live validation plan
    - **Evidence:** suspected/inspection-backed
 
 4. **Storm parser robustness improvements**
