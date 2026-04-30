@@ -4,6 +4,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import maplibregl, { type StyleSpecification } from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent } from "react";
 import { useBajaLocation } from "@/components/LocationProvider";
+import PlanSearchPanel, { type SearchSuggestion } from "@/components/map/PlanSearchPanel";
 
 interface Pin {
   id: string;
@@ -22,17 +23,6 @@ interface SessionUser {
 }
 
 type MapMode = "DRIVE" | "PLAN";
-type SuggestionType = "town" | "category" | "pin";
-
-interface SearchSuggestion {
-  id: string;
-  type: SuggestionType;
-  label: string;
-  detail: string;
-  query: string;
-  pinId?: string;
-}
-
 type DeviceOrientationEventWithCompass = DeviceOrientationEvent & {
   webkitCompassHeading?: number;
 };
@@ -882,38 +872,26 @@ export default function MapClientMapLibre() {
             </div>
 
             {mode === "PLAN" && (
-              <form onSubmit={handleSearchSubmit} className={`flex max-w-xl items-center gap-2 rounded-full border px-4 py-3 shadow-xl ${dark ? "bg-[#050c16]/95 border-white/20" : "bg-white/95 border-black/10"}`}>
-                <span className="text-sm">🔎</span>
-                <input
-                  value={search}
-                  onChange={(event) => {
-                    setSearch(event.target.value);
-                    setLastSearchHint("");
-                    setShowSuggestions(Boolean(event.target.value.trim()));
-                  }}
-                  placeholder="Search towns, fuel, water, beaches"
-                  enterKeyHint="search"
-                  className={`w-full bg-transparent text-base outline-none ${dark ? "text-white placeholder-slate-400" : "text-slate-950 placeholder-slate-500"}`}
-                />
-                {search && (
-                  <button type="button" onClick={() => { setSearch(""); setLastSearchHint(""); setShowSuggestions(false); }} className={`text-xs font-extrabold ${textMuted}`}>
-                    Clear
-                  </button>
-                )}
-                <button type="submit" className="rounded-full bg-jade px-3 py-1.5 text-xs font-extrabold text-white">
-                  Go
-                </button>
-              </form>
-            )}
-            {mode === "PLAN" && showSuggestions && searchSuggestions.length > 0 && (
-              <div className="map-search-suggestions max-w-xl">
-                {searchSuggestions.map((suggestion) => (
-                  <button key={suggestion.id} type="button" className="map-search-suggestion" onClick={() => applySuggestion(suggestion)}>
-                    <span className="block font-semibold">{suggestion.label}</span>
-                    <span className={`mt-1 block text-xs font-semibold ${textSoft}`}>{suggestion.detail}</span>
-                  </button>
-                ))}
-              </div>
+              <PlanSearchPanel
+                dark={dark}
+                search={search}
+                showSuggestions={showSuggestions}
+                searchSuggestions={searchSuggestions}
+                textMuted={textMuted}
+                textSoft={textSoft}
+                onSubmit={handleSearchSubmit}
+                onSearchChange={(value) => {
+                  setSearch(value);
+                  setLastSearchHint("");
+                  setShowSuggestions(Boolean(value.trim()));
+                }}
+                onApplySuggestion={applySuggestion}
+                onClear={() => {
+                  setSearch("");
+                  setLastSearchHint("");
+                  setShowSuggestions(false);
+                }}
+              />
             )}
           </div>
 
