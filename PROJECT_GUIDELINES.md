@@ -50,6 +50,16 @@ Claude Code should read `baja411/CLAUDE.md`.
 
 If instructions conflict, stop and report the conflict instead of guessing.
 
+## Current weather and directory implementation notes
+
+1. Native forecast UI is inside `baja411/app/weather/page.tsx`.
+2. Native forecast uses Open-Meteo data.
+3. Forecast modes: Today, 7 Day, 16 Day.
+4. Windy remains for rain, wind, storm, and satellite visual map tools.
+5. Do not replace the native forecast panel with the old Windy forecast iframe.
+6. On iPhone, directory Enter/Search dismisses the keyboard by blurring the real input in `baja411/components/BusinessDirectoryClient.tsx`.
+7. Satellite proxy behavior in `baja411/app/api/satellite/route.ts` was rolled back to known working behavior after stricter hardening broke satellite tools.
+
 ## Current priorities
 
 1. Keep SOS emergency access clean and reliable

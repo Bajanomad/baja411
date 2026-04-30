@@ -1,47 +1,60 @@
 # Baja411 App (Nested Next.js Project)
 
-**Actual app folder:** `baja411/`
+This folder contains the real Baja411 app.
 
-This directory contains the real Baja411 application.
+## App root
+
+Run all app commands from:
+
+```bash
+cd baja411
+```
 
 ## Stack
 
-From `package.json` and current project configuration:
-
 - Next.js
 - React
-- TypeScript
+- TypeScript (strict)
 - Tailwind CSS
 - Prisma
-- MapLibre
-- NextAuth (vendored locally under `vendor/`)
+- MapLibre GL
+- NextAuth (vendored under `vendor/`)
 
 ## Scripts
 
-Run these from inside `baja411/`:
-
 ```bash
 npm run dev
+npm run lint
 npm run build
 npm run start
-npm run lint
 ```
 
-## Import paths
+## Current weather architecture
 
-Path aliases use:
+- Native weather page: `app/weather/page.tsx`
+- Forecast source: Open-Meteo
+- Forecast modes: Today, 7 Day, 16 Day
+- Windy usage remains focused on map-style weather visual tools (rain, wind, storms, satellite)
+- Do not reintroduce the old Windy forecast iframe as the primary forecast panel
+
+## Current directory UX note
+
+- `components/BusinessDirectoryClient.tsx` includes the iPhone Enter/Search keyboard dismissal fix by blurring the real input.
+
+## Risk reminders
+
+- Map behavior is high risk (`components/MapClientMapLibre.tsx`, related map flow).
+- SOS emergency behavior is high priority and must remain reliable.
+
+## Import alias
 
 ```json
 "@/*": ["./*"]
 ```
 
-So imports like `@/components/Nav` resolve from this nested `baja411/` folder.
+## Required reading before edits
 
-## Before changing code
-
-Agents should read `REPO_MAP.md` first to understand ownership, architecture, and high-risk behavior areas before editing application files.
-
-
-## Scope reminder
-
-This folder is the app project and not repository root. Run app scripts from inside `baja411/`.
+1. `REPO_MAP.md`
+2. `AGENTS.md` (Codex/OpenAI coding agents)
+3. `CLAUDE.md` (Claude/Claude Code)
+4. The exact files you plan to modify
