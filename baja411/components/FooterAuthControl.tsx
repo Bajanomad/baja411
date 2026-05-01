@@ -12,7 +12,11 @@ type CsrfResponse = {
   csrfToken?: string;
 };
 
-export default function FooterAuthControl() {
+interface FooterAuthControlProps {
+  className?: string;
+}
+
+export default function FooterAuthControl({ className = "" }: FooterAuthControlProps) {
   const pathname = usePathname();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [csrfToken, setCsrfToken] = useState("");
@@ -55,23 +59,17 @@ export default function FooterAuthControl() {
 
   if (!isAuthenticated) {
     return (
-      <Link
-        href={`/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`}
-        className="text-sm leading-normal font-semibold text-white/50 transition-colors hover:text-white"
-      >
+      <Link href={`/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`} className={className}>
         Sign In
       </Link>
     );
   }
 
   return (
-    <form method="post" action="/api/auth/signout" className="m-0 inline-flex items-center p-0">
+    <form method="post" action="/api/auth/signout" className="m-0 inline-flex h-5 items-center p-0 leading-none">
       <input type="hidden" name="csrfToken" value={csrfToken} />
       <input type="hidden" name="callbackUrl" value={callbackUrl} />
-      <button
-        type="submit"
-        className="m-0 appearance-none bg-transparent p-0 text-sm leading-normal font-semibold text-white/50 transition-colors hover:text-white"
-      >
+      <button type="submit" className={`${className} m-0 appearance-none border-0 bg-transparent p-0 font-inherit`}>
         Sign Out
       </button>
     </form>
