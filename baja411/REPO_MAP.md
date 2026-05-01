@@ -245,8 +245,15 @@ Directory UX note:
 2. Pin moderation uses `baja411/app/admin/PinsAdmin.tsx` and `baja411/app/api/admin/pins/route.ts`.
 3. Business moderation uses `baja411/app/admin/BusinessesAdmin.tsx` and `baja411/app/api/admin/businesses/route.ts`.
 4. Business admin supports pending/approved/rejected review, edit, approve, reject, and delete.
-5. Public business submissions are not implemented yet.
+5. Public business submissions are available at `/businesses/submit` for logged-in users.
 6. Public directory still only shows APPROVED businesses through `getDirectoryBusinesses()` in `baja411/lib/business-directory.ts`.
+
+7. Public business submissions route: `/businesses/submit`.
+8. Submission API route: `/api/businesses`.
+9. Submissions require login and create `PENDING` business records for admin review.
+10. Admin reviews submissions through existing business moderation.
+11. Public directory remains `APPROVED`-only via `getDirectoryBusinesses()`.
+12. Emergency listings are not accepted through public business submissions.
 
 ## Weather system
 
