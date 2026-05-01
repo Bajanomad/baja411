@@ -32,6 +32,9 @@ export default async function BusinessesPage() {
               <Link href="/map" className="inline-flex min-h-14 items-center justify-center rounded-full border border-white/15 px-7 py-3 text-sm font-extrabold text-white">
                 Open Map
               </Link>
+              <Link href="/businesses/submit" className="inline-flex min-h-14 items-center justify-center rounded-full border border-white/15 px-7 py-3 text-sm font-extrabold text-white">
+                Suggest a Business
+              </Link>
             </div>
           </div>
         </div>
