@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import PinsAdmin from "./PinsAdmin";
 import EmailsAdmin from "./EmailsAdmin";
+import BusinessesAdmin from "./BusinessesAdmin";
 
 export const metadata = { title: "Admin | Baja 411" };
 
@@ -22,6 +23,14 @@ export default async function AdminPage() {
           <p className="text-sm text-muted mt-1">Approve, reject, or delete community-submitted pins.</p>
         </div>
         <PinsAdmin />
+      </section>
+
+      <section>
+        <div className="mb-8">
+          <h2 className="text-xl font-extrabold text-foreground">Business Directory Moderation</h2>
+          <p className="text-sm text-muted mt-1">Review, edit, approve, reject, or delete business directory listings.</p>
+        </div>
+        <BusinessesAdmin />
       </section>
 
       <section>
