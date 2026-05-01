@@ -1,11 +1,11 @@
 import Link from "next/link";
+import FooterAuthControl from "./FooterAuthControl";
 
 const links = [
   { href: "/map", label: "Map" },
   { href: "/businesses", label: "Directory" },
   { href: "/weather", label: "Weather" },
-    { href: "/rules-permits", label: "Rules" },
-  { href: "/signin", label: "Sign In" },
+  { href: "/rules-permits", label: "Rules" },
 ];
 
 export default function Footer() {
@@ -47,6 +47,7 @@ export default function Footer() {
                 {link.label}
               </Link>
             ))}
+            <FooterAuthControl />
           </nav>
         </div>
 
