@@ -1,43 +1,44 @@
 # Night Audit Summary
 
-## 1) Date
-- 2026-04-30 (audit performed on 2026-05-01 UTC during night closeout)
+## Date
 
-## 2) Purpose of the audit
-- Close out today’s repository work without changing application behavior.
-- Confirm current status, recent commits, branch state, and validation readiness.
-- Document what shipped and what remains for tomorrow.
+2026-04-30 local closeout. Audit was finalized on 2026-05-01 UTC.
 
-## 3) Summary of today’s completed work (confirmed from git history)
-The following items are confirmed in commit history and/or current architecture documentation:
-- Business directory admin moderation exists.
-- Public business submission exists at `/businesses/submit`.
-- Submissions require login.
-- Submissions create `PENDING` business records.
-- Admin can approve, reject, edit, or delete businesses.
-- Public directory only shows `APPROVED` businesses.
-- Footer auth works.
-- Map Go button was removed.
-- Weather remains working and is unchanged by this audit.
-- Business submission Location UI was improved and uses location choices:
-  - Use my location
-  - Input location
-  - Has no location
-- Public submit does not expose raw latitude/longitude fields.
-- Public submit does not use a map picker.
-- Main map behavior remains untouched by this audit.
+## Purpose
 
-## 4) Pull requests reviewed
-- Could not enumerate open pull requests from this environment because GitHub CLI (`gh`) is not installed.
-- Repository commit history indicates merges through PR #71 today.
+Close out the day without changing application behavior. Capture what shipped, confirm the repo is not carrying obvious loose ends, record validation status honestly, and set the first sane task for tomorrow.
 
-## 5) Pull requests closed or left open, with reasons
-- Closed in this audit session: none.
-- Left open in this audit session: unknown from local environment due to missing `gh` tooling.
-- Reason: open PR state cannot be queried locally without GitHub tooling/API access via configured repo tools.
+## Completed today
 
-## 6) Files changed today
-From today’s git history, changed files include:
+Confirmed from git history and current repo documentation:
+
+1. Business directory admin moderation exists.
+2. Public business submission exists at `/businesses/submit`.
+3. Business submissions require login.
+4. Submissions create `PENDING` business records.
+5. Admin can approve, reject, edit, or delete businesses.
+6. Public directory still shows only `APPROVED` businesses.
+7. Footer auth works.
+8. Map Go button was removed.
+9. Weather remains working and was not changed during closeout.
+10. Business submission Location UI supports:
+   - Use my location
+   - Input location
+   - Has no location
+11. Public submit does not expose raw latitude or longitude fields.
+12. Public submit does not use a public map picker.
+13. Main map behavior remains protected.
+
+## Pull request status
+
+GitHub connector check found no open pull requests at closeout.
+
+Codex also reported that local `gh` CLI was unavailable in its environment, so this file uses the GitHub connector check as the final PR status source.
+
+## Files changed today
+
+From today’s git history, changed files included:
+
 - `baja411/REPO_MAP.md`
 - `baja411/app/admin/BusinessesAdmin.tsx`
 - `baja411/app/admin/page.tsx`
@@ -51,30 +52,45 @@ From today’s git history, changed files include:
 - `baja411/components/FooterAuthControl.tsx`
 - `baja411/components/map/PlanSearchPanel.tsx`
 
-## 7) Systems confirmed untouched (by this night audit patch)
-- `components/MapClientMapLibre.tsx`
-- Main map behavior (Drive Mode, Plan Mode internals, bearing/heading/recenter/GPS tracking)
+## Systems untouched by the night audit patch
+
+The night audit documentation patch did not intentionally change application behavior or touch these protected areas:
+
+- `baja411/components/MapClientMapLibre.tsx`
+- Main map behavior
+- Drive Mode
+- Plan Mode internals
+- Bearing, heading, recenter, or GPS tracking
 - Weather system behavior
-- Footer auth behavior (no additional changes in this audit patch)
-- Admin moderation behavior (no additional changes in this audit patch)
+- Footer auth behavior
+- Admin moderation behavior
 - Prisma schema
 - Package files
 - Vercel config
 
-## 8) Validation results
-Commands attempted:
-- `cd baja411 && npm run lint` → **failed in environment** (`eslint` package missing / not resolvable)
-- `cd baja411 && npm run build` → **failed in environment** (`next` binary missing)
+## Validation results
+
+Commands attempted by Codex:
+
+- `cd baja411 && npm run lint` failed in the local environment because `eslint` was missing or not resolvable.
+- `cd baja411 && npm run build` failed in the local environment because the `next` binary was missing.
 
 Validation could not complete in this environment because required local tooling was unavailable. This is an environment/tooling failure, not confirmed app breakage.
 
-## 9) Known remaining issues
-- Local environment is missing runtime/build dependencies needed for lint/build verification.
-- Open PR list could not be confirmed locally because `gh` is unavailable.
+## Known remaining issues
 
-## 10) Recommended first task for tomorrow
-- Re-run closeout validation in a fully provisioned environment:
-  1. `cd baja411 && npm ci`
-  2. `cd baja411 && npm run lint`
-  3. `cd baja411 && npm run build`
-- Then check and triage open pull requests from GitHub (web UI or `gh`) and verify no stale PRs need action.
+1. Local Codex environment was not fully provisioned for lint/build validation.
+2. Validation needs to be rerun after dependencies are installed.
+3. `BusinessLocationPicker.tsx` appeared in today’s changed files. Tomorrow, confirm whether it is still used or is dead leftover code before deleting anything.
+
+## Recommended first task tomorrow
+
+Run a clean validation pass in a provisioned environment:
+
+```bash
+cd baja411 && npm ci
+cd baja411 && npm run lint
+cd baja411 && npm run build
+```
+
+Then inspect whether `baja411/app/businesses/submit/BusinessLocationPicker.tsx` is imported anywhere. If it is unused, remove it in a tiny cleanup PR. Do not touch map, weather, auth, Prisma, package files, or Vercel config while doing that cleanup.
