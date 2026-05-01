@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 type SessionResponse = {
   user?: { name?: string | null; email?: string | null } | null;
@@ -14,14 +14,14 @@ type CsrfResponse = {
 
 export default function FooterAuthControl() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [csrfToken, setCsrfToken] = useState("");
+  const [callbackUrl, setCallbackUrl] = useState(pathname || "/");
 
-  const callbackUrl = useMemo(() => {
-    const qs = searchParams.toString();
-    return qs ? `${pathname}?${qs}` : pathname;
-  }, [pathname, searchParams]);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setCallbackUrl(`${window.location.pathname}${window.location.search}` || "/");
+  }, [pathname]);
 
   useEffect(() => {
     let mounted = true;
