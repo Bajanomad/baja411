@@ -4,14 +4,38 @@ Use this checklist before and after any map-related change.
 
 The map is the killer feature. Do not casually change Drive Mode, Plan Mode, heading rotation, recenter behavior, GPS tracking, search, pin rendering, add pin flow, or selected pin behavior.
 
+## Current map ownership
+
+Primary map behavior lives in:
+
+```txt
+components/MapClientMapLibre.tsx
+```
+
+Map shell and loader live in:
+
+```txt
+app/map/page.tsx
+app/map/MapLoader.tsx
+```
+
+Shared location state lives in:
+
+```txt
+components/LocationProvider.tsx
+```
+
+`app/map/MapSearchEnhancer.tsx` was removed and should not be treated as current architecture. Do not reintroduce the old DOM enhancer approach.
+
 ## Before editing map code
 
 1. Read `REPO_MAP.md`.
-2. Read `components/MapClientMapLibre.tsx`.
-3. Read `app/map/MapLoader.tsx` if the change touches map page shell, scroll locking, loading, or layout.
-4. Read `components/LocationProvider.tsx` if the change touches GPS, fallback, stale location, or permission behavior.
-5. Identify the smallest safe patch.
-6. Do not use MutationObserver hacks, polling loops, injected fake buttons, hidden CSS hacks, or broad rewrites.
+2. Read this checklist.
+3. Read `components/MapClientMapLibre.tsx`.
+4. Read `app/map/MapLoader.tsx` if the change touches map page shell, scroll locking, loading, or layout.
+5. Read `components/LocationProvider.tsx` if the change touches GPS, fallback, stale location, or permission behavior.
+6. Identify the smallest safe patch.
+7. Do not use DOM patching tricks, polling loops, injected controls, hidden styling behavior, or broad rewrites.
 
 ## Must not regress
 
@@ -20,7 +44,7 @@ The map is the killer feature. Do not casually change Drive Mode, Plan Mode, hea
 3. Drive Mode can center on the user.
 4. Drive Mode keeps heading and bearing behavior stable.
 5. Center me button recenters cleanly.
-6. Snap back behavior still works after manual panning.
+6. Snap-back behavior still works after manual panning.
 7. Plan Mode can still pan and explore without fighting the user.
 8. Plan Mode search submit still works for known towns, categories, and pins.
 9. Search UI does not block critical map controls on mobile.
@@ -45,7 +69,7 @@ Test these on real mobile when possible:
 3. Allow GPS and confirm current location updates.
 4. Tap center me once and confirm it recenters without repeated taps.
 5. Rotate the phone and confirm heading behavior does not feel stuck or wild.
-6. Pan the map in Drive Mode and confirm snap back behavior still makes sense.
+6. Pan the map in Drive Mode and confirm snap-back behavior still makes sense.
 7. Switch to Plan Mode and confirm the map stops fighting manual exploration.
 8. Search for `Todos Santos`.
 9. Search for a known category such as gas or medical if seeded data exists.
@@ -70,6 +94,8 @@ For code changes, attempt:
 cd baja411 && npm run lint
 cd baja411 && npm run build
 ```
+
+Documentation-only changes do not require lint/build unless app code changed.
 
 Do not claim validation passed unless it actually passed.
 
