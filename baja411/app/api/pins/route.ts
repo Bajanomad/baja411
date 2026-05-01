@@ -37,20 +37,28 @@ function isPinCategory(value: unknown): value is PinCategory {
   return typeof value === "string" && PIN_CATEGORIES.has(value as PinCategory);
 }
 
-
-
 function mapBusinessCategoryToPinCategory(category: BusinessCategory): PinCategory {
-  if (category === BusinessCategory.FUEL) return PinCategory.FUEL;
-  if (category === BusinessCategory.MECHANIC || category === BusinessCategory.TIRE_SHOP) return PinCategory.MECHANIC;
-  if ([BusinessCategory.RESTAURANT, BusinessCategory.BAR, BusinessCategory.BAKERY, BusinessCategory.BREWERY, BusinessCategory.GROCERY].includes(category)) {
-    return PinCategory.MARKET;
+  switch (category) {
+    case BusinessCategory.FUEL:
+      return PinCategory.FUEL;
+    case BusinessCategory.MECHANIC:
+    case BusinessCategory.TIRE_SHOP:
+      return PinCategory.MECHANIC;
+    case BusinessCategory.RESTAURANT:
+    case BusinessCategory.BAR:
+    case BusinessCategory.BAKERY:
+    case BusinessCategory.BREWERY:
+    case BusinessCategory.GROCERY:
+      return PinCategory.MARKET;
+    default:
+      return PinCategory.OTHER;
   }
-  return PinCategory.OTHER;
 }
 
 function formatTown(town: Town): string {
   return town.replaceAll("_", " ");
 }
+
 export async function GET() {
   try {
     const [pins, businesses] = await Promise.all([
