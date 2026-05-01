@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import BusinessLocationPicker from "./BusinessLocationPicker";
 
 const CATEGORIES = ["RESTAURANT", "BAR", "BAKERY", "BREWERY", "HOTEL", "RENTAL", "MECHANIC", "TIRE_SHOP", "FUEL", "MEDICAL", "DENTAL", "PHARMACY", "GROCERY", "OTHER"] as const;
 const TOWNS = ["CERRITOS", "PESCADERO", "TODOS_SANTOS", "LA_PAZ", "CABO_SAN_LUCAS", "SAN_JOSE_DEL_CABO", "LORETO", "OTHER"] as const;
@@ -9,55 +8,86 @@ const TOWNS = ["CERRITOS", "PESCADERO", "TODOS_SANTOS", "LA_PAZ", "CABO_SAN_LUCA
 type FormState = { name: string; category: string; town: string; description: string; address: string; phone: string; website: string; lat: number | null; lng: number | null };
 const initialState: FormState = { name: "", category: "", town: "", description: "", address: "", phone: "", website: "", lat: null, lng: null };
 
-type LocationMode = "gps" | "map" | "unknown";
+type LocationMode = "gps" | "known" | "serviceArea";
 
 export default function BusinessSubmitForm() {
   const [form, setForm] = useState<FormState>(initialState);
-  const [locationMode, setLocationMode] = useState<LocationMode>("unknown");
+  const [locationMode, setLocationMode] = useState<LocationMode>("known");
   const [locationMessage, setLocationMessage] = useState<string | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [locationText, setLocationText] = useState("");
+  const [serviceAreaText, setServiceAreaText] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   function handleUseCurrentLocation() {
+    setLocationMode("gps");
     setLocationError(null);
     setLocationMessage(null);
 
     if (!("geolocation" in navigator)) {
-      setLocationError("Location services are unavailable on this device. You can pick on map or add rough directions.");
+      setLocationError("Location services are unavailable on this device. You can choose another location option.");
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setForm((prev) => ({ ...prev, lat: position.coords.latitude, lng: position.coords.longitude }));
-        setLocationMode("gps");
         setLocationMessage("Location captured.");
       },
       () => {
-        setLocationError("We could not access your location. You can pick on map or add rough directions instead.");
+        setForm((prev) => ({ ...prev, lat: null, lng: null }));
+        setLocationError("We could not access your location. You can choose another location option.");
       },
       { enableHighAccuracy: true, timeout: 12000 },
     );
+  }
+
+  function selectKnownLocation() {
+    setLocationMode("known");
+    setLocationError(null);
+    setLocationMessage(null);
+    setForm((prev) => ({ ...prev, lat: null, lng: null }));
+  }
+
+  function selectNoPublicLocation() {
+    setLocationMode("serviceArea");
+    setLocationError(null);
+    setLocationMessage(null);
+    setForm((prev) => ({ ...prev, lat: null, lng: null }));
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
     setIsSubmitting(true);
+
+    const address = locationMode === "serviceArea"
+      ? (serviceAreaText.trim() ? `Service area: ${serviceAreaText.trim()}` : "")
+      : locationText.trim();
+
+    const payload: FormState = {
+      ...form,
+      address,
+      lat: locationMode === "gps" ? form.lat : null,
+      lng: locationMode === "gps" ? form.lng : null,
+    };
+
     try {
-      const res = await fetch("/api/businesses", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
-      const payload = await res.json().catch(() => ({}));
+      const res = await fetch("/api/businesses", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      const responsePayload = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(typeof payload.error === "string" ? payload.error : "Unable to submit right now.");
+        setError(typeof responsePayload.error === "string" ? responsePayload.error : "Unable to submit right now.");
         return;
       }
       setSubmitted(true);
       setForm(initialState);
-      setLocationMode("unknown");
+      setLocationMode("known");
       setLocationMessage(null);
       setLocationError(null);
+      setLocationText("");
+      setServiceAreaText("");
     } catch {
       setError("Something went wrong while sending your suggestion. Please try again.");
     } finally {
@@ -77,28 +107,41 @@ export default function BusinessSubmitForm() {
       <div><label htmlFor="description" className="mb-2 block text-sm font-bold text-foreground">Short description *</label><textarea id="description" required rows={4} value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} className="w-full rounded-2xl border border-border bg-sand px-4 py-3 text-sm" /></div>
 
       <section className="rounded-2xl border border-border bg-white p-4">
-        <h3 className="text-base font-extrabold text-foreground">Location</h3>
-        <p className="mt-1 text-xs text-muted">Choose the easiest way to share where this business is.</p>
+        <h3 className="text-base font-extrabold text-foreground">How should we locate this business?</h3>
 
         <div className="mt-4 grid gap-3">
-          <button type="button" onClick={handleUseCurrentLocation} className="min-h-12 rounded-2xl border border-border bg-sand px-4 py-3 text-left text-sm font-bold text-foreground">Use my current location</button>
+          <div className="rounded-2xl border border-border bg-sand p-4">
+            <p className="text-sm font-bold text-foreground">I&apos;m at the business now</p>
+            <p className="mt-1 text-xs text-muted">Use GPS to save the exact location.</p>
+            <button type="button" onClick={handleUseCurrentLocation} className="mt-3 min-h-11 rounded-full bg-jade px-5 py-2 text-sm font-extrabold text-white">Use my GPS location</button>
+          </div>
 
-          <button type="button" onClick={() => setLocationMode("map")} className="min-h-12 rounded-2xl border border-border bg-sand px-4 py-3 text-left text-sm font-bold text-foreground">Pick location on map</button>
+          <div className="rounded-2xl border border-border bg-sand p-4">
+            <p className="text-sm font-bold text-foreground">I know the location</p>
+            <p className="mt-1 text-xs text-muted">Add an address, landmark, directions, or Google Maps link.</p>
+            <button type="button" onClick={selectKnownLocation} className="mt-3 min-h-11 rounded-full border border-border bg-white px-5 py-2 text-sm font-extrabold text-foreground">Use this option</button>
+            {locationMode === "known" && (
+              <div className="mt-3">
+                <label htmlFor="known-location" className="mb-2 block text-sm font-bold text-foreground">Address, landmark, directions, or Google Maps link</label>
+                <input id="known-location" maxLength={500} value={locationText} onChange={(e) => setLocationText(e.target.value)} className="min-h-12 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm" />
+                <p className="mt-1 text-xs text-muted">Calle Sin Nombre behind the Pemex, near the blue gate, or paste a Google Maps link.</p>
+              </div>
+            )}
+          </div>
 
-          <button type="button" onClick={() => { setLocationMode("unknown"); setForm((prev) => ({ ...prev, lat: null, lng: null })); setLocationMessage("You can share rough directions below."); }} className="min-h-12 rounded-2xl border border-border bg-sand px-4 py-3 text-left text-sm font-bold text-foreground">I do not know the exact location</button>
+          <div className="rounded-2xl border border-border bg-sand p-4">
+            <p className="text-sm font-bold text-foreground">No public location</p>
+            <p className="mt-1 text-xs text-muted">For mobile or service area businesses.</p>
+            <button type="button" onClick={selectNoPublicLocation} className="mt-3 min-h-11 rounded-full border border-border bg-white px-5 py-2 text-sm font-extrabold text-foreground">Use this option</button>
+            {locationMode === "serviceArea" && (
+              <div className="mt-3">
+                <label htmlFor="service-area" className="mb-2 block text-sm font-bold text-foreground">Service area or towns served</label>
+                <input id="service-area" maxLength={500} value={serviceAreaText} onChange={(e) => setServiceAreaText(e.target.value)} className="min-h-12 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm" />
+                <p className="mt-1 text-xs text-muted">Mobile mechanic serving Todos Santos, Pescadero, and Cerritos.</p>
+              </div>
+            )}
+          </div>
         </div>
-
-        {locationMode === "map" && (
-          <BusinessLocationPicker
-            onConfirm={({ lat, lng }) => {
-              setForm((prev) => ({ ...prev, lat, lng }));
-              setLocationMessage("Location captured.");
-              setLocationError(null);
-            }}
-          />
-        )}
-
-        <div className="mt-4"><label htmlFor="address" className="mb-2 block text-sm font-bold text-foreground">Address, area, landmark, or directions</label><input id="address" maxLength={500} value={form.address} onChange={(e) => setForm((p) => ({ ...p, address: e.target.value }))} className="min-h-12 w-full rounded-2xl border border-border bg-sand px-4 py-3 text-sm" /><p className="mt-1 text-xs text-muted">Example: Near the Pemex in Todos Santos, across from the tire shop.</p></div>
 
         {locationMessage && <p className="mt-3 text-sm font-semibold text-jade">{locationMessage}</p>}
         {locationError && <p className="mt-3 text-sm font-semibold text-red-400">{locationError}</p>}
