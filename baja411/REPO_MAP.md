@@ -254,9 +254,11 @@ Directory UX note:
 10. Admin reviews submissions through existing business moderation.
 11. Public directory remains `APPROVED`-only via `getDirectoryBusinesses()`.
 12. Emergency listings are not accepted through public business submissions.
-13. Business submit location UX supports three choices: current location, simple in-form map picker, or rough directions text in the `address` field when exact coordinates are unknown.
-14. Public users are not asked to manually enter latitude and longitude on `/businesses/submit`.
-15. Submission location picker is isolated to the submit flow and does not reuse the main `/map` experience (Drive Mode, Plan Mode, recenter, heading, and main map behavior remain unchanged).
+13. Public business submit location choices are: “I'm at the business now”, “I know the location”, and “No public location”.
+14. Public users are not asked to manually know or enter latitude and longitude on `/businesses/submit`.
+15. Public users no longer place pins with a map picker in the submit flow; GPS is only captured when the user says they are at the business now.
+16. Address, landmark, directions, Google Maps link, or service area text can be submitted in the `address` field for admin review.
+17. Submission location entry in `/businesses/submit` does not use the main `/map` experience (Drive Mode, Plan Mode, recenter, heading, and main map behavior remain unchanged).
 
 ## Weather system
 
