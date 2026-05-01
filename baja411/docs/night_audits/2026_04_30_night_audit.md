@@ -37,7 +37,7 @@ Codex also reported that local `gh` CLI was unavailable in its environment, so t
 
 ## Files changed today
 
-From today’s git history, changed files included:
+From today's git history, changed files included:
 
 - `baja411/REPO_MAP.md`
 - `baja411/app/admin/BusinessesAdmin.tsx`
@@ -45,7 +45,7 @@ From today’s git history, changed files included:
 - `baja411/app/api/admin/businesses/route.ts`
 - `baja411/app/api/businesses/route.ts`
 - `baja411/app/businesses/page.tsx`
-- `baja411/app/businesses/submit/BusinessLocationPicker.tsx`
+- `baja411/app/businesses/submit/BusinessLocationPicker.tsx` was touched during the earlier location-picker iteration and later removed from current architecture
 - `baja411/app/businesses/submit/BusinessSubmitForm.tsx`
 - `baja411/app/businesses/submit/page.tsx`
 - `baja411/components/Footer.tsx`
@@ -81,16 +81,17 @@ Validation could not complete in this environment because required local tooling
 
 1. Local Codex environment was not fully provisioned for lint/build validation.
 2. Validation needs to be rerun after dependencies are installed.
-3. `BusinessLocationPicker.tsx` appeared in today’s changed files. Tomorrow, confirm whether it is still used or is dead leftover code before deleting anything.
+3. This report previously called for follow-up verification of `BusinessLocationPicker.tsx`; that file is now removed from current architecture, so no runtime cleanup is pending for it unless it reappears in search or imports.
 
 ## Recommended first task tomorrow
 
 Run a clean validation pass in a provisioned environment:
 
 ```bash
-cd baja411 && npm ci
-cd baja411 && npm run lint
-cd baja411 && npm run build
+cd baja411
+npm ci
+npm run lint
+npm run build
 ```
 
-Then inspect whether `baja411/app/businesses/submit/BusinessLocationPicker.tsx` is imported anywhere. If it is unused, remove it in a tiny cleanup PR. Do not touch map, weather, auth, Prisma, package files, or Vercel config while doing that cleanup.
+Then continue with live-site regression checks before starting new app work. Prioritize map behavior, weather, SOS, directory submission, and admin moderation. Do not touch map, weather, auth, Prisma, package files, or Vercel config casually.
