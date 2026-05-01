@@ -68,7 +68,10 @@ export default function FooterAuthControl() {
     <form method="post" action="/api/auth/signout" className="m-0 inline-flex items-center p-0">
       <input type="hidden" name="csrfToken" value={csrfToken} />
       <input type="hidden" name="callbackUrl" value={callbackUrl} />
-      <button type="submit" className="text-sm leading-normal font-semibold text-white/50 transition-colors hover:text-white">
+      <button
+        type="submit"
+        className="m-0 appearance-none bg-transparent p-0 text-sm leading-normal font-semibold text-white/50 transition-colors hover:text-white"
+      >
         Sign Out
       </button>
     </form>
