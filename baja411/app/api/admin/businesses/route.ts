@@ -47,19 +47,48 @@ export async function PATCH(req: NextRequest) {
   const body = await req.json();
   const { id, name, category, town, address, phone, website, description, lat, lng, status, lastVerified } = body;
 
+  const trimToNull = (value: unknown): string | null => {
+    if (value === null) return null;
+    if (typeof value !== "string") return null;
+    const trimmed = value.trim();
+    return trimmed.length ? trimmed : null;
+  };
+
   if (!id) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
   if (status !== undefined && !VALID_STATUSES.includes(status)) return NextResponse.json({ error: "Invalid status" }, { status: 400 });
   if (category !== undefined && !VALID_CATEGORIES.includes(category)) return NextResponse.json({ error: "Invalid category" }, { status: 400 });
   if (town !== undefined && !VALID_TOWNS.includes(town)) return NextResponse.json({ error: "Invalid town" }, { status: 400 });
 
+  if (name !== undefined) {
+    if (typeof name !== "string" || !name.trim()) {
+      return NextResponse.json({ error: "Invalid name" }, { status: 400 });
+    }
+  }
+
+  if (lat !== undefined) {
+    if (lat !== null && (typeof lat !== "number" || Number.isNaN(lat) || lat < -90 || lat > 90)) {
+      return NextResponse.json({ error: "Invalid latitude" }, { status: 400 });
+    }
+  }
+
+  if (lng !== undefined) {
+    if (lng !== null && (typeof lng !== "number" || Number.isNaN(lng) || lng < -180 || lng > 180)) {
+      return NextResponse.json({ error: "Invalid longitude" }, { status: 400 });
+    }
+  }
+
+  if (Object.prototype.hasOwnProperty.call(body, "authorId")) {
+    return NextResponse.json({ error: "authorId is not editable" }, { status: 400 });
+  }
+
   const data: Record<string, unknown> = {};
-  if (name !== undefined) data.name = name;
+  if (name !== undefined) data.name = name.trim();
   if (category !== undefined) data.category = category;
   if (town !== undefined) data.town = town;
-  if (address !== undefined) data.address = address;
-  if (phone !== undefined) data.phone = phone;
-  if (website !== undefined) data.website = website;
-  if (description !== undefined) data.description = description;
+  if (address !== undefined) data.address = trimToNull(address);
+  if (phone !== undefined) data.phone = trimToNull(phone);
+  if (website !== undefined) data.website = trimToNull(website);
+  if (description !== undefined) data.description = trimToNull(description);
   if (lat !== undefined) data.lat = lat;
   if (lng !== undefined) data.lng = lng;
   if (status !== undefined) data.status = status;

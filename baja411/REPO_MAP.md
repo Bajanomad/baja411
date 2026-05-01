@@ -238,6 +238,16 @@ Directory UX note:
 
 - On iPhone, Enter/Search now dismisses the keyboard by blurring the real input in `components/BusinessDirectoryClient.tsx`.
 
+
+### Admin moderation system
+
+1. Admin route: `baja411/app/admin/page.tsx`.
+2. Pin moderation uses `baja411/app/admin/PinsAdmin.tsx` and `baja411/app/api/admin/pins/route.ts`.
+3. Business moderation uses `baja411/app/admin/BusinessesAdmin.tsx` and `baja411/app/api/admin/businesses/route.ts`.
+4. Business admin supports pending/approved/rejected review, edit, approve, reject, and delete.
+5. Public business submissions are not implemented yet.
+6. Public directory still only shows APPROVED businesses through `getDirectoryBusinesses()` in `baja411/lib/business-directory.ts`.
+
 ## Weather system
 
 Weather route:
