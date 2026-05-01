@@ -35,10 +35,11 @@ export default function BusinessLocationPicker({ onConfirm }: Props) {
       },
       center: DEFAULT_CENTER,
       zoom: 7.4,
-      attributionControl: true,
+      attributionControl: false,
     });
 
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+    map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-left");
 
     map.on("click", (event) => {
       const point = { lat: event.lngLat.lat, lng: event.lngLat.lng };
