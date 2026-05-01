@@ -18,7 +18,7 @@ export async function POST(req: Request) {
   const category = data.category;
   const town = data.town;
   const description = cleanRequiredText(data.description, 1000);
-  const address = cleanOptionalText(data.address, 240);
+  const address = cleanOptionalText(data.address, 500);
   const phone = cleanOptionalText(data.phone, 60);
   const website = cleanOptionalText(data.website, 240);
   const lat = parseOptionalCoordinate(data.lat);
