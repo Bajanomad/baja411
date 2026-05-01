@@ -49,6 +49,8 @@ Default paths: morning audits at `baja411/docs/morning_audits/YYYY_MM_DD_morning
 
 The prompt must require creating the folder if missing, writing completed findings, committing the file, not rerunning the audit if only the file is missing, and final response with file path, commit SHA, docs-only/app-code status, and summary.
 
+Required audit sections: date, purpose, recent merged PR summary, open PR status, deployment/Vercel status if checked, files inspected, bugs found, dead or duplicate code found, validation results, recommended next task, files changed.
+
 ## Validation
 
 For app changes, attempt:
