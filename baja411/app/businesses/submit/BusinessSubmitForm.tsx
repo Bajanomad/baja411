@@ -8,11 +8,11 @@ const TOWNS = ["CERRITOS", "PESCADERO", "TODOS_SANTOS", "LA_PAZ", "CABO_SAN_LUCA
 type FormState = { name: string; category: string; town: string; description: string; address: string; phone: string; website: string; lat: number | null; lng: number | null };
 const initialState: FormState = { name: "", category: "", town: "", description: "", address: "", phone: "", website: "", lat: null, lng: null };
 
-type LocationMode = "gps" | "known" | "serviceArea";
+type LocationMode = "gps" | "address" | "serviceArea";
 
 export default function BusinessSubmitForm() {
   const [form, setForm] = useState<FormState>(initialState);
-  const [locationMode, setLocationMode] = useState<LocationMode>("known");
+  const [locationMode, setLocationMode] = useState<LocationMode>("address");
   const [locationMessage, setLocationMessage] = useState<string | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [locationText, setLocationText] = useState("");
@@ -44,8 +44,8 @@ export default function BusinessSubmitForm() {
     );
   }
 
-  function selectKnownLocation() {
-    setLocationMode("known");
+  function selectAddressLocation() {
+    setLocationMode("address");
     setLocationError(null);
     setLocationMessage(null);
     setForm((prev) => ({ ...prev, lat: null, lng: null }));
@@ -83,7 +83,7 @@ export default function BusinessSubmitForm() {
       }
       setSubmitted(true);
       setForm(initialState);
-      setLocationMode("known");
+      setLocationMode("address");
       setLocationMessage(null);
       setLocationError(null);
       setLocationText("");
@@ -107,37 +107,38 @@ export default function BusinessSubmitForm() {
       <div><label htmlFor="description" className="mb-2 block text-sm font-bold text-foreground">Short description *</label><textarea id="description" required rows={4} value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} className="w-full rounded-2xl border border-border bg-sand px-4 py-3 text-sm" /></div>
 
       <section className="rounded-2xl border border-border bg-white p-4">
-        <h3 className="text-base font-extrabold text-foreground">How should we locate this business?</h3>
+        <h3 className="text-base font-extrabold text-foreground">Location</h3>
+        <p className="mt-1 text-sm text-muted">How should we locate this business?</p>
 
         <div className="mt-4 grid gap-3">
           <div className="rounded-2xl border border-border bg-sand p-4">
-            <p className="text-sm font-bold text-foreground">I&apos;m at the business now</p>
-            <p className="mt-1 text-xs text-muted">Use GPS to save the exact location.</p>
-            <button type="button" onClick={handleUseCurrentLocation} className="mt-3 min-h-11 rounded-full bg-jade px-5 py-2 text-sm font-extrabold text-white">Use my GPS location</button>
+            <p className="text-sm font-bold text-foreground">Use my GPS</p>
+            <p className="mt-1 text-xs text-muted">Use this if you’re at the business now.</p>
+            <button type="button" onClick={handleUseCurrentLocation} className="mt-3 min-h-11 rounded-full bg-jade px-5 py-2 text-sm font-extrabold text-white">Use my current location</button>
           </div>
 
           <div className="rounded-2xl border border-border bg-sand p-4">
-            <p className="text-sm font-bold text-foreground">I know the location</p>
-            <p className="mt-1 text-xs text-muted">Add an address, landmark, directions, or Google Maps link.</p>
-            <button type="button" onClick={selectKnownLocation} className="mt-3 min-h-11 rounded-full border border-border bg-white px-5 py-2 text-sm font-extrabold text-foreground">Use this option</button>
-            {locationMode === "known" && (
+            <p className="text-sm font-bold text-foreground">Add address</p>
+            <p className="mt-1 text-xs text-muted">Add an address, directions, landmark, or Google Maps link.</p>
+            <button type="button" onClick={selectAddressLocation} className="mt-3 min-h-11 rounded-full border border-border bg-white px-5 py-2 text-sm font-extrabold text-foreground">Add address</button>
+            {locationMode === "address" && (
               <div className="mt-3">
-                <label htmlFor="known-location" className="mb-2 block text-sm font-bold text-foreground">Address, landmark, directions, or Google Maps link</label>
+                <label htmlFor="known-location" className="mb-2 block text-sm font-bold text-foreground">Address or directions</label>
                 <input id="known-location" maxLength={500} value={locationText} onChange={(e) => setLocationText(e.target.value)} className="min-h-12 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm" />
-                <p className="mt-1 text-xs text-muted">Calle Sin Nombre behind the Pemex, near the blue gate, or paste a Google Maps link.</p>
+                <p className="mt-1 text-xs text-muted">Example: Near the Pemex in Todos Santos.</p>
               </div>
             )}
           </div>
 
           <div className="rounded-2xl border border-border bg-sand p-4">
-            <p className="text-sm font-bold text-foreground">No public location</p>
-            <p className="mt-1 text-xs text-muted">For mobile or service area businesses.</p>
-            <button type="button" onClick={selectNoPublicLocation} className="mt-3 min-h-11 rounded-full border border-border bg-white px-5 py-2 text-sm font-extrabold text-foreground">Use this option</button>
+            <p className="text-sm font-bold text-foreground">No physical address</p>
+            <p className="mt-1 text-xs text-muted">For mobile or service-area businesses.</p>
+            <button type="button" onClick={selectNoPublicLocation} className="mt-3 min-h-11 rounded-full border border-border bg-white px-5 py-2 text-sm font-extrabold text-foreground">No physical address</button>
             {locationMode === "serviceArea" && (
               <div className="mt-3">
-                <label htmlFor="service-area" className="mb-2 block text-sm font-bold text-foreground">Service area or towns served</label>
+                <label htmlFor="service-area" className="mb-2 block text-sm font-bold text-foreground">Service area</label>
                 <input id="service-area" maxLength={500} value={serviceAreaText} onChange={(e) => setServiceAreaText(e.target.value)} className="min-h-12 w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm" />
-                <p className="mt-1 text-xs text-muted">Mobile mechanic serving Todos Santos, Pescadero, and Cerritos.</p>
+                <p className="mt-1 text-xs text-muted">Example: Mobile mechanic serving Todos Santos and Pescadero.</p>
               </div>
             )}
           </div>
