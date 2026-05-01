@@ -8,6 +8,8 @@ const links = [
   { href: "/rules-permits", label: "Rules" },
 ];
 
+const footerLinkClass = "inline-flex h-5 items-center text-sm leading-none font-semibold text-white/50 transition-colors hover:text-white";
+
 export default function Footer() {
   return (
     <footer className="relative overflow-hidden bg-night text-white/60">
@@ -43,11 +45,11 @@ export default function Footer() {
 
           <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-3 md:justify-end">
             {links.map((link) => (
-              <Link key={link.href} href={link.href} className="text-sm font-semibold text-white/50 transition-colors hover:text-white">
+              <Link key={link.href} href={link.href} className={footerLinkClass}>
                 {link.label}
               </Link>
             ))}
-            <FooterAuthControl />
+            <FooterAuthControl className={footerLinkClass} />
           </nav>
         </div>
 
