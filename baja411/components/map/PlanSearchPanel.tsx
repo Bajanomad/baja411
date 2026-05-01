@@ -52,9 +52,6 @@ export default function PlanSearchPanel({
             Clear
           </button>
         )}
-        <button type="submit" className="rounded-full bg-jade px-3 py-1.5 text-xs font-extrabold text-white">
-          Go
-        </button>
       </form>
 
       {showSuggestions && searchSuggestions.length > 0 && (
