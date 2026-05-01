@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PinCategory } from "@prisma/client";
+import { BusinessCategory, PinCategory, Town } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
@@ -37,24 +37,75 @@ function isPinCategory(value: unknown): value is PinCategory {
   return typeof value === "string" && PIN_CATEGORIES.has(value as PinCategory);
 }
 
+
+
+function mapBusinessCategoryToPinCategory(category: BusinessCategory): PinCategory {
+  if (category === BusinessCategory.FUEL) return PinCategory.FUEL;
+  if (category === BusinessCategory.MECHANIC || category === BusinessCategory.TIRE_SHOP) return PinCategory.MECHANIC;
+  if ([BusinessCategory.RESTAURANT, BusinessCategory.BAR, BusinessCategory.BAKERY, BusinessCategory.BREWERY, BusinessCategory.GROCERY].includes(category)) {
+    return PinCategory.MARKET;
+  }
+  return PinCategory.OTHER;
+}
+
+function formatTown(town: Town): string {
+  return town.replaceAll("_", " ");
+}
 export async function GET() {
   try {
-    const pins = await db.mapPin.findMany({
-      where: { status: "APPROVED" },
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        lat: true,
-        lng: true,
-        category: true,
-        createdAt: true,
-        author: { select: { name: true } },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    const [pins, businesses] = await Promise.all([
+      db.mapPin.findMany({
+        where: { status: "APPROVED" },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          lat: true,
+          lng: true,
+          category: true,
+          createdAt: true,
+          author: { select: { name: true } },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+      db.business.findMany({
+        where: { status: "APPROVED", lat: { not: null }, lng: { not: null } },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          lat: true,
+          lng: true,
+          category: true,
+          address: true,
+          phone: true,
+          website: true,
+          town: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+    ]);
 
-    return NextResponse.json(pins);
+    const pinEntries = pins.map((pin) => ({ ...pin, source: "PIN" as const }));
+    const businessEntries = businesses.map((business) => ({
+      id: `business-${business.id}`,
+      title: business.name,
+      description: business.description,
+      lat: business.lat as number,
+      lng: business.lng as number,
+      category: mapBusinessCategoryToPinCategory(business.category),
+      createdAt: business.createdAt,
+      source: "BUSINESS" as const,
+      businessId: business.id,
+      address: business.address,
+      phone: business.phone,
+      website: business.website,
+      town: formatTown(business.town),
+      author: null,
+    }));
+
+    return NextResponse.json([...pinEntries, ...businessEntries]);
   } catch {
     return NextResponse.json({ error: "Database unavailable", pins: [] }, { status: 503 });
   }

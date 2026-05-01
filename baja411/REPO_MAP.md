@@ -172,7 +172,7 @@ Use the checklist before and after any map-related change.
 7. Snap back behavior
 8. Device orientation heading updates
 9. Location marker
-10. Pin fetch and render
+10. Pin fetch and render via `/api/pins` combined feed (approved `MapPin` + approved geocoded `Business`)
 11. Category filtering
 12. Search submit logic
 13. Add pin modal and submit flow

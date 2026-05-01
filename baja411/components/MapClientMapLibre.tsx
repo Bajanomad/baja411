@@ -14,6 +14,12 @@ interface Pin {
   lng: number;
   category: string;
   author?: { name?: string | null } | null;
+  source?: "PIN" | "BUSINESS";
+  businessId?: string;
+  address?: string | null;
+  phone?: string | null;
+  website?: string | null;
+  town?: string | null;
 }
 
 interface SessionUser {
@@ -974,6 +980,18 @@ export default function MapClientMapLibre() {
                 <p className={`text-[10px] font-bold uppercase tracking-widest ${textSoft}`}>{CATEGORY_LABELS[selectedPin.category] ?? selectedPin.category}</p>
                 <h2 className={`text-lg font-extrabold leading-tight ${textPrimary}`}>{selectedPin.title}</h2>
                 {selectedPin.description && <p className={`mt-1 text-sm leading-relaxed ${textMuted}`}>{selectedPin.description}</p>}
+                {selectedPin.source === "BUSINESS" && (
+                  <div className={`mt-2 space-y-1 text-xs ${textMuted}`}>
+                    {selectedPin.address && <p>📍 {selectedPin.address}</p>}
+                    {selectedPin.phone && <p>📞 {selectedPin.phone}</p>}
+                    {selectedPin.website && (
+                      <p>
+                        🌐 <a href={selectedPin.website} target="_blank" rel="noopener noreferrer" className="underline">{selectedPin.website}</a>
+                      </p>
+                    )}
+                    {selectedPin.town && <p>🏘️ {selectedPin.town}</p>}
+                  </div>
+                )}
                 <div className="mt-4 flex gap-2">
                   <a href={`https://www.google.com/maps/dir/?api=1&destination=${selectedPin.lat},${selectedPin.lng}`} target="_blank" rel="noopener noreferrer" className="rounded-full bg-jade px-4 py-2 text-xs font-bold text-white">
                     Directions
