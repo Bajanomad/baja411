@@ -2,30 +2,69 @@
 
 Baja411 is a map-first field utility for Baja California Sur travelers, locals, expats, and overland drivers.
 
+It is built for practical use in the field: map access, weather, storms, emergency information, local services, and community-submitted Baja intel.
+
 ## Repository structure
 
 This repository is nested:
 
-- Repository root: shared documentation, process notes, and planning artifacts.
-- Real app: `baja411/` (Next.js app, routes, components, APIs, and config).
+- Repository root: shared documentation, process notes, audit reports, and planning artifacts.
+- Real app: `baja411/` contains the Next.js app, routes, components, APIs, Prisma schema, and config.
 
-Do not assume app files are at repository root.
+Do not assume app files are at the repository root. App paths begin under `baja411/`.
 
-## Current product notes (April 2026)
+## Source of truth
 
-- Native forecast UI lives in `baja411/app/weather/page.tsx`.
-- Forecast data uses Open-Meteo.
-- Forecast modes include Today, 7 Day, and 16 Day.
-- Windy remains in use for rain, wind, storm, and satellite visual map tools.
-- Do not replace the native forecast panel with the old Windy forecast iframe.
-- Directory search on iPhone dismisses the keyboard on Enter/Search by blurring the real input in `baja411/components/BusinessDirectoryClient.tsx`.
-- Satellite proxy behavior was rolled back to the known working behavior after stricter hardening broke satellite tools.
-- Map behavior remains high risk and should not be casually edited.
-- SOS emergency behavior remains high priority and must stay reliable.
+- GitHub is the code source of truth.
+- Vercel is the live deployment path.
+- The first technical context file is `baja411/REPO_MAP.md`.
 
-## Read before changing anything
+## Current product priorities
 
-1. `PROJECT_GUIDELINES.md`
-2. `baja411/REPO_MAP.md`
-3. `baja411/AGENTS.md` (Codex/OpenAI coding agents)
-4. `baja411/CLAUDE.md` (Claude/Claude Code)
+1. Keep SOS emergency access clean and reliable.
+2. Protect map behavior.
+3. Keep weather and storm tools useful inside Baja411.
+4. Improve Plan Mode search suggestions only when scoped.
+5. Preserve Drive Mode heading, bearing, recenter, and snap-back behavior.
+6. Improve Local Directory usefulness with verified data.
+7. Keep navigation and footer clean.
+8. Keep the directory user-facing, not sales-first.
+
+## Architecture notes
+
+- Main map ownership lives in `baja411/components/MapClientMapLibre.tsx`.
+- `baja411/app/map/MapSearchEnhancer.tsx` is removed and should not be referenced as current architecture.
+- Weather uses a native Baja411 forecast UI powered by Open-Meteo.
+- Windy remains for visual weather tools such as rain, wind, storms, and satellite layers.
+- Public business submissions create `PENDING` records for admin review.
+- The public directory shows `APPROVED` businesses only.
+- SOS is a global safety layer, not a directory category.
+
+## Important documentation
+
+Read before changing app behavior:
+
+1. `baja411/REPO_MAP.md`
+2. `PROJECT_GUIDELINES.md`
+3. `baja411/AGENTS.md` for Codex or OpenAI coding agents
+4. `baja411/CLAUDE.md` for Claude Code
+5. Exact files being changed
+
+Audit reports live in:
+
+- `baja411/docs/morning_audits/`
+- `baja411/docs/night_audits/`
+
+## Validation
+
+For app code changes, run from the nested app directory:
+
+```bash
+cd baja411
+npm run lint
+npm run build
+```
+
+Documentation-only changes do not require lint or build unless app code changed.
+
+Do not claim validation passed unless it actually passed.
