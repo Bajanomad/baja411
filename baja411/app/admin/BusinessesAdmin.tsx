@@ -2,11 +2,15 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+type BusinessStatus = "PENDING" | "APPROVED" | "REJECTED";
+type BusinessCategory = "RESTAURANT" | "BAR" | "BAKERY" | "BREWERY" | "HOTEL" | "RENTAL" | "MECHANIC" | "TIRE_SHOP" | "FUEL" | "MEDICAL" | "DENTAL" | "PHARMACY" | "GROCERY" | "OTHER";
+type BusinessTown = "CERRITOS" | "PESCADERO" | "TODOS_SANTOS" | "LA_PAZ" | "CABO_SAN_LUCAS" | "SAN_JOSE_DEL_CABO" | "LORETO" | "OTHER";
+
 interface Business {
   id: string;
   name: string;
-  category: string;
-  town: string;
+  category: BusinessCategory;
+  town: BusinessTown;
   address?: string | null;
   phone?: string | null;
   website?: string | null;
@@ -14,23 +18,42 @@ interface Business {
   photos: string[];
   lat?: number | null;
   lng?: number | null;
-  status: "PENDING" | "APPROVED" | "REJECTED";
+  status: BusinessStatus;
   createdAt: string;
   updatedAt: string;
   lastVerified?: string | null;
   author?: { name?: string | null; email?: string | null } | null;
 }
 
-const STATUS_TABS = ["PENDING", "APPROVED", "REJECTED"] as const;
-const CATEGORIES = ["RESTAURANT", "BAR", "BAKERY", "BREWERY", "HOTEL", "RENTAL", "MECHANIC", "TIRE_SHOP", "FUEL", "MEDICAL", "DENTAL", "PHARMACY", "GROCERY", "OTHER"];
-const TOWNS = ["CERRITOS", "PESCADERO", "TODOS_SANTOS", "LA_PAZ", "CABO_SAN_LUCAS", "SAN_JOSE_DEL_CABO", "LORETO", "OTHER"];
+interface BusinessEditFormState {
+  name: string;
+  category: BusinessCategory;
+  town: BusinessTown;
+  address: string;
+  phone: string;
+  website: string;
+  description: string;
+  lat: string;
+  lng: string;
+  status: BusinessStatus;
+  lastVerified: string;
+}
+
+const STATUS_TABS: BusinessStatus[] = ["PENDING", "APPROVED", "REJECTED"];
+const CATEGORIES: BusinessCategory[] = ["RESTAURANT", "BAR", "BAKERY", "BREWERY", "HOTEL", "RENTAL", "MECHANIC", "TIRE_SHOP", "FUEL", "MEDICAL", "DENTAL", "PHARMACY", "GROCERY", "OTHER"];
+const TOWNS: BusinessTown[] = ["CERRITOS", "PESCADERO", "TODOS_SANTOS", "LA_PAZ", "CABO_SAN_LUCAS", "SAN_JOSE_DEL_CABO", "LORETO", "OTHER"];
+
+function toNullableTrimmedString(value: string): string | null {
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}
 
 export default function BusinessesAdmin() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
-  const [tab, setTab] = useState<"PENDING" | "APPROVED" | "REJECTED">("PENDING");
+  const [tab, setTab] = useState<BusinessStatus>("PENDING");
   const [loading, setLoading] = useState(true);
   const [working, setWorking] = useState<string | null>(null);
-  const [editing, setEditing] = useState<Record<string, Partial<Business>>>({});
+  const [editing, setEditing] = useState<Record<string, BusinessEditFormState>>({});
   const [openEditor, setOpenEditor] = useState<string | null>(null);
 
   const load = useCallback(() => {
@@ -38,7 +61,7 @@ export default function BusinessesAdmin() {
     fetch("/api/admin/businesses")
       .then((r) => r.json())
       .then((data) => {
-        setBusinesses(Array.isArray(data) ? data : []);
+        setBusinesses(Array.isArray(data) ? (data as Business[]) : []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -54,7 +77,7 @@ export default function BusinessesAdmin() {
       body: JSON.stringify({ id, ...payload }),
     });
     if (res.ok) {
-      const updated = await res.json();
+      const updated = (await res.json()) as Business;
       setBusinesses((curr) => curr.map((b) => (b.id === id ? updated : b)));
     }
     setWorking(null);
@@ -87,8 +110,8 @@ export default function BusinessesAdmin() {
         phone: business.phone ?? "",
         website: business.website ?? "",
         description: business.description ?? "",
-        lat: business.lat ?? "",
-        lng: business.lng ?? "",
+        lat: business.lat === null || business.lat === undefined ? "" : String(business.lat),
+        lng: business.lng === null || business.lng === undefined ? "" : String(business.lng),
         status: business.status,
         lastVerified: business.lastVerified ? business.lastVerified.slice(0, 10) : "",
       },
@@ -98,16 +121,20 @@ export default function BusinessesAdmin() {
   async function saveEdit(id: string) {
     const form = editing[id];
     if (!form) return;
+
+    const parsedLat = form.lat.trim() === "" ? null : Number(form.lat);
+    const parsedLng = form.lng.trim() === "" ? null : Number(form.lng);
+
     await patchBusiness(id, {
       name: form.name,
       category: form.category,
       town: form.town,
-      address: form.address || null,
-      phone: form.phone || null,
-      website: form.website || null,
-      description: form.description || null,
-      lat: form.lat === "" ? null : Number(form.lat),
-      lng: form.lng === "" ? null : Number(form.lng),
+      address: toNullableTrimmedString(form.address),
+      phone: toNullableTrimmedString(form.phone),
+      website: toNullableTrimmedString(form.website),
+      description: toNullableTrimmedString(form.description),
+      lat: parsedLat,
+      lng: parsedLng,
       status: form.status,
       lastVerified: form.lastVerified || null,
     });
@@ -121,15 +148,10 @@ export default function BusinessesAdmin() {
     REJECTED: businesses.filter((b) => b.status === "REJECTED").length,
   };
 
-  return (
-    <div>
+  return (<div>{/* unchanged UI */}
       <div className="flex gap-2 mb-6 flex-wrap">
         {STATUS_TABS.map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-colors ${tab === t ? "bg-jade text-white" : "bg-white border border-border text-muted hover:border-jade/40"}`}
-          >
+          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 rounded-full text-xs font-bold transition-colors ${tab === t ? "bg-jade text-white" : "bg-white border border-border text-muted hover:border-jade/40"}`}>
             {t === "PENDING" ? "⏳" : t === "APPROVED" ? "✅" : "❌"} {t} {counts[t] > 0 && <span className="ml-1 opacity-70">({counts[t]})</span>}
           </button>
         ))}
@@ -139,7 +161,7 @@ export default function BusinessesAdmin() {
         filtered.length === 0 ? <div className="text-center py-16 text-muted text-sm">No {tab.toLowerCase()} businesses.</div> : (
           <div className="space-y-3">
             {filtered.map((business) => {
-              const form = editing[business.id] ?? {};
+              const form = editing[business.id];
               return (
                 <div key={business.id} className="bg-white rounded-2xl border border-border p-4 shadow-sm space-y-3">
                   <div className="flex items-start justify-between gap-3">
@@ -171,21 +193,21 @@ export default function BusinessesAdmin() {
                     </div>
                   </div>
 
-                  {openEditor === business.id && (
+                  {openEditor === business.id && form && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-border">
-                      <input className="border border-border rounded-lg px-3 py-2 text-xs" value={(form.name as string) ?? ""} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], name: e.target.value } }))} placeholder="Name" />
-                      <select className="border border-border rounded-lg px-3 py-2 text-xs" value={(form.category as string) ?? "OTHER"} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], category: e.target.value } }))}>{CATEGORIES.map((c) => <option key={c} value={c}>{c.replaceAll("_", " ")}</option>)}</select>
-                      <select className="border border-border rounded-lg px-3 py-2 text-xs" value={(form.town as string) ?? "OTHER"} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], town: e.target.value } }))}>{TOWNS.map((t) => <option key={t} value={t}>{t.replaceAll("_", " ")}</option>)}</select>
-                      <input className="border border-border rounded-lg px-3 py-2 text-xs" value={(form.phone as string) ?? ""} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], phone: e.target.value } }))} placeholder="Phone" />
-                      <input className="border border-border rounded-lg px-3 py-2 text-xs sm:col-span-2" value={(form.address as string) ?? ""} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], address: e.target.value } }))} placeholder="Address" />
-                      <input className="border border-border rounded-lg px-3 py-2 text-xs sm:col-span-2" value={(form.website as string) ?? ""} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], website: e.target.value } }))} placeholder="Website" />
-                      <textarea className="border border-border rounded-lg px-3 py-2 text-xs sm:col-span-2" rows={3} value={(form.description as string) ?? ""} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], description: e.target.value } }))} placeholder="Description" />
-                      <input className="border border-border rounded-lg px-3 py-2 text-xs" value={form.lat as string | number | undefined ?? ""} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], lat: e.target.value } }))} placeholder="Latitude" />
-                      <input className="border border-border rounded-lg px-3 py-2 text-xs" value={form.lng as string | number | undefined ?? ""} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], lng: e.target.value } }))} placeholder="Longitude" />
-                      <select className="border border-border rounded-lg px-3 py-2 text-xs" value={(form.status as string) ?? business.status} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], status: e.target.value } }))}>
+                      <input className="border border-border rounded-lg px-3 py-2 text-xs" value={form.name} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], name: e.target.value } }))} placeholder="Name" />
+                      <select className="border border-border rounded-lg px-3 py-2 text-xs" value={form.category} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], category: e.target.value as BusinessCategory } }))}>{CATEGORIES.map((c) => <option key={c} value={c}>{c.replaceAll("_", " ")}</option>)}</select>
+                      <select className="border border-border rounded-lg px-3 py-2 text-xs" value={form.town} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], town: e.target.value as BusinessTown } }))}>{TOWNS.map((t) => <option key={t} value={t}>{t.replaceAll("_", " ")}</option>)}</select>
+                      <input className="border border-border rounded-lg px-3 py-2 text-xs" value={form.phone} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], phone: e.target.value } }))} placeholder="Phone" />
+                      <input className="border border-border rounded-lg px-3 py-2 text-xs sm:col-span-2" value={form.address} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], address: e.target.value } }))} placeholder="Address" />
+                      <input className="border border-border rounded-lg px-3 py-2 text-xs sm:col-span-2" value={form.website} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], website: e.target.value } }))} placeholder="Website" />
+                      <textarea className="border border-border rounded-lg px-3 py-2 text-xs sm:col-span-2" rows={3} value={form.description} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], description: e.target.value } }))} placeholder="Description" />
+                      <input className="border border-border rounded-lg px-3 py-2 text-xs" value={form.lat} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], lat: e.target.value } }))} placeholder="Latitude" />
+                      <input className="border border-border rounded-lg px-3 py-2 text-xs" value={form.lng} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], lng: e.target.value } }))} placeholder="Longitude" />
+                      <select className="border border-border rounded-lg px-3 py-2 text-xs" value={form.status} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], status: e.target.value as BusinessStatus } }))}>
                         {STATUS_TABS.map((s) => <option key={s} value={s}>{s}</option>)}
                       </select>
-                      <input type="date" className="border border-border rounded-lg px-3 py-2 text-xs" value={(form.lastVerified as string) ?? ""} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], lastVerified: e.target.value } }))} />
+                      <input type="date" className="border border-border rounded-lg px-3 py-2 text-xs" value={form.lastVerified} onChange={(e) => setEditing((c) => ({ ...c, [business.id]: { ...c[business.id], lastVerified: e.target.value } }))} />
                       <div className="sm:col-span-2 flex justify-end">
                         <button onClick={() => saveEdit(business.id)} disabled={working === business.id} className="px-4 py-2 rounded-lg bg-jade text-white text-xs font-bold hover:bg-jade-light disabled:opacity-50">Save</button>
                       </div>
