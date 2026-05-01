@@ -57,7 +57,7 @@ export default function FooterAuthControl() {
     return (
       <Link
         href={`/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`}
-        className="text-sm font-semibold text-white/50 transition-colors hover:text-white"
+        className="text-sm leading-normal font-semibold text-white/50 transition-colors hover:text-white"
       >
         Sign In
       </Link>
@@ -65,10 +65,10 @@ export default function FooterAuthControl() {
   }
 
   return (
-    <form method="post" action="/api/auth/signout">
+    <form method="post" action="/api/auth/signout" className="m-0 inline-flex items-center p-0">
       <input type="hidden" name="csrfToken" value={csrfToken} />
       <input type="hidden" name="callbackUrl" value={callbackUrl} />
-      <button type="submit" className="text-sm font-semibold text-white/50 transition-colors hover:text-white">
+      <button type="submit" className="text-sm leading-normal font-semibold text-white/50 transition-colors hover:text-white">
         Sign Out
       </button>
     </form>

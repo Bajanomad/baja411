@@ -41,7 +41,7 @@ export default function Footer() {
             <p className="mt-3 text-xs tracking-wide text-white/25">Cerritos · Pescadero · Todos Santos · La Paz · Cabo</p>
           </div>
 
-          <nav className="flex flex-wrap gap-x-5 gap-y-3 md:justify-end">
+          <nav className="flex flex-wrap items-center gap-x-5 gap-y-3 md:justify-end">
             {links.map((link) => (
               <Link key={link.href} href={link.href} className="text-sm font-semibold text-white/50 transition-colors hover:text-white">
                 {link.label}
