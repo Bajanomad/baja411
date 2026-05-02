@@ -587,12 +587,7 @@ export default function MapClientMapLibre() {
         setSelectedPin(pin);
         setFollowing(false);
         if (modeRef.current === "DRIVE") setMode("PLAN");
-        map.easeTo({
-          center: [pin.lng, pin.lat],
-          zoom: Math.max(map.getZoom(), 13),
-          duration: 650,
-          essential: true,
-        });
+        centerOnSelectedPin(pin);
       });
 
       markersRef.current.push(marker);
@@ -702,6 +697,33 @@ export default function MapClientMapLibre() {
     });
   }
 
+
+  function getSelectedPinCameraOffset() {
+    if (typeof window === "undefined") return [0, 0] as [number, number];
+    const mobile = window.innerWidth < 768;
+    if (!mobile) return [0, 0] as [number, number];
+
+    const viewportHeight = window.innerHeight;
+    const topOverlayPx = Math.min(220, Math.max(140, viewportHeight * 0.24));
+    const bottomDrawerPx = Math.min(320, Math.max(200, viewportHeight * 0.34));
+    const usableCenterY = (topOverlayPx + (viewportHeight - bottomDrawerPx)) / 2;
+    const pixelShiftFromCenter = usableCenterY - viewportHeight / 2;
+
+    return [0, pixelShiftFromCenter] as [number, number];
+  }
+
+  function centerOnSelectedPin(pin: Pin, minZoom = 14) {
+    const map = mapRef.current;
+    if (!map) return;
+    map.easeTo({
+      center: [pin.lng, pin.lat],
+      zoom: Math.max(map.getZoom(), minZoom),
+      offset: getSelectedPinCameraOffset(),
+      duration: 650,
+      essential: true,
+    });
+  }
+
   function switchToDrive() {
     setMode("DRIVE");
     setShowCategoryMenu(false);
@@ -723,12 +745,8 @@ export default function MapClientMapLibre() {
     if (!map || matches.length === 0) return;
 
     if (matches.length === 1) {
-      map.easeTo({
-        center: [matches[0].lng, matches[0].lat],
-        zoom: Math.max(map.getZoom(), 14),
-        duration: 650,
-        essential: true,
-      });
+      setSelectedPin(matches[0]);
+      centerOnSelectedPin(matches[0]);
       return;
     }
 
@@ -779,7 +797,7 @@ export default function MapClientMapLibre() {
       if (pin) {
         setSelectedPin(pin);
         setFollowing(false);
-        map.easeTo({ center: [pin.lng, pin.lat], zoom: Math.max(map.getZoom(), 13), duration: 650, essential: true });
+        centerOnSelectedPin(pin);
         setLastSearchHint(pin.title);
         return;
       }
