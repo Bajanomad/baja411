@@ -6,25 +6,25 @@ This guide defines execution responsibilities for Codex and Claude Code in the B
 
 For every Baja 411 decision, review, prompt, UI idea, feature idea, bug fix, or code change, think in this exact order:
 
-1. End user first
-2. CEO/business strategy second
-3. Engineer execution third
+1. User first
+2. Engineer second
+3. CEO third
 
-### 1) End user first
+### 1) User first
 Ask:
 - Who is using this?
 - What are they trying to do?
 - What pain does this remove?
 - Does this help them find, decide, contact, navigate, trust, or stay informed?
 
-### 2) CEO/business strategy second
+### 2) Engineer second
 Ask:
 - Does this strengthen Baja 411 as a useful Baja Sur local intel app?
 - Does it improve trust?
 - Does it improve map, directory, or community value?
 - Is it a distraction?
 
-### 3) Engineer execution third
+### 3) CEO third
 Only after user value and business value are clear, decide:
 - The smallest safe code change
 - The owning file

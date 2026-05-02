@@ -31,9 +31,10 @@ npm run start
 ## Required reading before edits
 
 1. `REPO_MAP.md`
-2. `AGENTS.md` for Codex or OpenAI coding agents
-3. `CLAUDE.md` for Claude Code
-4. The exact files being changed
+2. `docs/MASTERPLAN.md` (canonical product build plan)
+3. `AGENTS.md` for Codex or OpenAI coding agents
+4. `CLAUDE.md` for Claude Code
+5. The exact files being changed
 
 ## High-risk app areas
 

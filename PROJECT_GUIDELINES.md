@@ -8,9 +8,9 @@ It is a practical field utility, not a generic tourism site.
 
 Think in this order before changing anything:
 
-1. End user need
-2. CEO and business strategy
-3. Engineering execution
+1. User first
+2. Engineer second
+3. CEO third
 
 Start with why a real person would care. Do not start with code cleverness.
 
@@ -41,8 +41,9 @@ Everyone should read `baja411/REPO_MAP.md` first.
 Before repo advice, agent prompts, code review, patches, or implementation guidance, prioritize:
 
 1. `baja411/REPO_MAP.md`
-2. The correct agent instruction file when relevant
-3. The exact files being changed
+2. `baja411/docs/MASTERPLAN.md`
+3. The correct agent instruction file when relevant
+4. The exact files being changed
 
 Codex should read `baja411/REPO_MAP.md`, `baja411/AGENTS.md` if present, `AGENTS.md` at repo root if present, and exact files being changed.
 

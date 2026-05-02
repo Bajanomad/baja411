@@ -8,9 +8,9 @@ Use this file for ideas that need validation, provider conversations, or product
 
 Every idea should be framed in this order:
 
-1. End user first
-2. CEO/business strategy second
-3. Engineer execution third
+1. User first
+2. Engineer second
+3. CEO third
 
 Do not turn an idea into code until the user value and business value are clear.
 
