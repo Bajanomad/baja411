@@ -295,6 +295,12 @@ function safeClearTimeout(timer: React.MutableRefObject<number | null>) {
   }
 }
 
+function clearGeoWatch(watchIdRef: React.MutableRefObject<number | null>) {
+  if (watchIdRef.current === null) return;
+  navigator.geolocation.clearWatch(watchIdRef.current);
+  watchIdRef.current = null;
+}
+
 export default function MapClientMapLibre() {
   const { location } = useBajaLocation();
   const providerCenter: [number, number] = [location.lon, location.lat];
@@ -487,7 +493,7 @@ export default function MapClientMapLibre() {
 
     return () => {
       safeClearTimeout(snapBackTimerRef);
-      if (watchIdRef.current !== null) navigator.geolocation.clearWatch(watchIdRef.current);
+      clearGeoWatch(watchIdRef);
       markersRef.current.forEach((marker) => marker.remove());
       tempMarkerRef.current?.remove();
       locationMarkerRef.current?.remove();
@@ -664,6 +670,7 @@ export default function MapClientMapLibre() {
         setFollowing(true);
       },
       () => {
+        clearGeoWatch(watchIdRef);
         setLocating(false);
         setTracking(false);
         setFollowing(false);

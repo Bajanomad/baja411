@@ -57,6 +57,14 @@ function storeLocation(location: BajaLocation) {
   }
 }
 
+function clearStoredLocation() {
+  try {
+    window.localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Ignore localStorage failures.
+  }
+}
+
 export function LocationProvider({ children }: { children: React.ReactNode }) {
   const [location, setLocation] = useState<BajaLocation>(TODOS_SANTOS);
   const [isRequesting, setIsRequesting] = useState(false);
@@ -82,7 +90,13 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
         saveGpsPosition(position);
         setIsRequesting(false);
       },
-      () => {
+      (error) => {
+        if (error.code === error.PERMISSION_DENIED) {
+          setPermissionState("denied");
+        }
+        if (error.code === error.POSITION_UNAVAILABLE || error.code === error.TIMEOUT) {
+          clearStoredLocation();
+        }
         setLocation((current) => current || TODOS_SANTOS);
         setIsRequesting(false);
       },
