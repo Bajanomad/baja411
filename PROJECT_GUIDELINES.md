@@ -18,7 +18,7 @@ Start with why a real person would care. Do not start with code cleverness.
 
 Repo: `Bajanomad/baja411`.
 
-Actual app directory: `baja411/`.
+Actual app directory: repo root.
 
 Do not assume app files are at the repository root.
 
@@ -36,33 +36,33 @@ Do not have multiple agents rewrite the same area blindly.
 
 ## Required repo context
 
-Everyone should read `baja411/REPO_MAP.md` first.
+Everyone should read `REPO_MAP.md` first.
 
 Before repo advice, agent prompts, code review, patches, or implementation guidance, prioritize:
 
-1. `baja411/REPO_MAP.md`
-2. `baja411/docs/MASTERPLAN.md`
+1. `REPO_MAP.md`
+2. `docs/MASTERPLAN.md`
 3. The correct agent instruction file when relevant
 4. The exact files being changed
 
-Codex should read `baja411/REPO_MAP.md`, `baja411/AGENTS.md` if present, `AGENTS.md` at repo root if present, and exact files being changed.
+Codex should read `REPO_MAP.md`, `AGENTS.md` if present, `AGENTS.md` at repo root if present, and exact files being changed.
 
-Claude Code should read `baja411/REPO_MAP.md`, `baja411/CLAUDE.md` if present, and exact files being changed.
+Claude Code should read `REPO_MAP.md`, `CLAUDE.md` if present, and exact files being changed.
 
 If instructions conflict, stop and report the conflict instead of guessing.
 
 ## Current implementation notes
 
-1. Native forecast UI is inside `baja411/app/weather/page.tsx`.
+1. Native forecast UI is inside `app/weather/page.tsx`.
 2. Native forecast uses Open-Meteo data.
 3. Forecast modes are Today, 7 Day, and 16 Day.
 4. Windy remains for rain, wind, storm, and satellite visual map tools.
 5. Do not replace the native forecast panel with the old Windy forecast iframe.
-6. On iPhone, directory Enter/Search dismisses the keyboard by blurring the real input in `baja411/components/BusinessDirectoryClient.tsx`.
-7. Satellite proxy behavior in `baja411/app/api/satellite/route.ts` was rolled back to known working behavior after stricter hardening broke satellite tools.
+6. On iPhone, directory Enter/Search dismisses the keyboard by blurring the real input in `components/BusinessDirectoryClient.tsx`.
+7. Satellite proxy behavior in `app/api/satellite/route.ts` was rolled back to known working behavior after stricter hardening broke satellite tools.
 8. Public business submissions live at `/businesses/submit`, require login, create `PENDING` business records, and public directory output remains `APPROVED` only.
 9. Public business submit location choices are `Use my location`, `Input location`, and `Has no location`.
-10. `baja411/app/map/MapSearchEnhancer.tsx` was removed and should not be treated as current architecture.
+10. `app/map/MapSearchEnhancer.tsx` was removed and should not be treated as current architecture.
 
 ## Current priorities
 
@@ -94,7 +94,7 @@ The map is the killer feature. Do not casually change Drive Mode, Plan Mode, hea
 
 Do not use MutationObserver hacks, polling loops, injected fake buttons, hidden CSS hacks, or broad rewrites.
 
-Use `baja411/MAP_REGRESSION_CHECKLIST.md` before and after map changes.
+Use `MAP_REGRESSION_CHECKLIST.md` before and after map changes.
 
 ## Emergency rule
 
@@ -142,8 +142,8 @@ The app must handle denied, unavailable, stale, and pending GPS gracefully.
 Every Codex or Claude Code task that changes app code should attempt:
 
 ```bash
-cd baja411 && npm run lint
-cd baja411 && npm run build
+npm run lint
+npm run build
 ```
 
 Agents must not claim validation passed unless it actually passed.
@@ -162,8 +162,8 @@ Any time the user asks for a morning checklist, night audit, repo audit, daily c
 
 Default paths:
 
-1. Morning audits: `baja411/docs/morning_audits/YYYY_MM_DD_morning_audit.md`
-2. Night audits: `baja411/docs/night_audits/YYYY_MM_DD_night_audit.md`
+1. Morning audits: `docs/morning_audits/YYYY_MM_DD_morning_audit.md`
+2. Night audits: `docs/night_audits/YYYY_MM_DD_night_audit.md`
 
 The prompt must require creating the folder if missing, writing completed audit findings into the file, committing the file, not rerunning the audit if only the file is missing, and final response with file path, commit SHA, docs-only/app-code status, and summary.
 

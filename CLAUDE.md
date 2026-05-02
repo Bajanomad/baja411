@@ -2,7 +2,13 @@
 
 This file is for Claude and Claude Code when working inside the Baja411 app directory.
 
-The actual Next.js app is here: `baja411/`. Do not assume app files are at the repository root.
+The repository root is now the Next.js app root.
+
+App routes live in `app/`.
+Components live in `components/`.
+Prisma lives in `prisma/`.
+Main map file is `components/MapClientMapLibre.tsx`.
+Validation runs from repo root.
 
 ## Required reading
 

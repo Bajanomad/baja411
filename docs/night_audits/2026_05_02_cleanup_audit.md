@@ -44,9 +44,9 @@ Deployment status observed:
 
 ## Files inspected
 
-1. `baja411/REPO_MAP.md`
+1. `REPO_MAP.md`
 2. `README.md`
-3. `baja411/README.md`
+3. `README.md`
 4. GitHub PR metadata for recent PRs #62 through #81
 5. GitHub branch search results for Codex, Claude, revert, and Baja-related branches
 6. Vercel deployment list for project `baja411`
@@ -141,4 +141,4 @@ Only after that, optionally prune the older stale branches.
 
 ## Files changed
 
-1. `baja411/docs/night_audits/2026_05_02_cleanup_audit.md`
+1. `docs/night_audits/2026_05_02_cleanup_audit.md`
