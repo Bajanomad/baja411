@@ -4,10 +4,10 @@
 2026-05-02 (UTC)
 
 ## Purpose
-This report captures discovery findings for a planned migration from `Bajanomad/baja411` to `Bajanomad/BajaSur411` without changing current app behavior during discovery.
+This report captures discovery findings for a planned migration from `BajaSur411/BajaSur411` to `Bajanomad/BajaSur411` without changing current app behavior during discovery.
 
 ## Source repo
-`Bajanomad/baja411`
+`BajaSur411/BajaSur411`
 
 ## Target repo
 `Bajanomad/BajaSur411`
@@ -101,55 +101,55 @@ BajaSur411/
 ```
 
 ## Source-to-target move map
-- `baja411/app` -> `apps/web/app`
-- `baja411/components` -> `apps/web/components`
-- `baja411/lib` -> `apps/web/lib`
-- `baja411/data` -> `apps/web/data`
-- `baja411/prisma` -> `apps/web/prisma`
-- `baja411/public` -> `apps/web/public`
-- `baja411/vendor` -> `apps/web/vendor`
-- `baja411/package.json` -> `apps/web/package.json`
-- `baja411/tsconfig.json` -> `apps/web/tsconfig.json`
-- `baja411/MAP_REGRESSION_CHECKLIST.md` -> `apps/web/MAP_REGRESSION_CHECKLIST.md`
-- `baja411/AGENTS.md` -> `apps/web/AGENTS.md`
-- `baja411/CLAUDE.md` -> `apps/web/CLAUDE.md`
-- `baja411/REPO_MAP.md` -> `docs/REPO_MAP.md`
-- `baja411/docs/MASTERPLAN.md` -> `docs/MASTERPLAN.md`
-- `baja411/docs/MAP_ARCHITECTURE_AUDIT.md` -> `docs/MAP_ARCHITECTURE_AUDIT.md`
+- `app` -> `apps/web/app`
+- `components` -> `apps/web/components`
+- `lib` -> `apps/web/lib`
+- `data` -> `apps/web/data`
+- `prisma` -> `apps/web/prisma`
+- `public` -> `apps/web/public`
+- `vendor` -> `apps/web/vendor`
+- `package.json` -> `apps/web/package.json`
+- `tsconfig.json` -> `apps/web/tsconfig.json`
+- `MAP_REGRESSION_CHECKLIST.md` -> `apps/web/MAP_REGRESSION_CHECKLIST.md`
+- `AGENTS.md` -> `apps/web/AGENTS.md`
+- `CLAUDE.md` -> `apps/web/CLAUDE.md`
+- `REPO_MAP.md` -> `docs/REPO_MAP.md`
+- `docs/MASTERPLAN.md` -> `docs/MASTERPLAN.md`
+- `docs/MAP_ARCHITECTURE_AUDIT.md` -> `docs/MAP_ARCHITECTURE_AUDIT.md`
 - `MOBILE_ROADMAP.md` -> `docs/MOBILE_ROADMAP.md`
 - `DIRECTORY_INTAKE.md` if present -> `docs/DIRECTORY_INTAKE.md`
-- `baja411/docs/morning_audits` -> `docs/morning_audits`
-- `baja411/docs/night_audits` -> `docs/night_audits`
+- `docs/morning_audits` -> `docs/morning_audits`
+- `docs/night_audits` -> `docs/night_audits`
 
 ## Docs that must be updated
 Path rewrites and structure updates are required in:
 - Root `README.md`
 - Root `PROJECT_GUIDELINES.md`
 - Root `AGENTS.md`
-- `baja411/README.md` (to become `apps/web/README.md`)
-- `baja411/AGENTS.md` (to become `apps/web/AGENTS.md`)
-- `baja411/CLAUDE.md` (to become `apps/web/CLAUDE.md`)
-- `baja411/REPO_MAP.md` (to become `docs/REPO_MAP.md`)
-- `baja411/docs/MASTERPLAN.md` (to become `docs/MASTERPLAN.md`)
-- `baja411/docs/MAP_ARCHITECTURE_AUDIT.md` (to become `docs/MAP_ARCHITECTURE_AUDIT.md`)
-- `baja411/MAP_REGRESSION_CHECKLIST.md` (to become `apps/web/MAP_REGRESSION_CHECKLIST.md`)
+- `README.md` (to become `apps/web/README.md`)
+- `AGENTS.md` (to become `apps/web/AGENTS.md`)
+- `CLAUDE.md` (to become `apps/web/CLAUDE.md`)
+- `REPO_MAP.md` (to become `docs/REPO_MAP.md`)
+- `docs/MASTERPLAN.md` (to become `docs/MASTERPLAN.md`)
+- `docs/MAP_ARCHITECTURE_AUDIT.md` (to become `docs/MAP_ARCHITECTURE_AUDIT.md`)
+- `MAP_REGRESSION_CHECKLIST.md` (to become `apps/web/MAP_REGRESSION_CHECKLIST.md`)
 - `MOBILE_ROADMAP.md` (to become `docs/MOBILE_ROADMAP.md`)
 - `DIRECTORY_INTAKE.md` (to become `docs/DIRECTORY_INTAKE.md`)
 
 ## Path rewrite requirements
-- `baja411/REPO_MAP.md` -> `docs/REPO_MAP.md`
-- `baja411/docs/MASTERPLAN.md` -> `docs/MASTERPLAN.md`
-- `baja411/docs/MAP_ARCHITECTURE_AUDIT.md` -> `docs/MAP_ARCHITECTURE_AUDIT.md`
-- `baja411/MAP_REGRESSION_CHECKLIST.md` -> `apps/web/MAP_REGRESSION_CHECKLIST.md`
-- `baja411/components/MapClientMapLibre.tsx` -> `apps/web/components/MapClientMapLibre.tsx`
-- `baja411/app/map/MapLoader.tsx` -> `apps/web/app/map/MapLoader.tsx`
-- `baja411/components/LocationProvider.tsx` -> `apps/web/components/LocationProvider.tsx`
-- `baja411/app/weather/page.tsx` -> `apps/web/app/weather/page.tsx`
-- `baja411/components/HomeWeatherStrip.tsx` -> `apps/web/components/HomeWeatherStrip.tsx`
-- `baja411/app/emergency/page.tsx` -> `apps/web/app/emergency/page.tsx`
-- `baja411/prisma/schema.prisma` -> `apps/web/prisma/schema.prisma`
-- `cd baja411 && npm run lint` -> `cd apps/web && npm run lint`
-- `cd baja411 && npm run build` -> `cd apps/web && npm run build`
+- `REPO_MAP.md` -> `docs/REPO_MAP.md`
+- `docs/MASTERPLAN.md` -> `docs/MASTERPLAN.md`
+- `docs/MAP_ARCHITECTURE_AUDIT.md` -> `docs/MAP_ARCHITECTURE_AUDIT.md`
+- `MAP_REGRESSION_CHECKLIST.md` -> `apps/web/MAP_REGRESSION_CHECKLIST.md`
+- `components/MapClientMapLibre.tsx` -> `apps/web/components/MapClientMapLibre.tsx`
+- `app/map/MapLoader.tsx` -> `apps/web/app/map/MapLoader.tsx`
+- `components/LocationProvider.tsx` -> `apps/web/components/LocationProvider.tsx`
+- `app/weather/page.tsx` -> `apps/web/app/weather/page.tsx`
+- `components/HomeWeatherStrip.tsx` -> `apps/web/components/HomeWeatherStrip.tsx`
+- `app/emergency/page.tsx` -> `apps/web/app/emergency/page.tsx`
+- `prisma/schema.prisma` -> `apps/web/prisma/schema.prisma`
+- `npm run lint` -> `cd apps/web && npm run lint`
+- `npm run build` -> `cd apps/web && npm run build`
 
 ## Recommended package manager/workspace setup
 **Recommendation: npm workspaces (initially), no turbo yet.**
@@ -162,7 +162,7 @@ Why:
 
 ## Risks and mitigations
 1. **Path references risk**
-   - Risk: stale `baja411/...` strings in docs/scripts create broken instructions.
+   - Risk: stale `...` strings in docs/scripts create broken instructions.
    - Mitigation: global path-rewrite pass + targeted docs QA checklist.
 
 2. **tsconfig paths risk**
@@ -190,7 +190,7 @@ Why:
    - Mitigation: keep env variable names unchanged; update only docs path context.
 
 8. **Documentation drift risk (“docs lying to agents”)**
-   - Risk: old instructions continue pointing to nested `baja411/`.
+   - Risk: old instructions continue pointing to nested ``.
    - Mitigation: prioritize REPO_MAP/MASTERPLAN/AGENTS rewrite immediately after structure migration.
 
 9. **Accidental app behavior change risk**
@@ -225,7 +225,7 @@ The next Codex prompt should:
 Validation was **not required** for this task because this was documentation-only and no app code was changed.
 
 ## Files changed
-- `baja411/docs/migration/BajaSur411_migration_discovery_report.md`
+- `docs/migration/BajaSur411_migration_discovery_report.md`
 
 ## Final status
 - Documentation-only: **Yes**

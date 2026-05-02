@@ -18,7 +18,7 @@ Low-risk direction:
 
 ## 2) Current file inventory
 
-### `baja411/components/MapClientMapLibre.tsx`
+### `components/MapClientMapLibre.tsx`
 - **Main purpose:** Full interactive map screen and control surface.
 - **Major responsibilities:**
   - MapLibre init/teardown, style switching, controls, interaction listeners.
@@ -35,7 +35,7 @@ Low-risk direction:
   - Search behavior and category filtering interact via `visibleCategories` and `runSearch`.
   - Marker rendering is rebuilt from React state changes and relies on imperative marker refs.
 
-### `baja411/app/map/MapLoader.tsx`
+### `app/map/MapLoader.tsx`
 - **Main purpose:** Dynamically load map client and lock page scroll.
 - **Major responsibilities:**
   - `next/dynamic` client-only loading of map component.
@@ -45,13 +45,13 @@ Low-risk direction:
 - **Coupling notes:**
   - CSS/document state side effects (`html/body` styles) can affect global page behavior if modified incorrectly.
 
-### `baja411/app/map/MapSearchEnhancer.tsx`
+### `app/map/MapSearchEnhancer.tsx`
 - **Status:** **Not present** (confirmed missing).
 - **Main purpose:** N/A currently.
 - **Risk level:** N/A.
 - **Coupling notes:** Repo map indicates it was removed and should not be treated as active architecture.
 
-### `baja411/components/LocationProvider.tsx`
+### `components/LocationProvider.tsx`
 - **Main purpose:** App-wide location context with GPS/fallback state.
 - **Major responsibilities:**
   - Defines fallback location (Todos Santos).
@@ -313,8 +313,8 @@ Desktop + phone checklist:
 ## 11) Validation
 
 Commands attempted:
-- `cd baja411 && npm run lint`
-- `cd baja411 && npm run build`
+- `npm run lint`
+- `npm run build`
 
 (Results recorded after command execution in this environment.)
 

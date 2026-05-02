@@ -4,15 +4,15 @@
 Add a short warning modal before users can continue in the existing Add Pin flow. Keep all map behavior, auth behavior, pin submission behavior, and map movement logic unchanged.
 
 ## Files changed
-- `baja411/components/MapClientMapLibre.tsx`
+- `components/MapClientMapLibre.tsx`
 - `updates-and-changes/2026-04-29-map-pin-warning.md`
 
 ## Behavior changed
 Add Pin now shows a warning before continuing. Pin submission, auth, GPS, map movement, Drive Mode, Plan Mode, and search behavior unchanged.
 
 ## Validation
-- `npm run lint` (from `baja411/`) failed: `Cannot find package 'eslint' imported from .../eslint.config.mjs`.
-- `npm run build` (from `baja411/`) failed: `next: not found`.
+- `npm run lint` (from ``) failed: `Cannot find package 'eslint' imported from .../eslint.config.mjs`.
+- `npm run build` (from ``) failed: `next: not found`.
 
 ## Risks / follow up
 - Future moderation may add a sensitive location denial reason.

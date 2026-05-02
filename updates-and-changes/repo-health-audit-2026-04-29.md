@@ -68,8 +68,8 @@
 - auth and deployment pathways (`app/api/auth/[...nextauth]/route.ts`, Vercel settings outside this audit)
 
 ## 9) Validation results
-Commands run from `baja411/`:
-- `npm run lint` → **failed**: `Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'eslint' imported from /workspace/The-Baja-Nomad/baja411/eslint.config.mjs`
+Commands run from ``:
+- `npm run lint` → **failed**: `Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'eslint' imported from /workspace/The-Baja-Nomad/eslint.config.mjs`
 - `npm run build` → **failed**: `sh: 1: next: not found`
 
 Validation could not complete in this Codex environment because required local tooling was unavailable. This is an environment/tooling failure, not confirmed app breakage.

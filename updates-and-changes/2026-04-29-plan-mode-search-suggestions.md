@@ -4,7 +4,7 @@
 Restore Plan Mode map search suggestions as clean React behavior inside `MapClientMapLibre.tsx` without DOM enhancers, MutationObserver, polling loops, fake control injection, or broad map rewrites. Suggestions should appear while typing in Plan Mode, include towns/categories/(safe) pins, and trigger the same behavior as submitted search.
 
 ## Files changed
-- `baja411/components/MapClientMapLibre.tsx`
+- `components/MapClientMapLibre.tsx`
 - `updates-and-changes/2026-04-29-plan-mode-search-suggestions.md`
 
 ## Behavior changed

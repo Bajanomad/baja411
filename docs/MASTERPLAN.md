@@ -10,9 +10,9 @@ This document is not an implementation prompt.
 
 ## Supporting docs
 
-1. `baja411/REPO_MAP.md`
-2. `baja411/MAP_REGRESSION_CHECKLIST.md`
-3. `baja411/docs/MAP_ARCHITECTURE_AUDIT.md`
+1. `REPO_MAP.md`
+2. `MAP_REGRESSION_CHECKLIST.md`
+3. `docs/MAP_ARCHITECTURE_AUDIT.md`
 4. `MOBILE_ROADMAP.md`
 5. `PROJECT_GUIDELINES.md`
 
@@ -70,7 +70,7 @@ Baja411 should own Baja Sur field usefulness:
 
 ## What has already been built
 
-1. Next.js app inside `baja411/`
+1. Next.js app inside ``
 2. MapLibre map in `MapClientMapLibre.tsx`
 3. Drive Mode and Plan Mode
 4. `LocationProvider` and Todos Santos fallback
@@ -85,7 +85,7 @@ Baja411 should own Baja Sur field usefulness:
 13. Public directory shows `APPROVED` businesses only
 14. Approved geocoded businesses now appear on the map through `/api/pins` combined feed
 15. `MapSearchEnhancer.tsx` removed and should not be treated as current architecture
-16. Morning and night audit docs exist under `baja411/docs/`
+16. Morning and night audit docs exist under `docs/`
 
 ## Competitor lessons
 
@@ -257,9 +257,9 @@ Not yet:
 
 Before map work, read:
 
-1. `baja411/REPO_MAP.md`
-2. `baja411/MAP_REGRESSION_CHECKLIST.md`
-3. `baja411/components/MapClientMapLibre.tsx`
+1. `REPO_MAP.md`
+2. `MAP_REGRESSION_CHECKLIST.md`
+3. `components/MapClientMapLibre.tsx`
 4. Exact files being changed
 
 Protected map behavior:
@@ -281,7 +281,7 @@ Documentation only changes do not require lint or build unless app code changed.
 
 If app code changes, run:
 
-- `cd baja411 && npm run lint`
-- `cd baja411 && npm run build`
+- `npm run lint`
+- `npm run build`
 
 Do not claim validation passed unless it actually passed.

@@ -7,17 +7,17 @@ Aligned repository documentation with the current nested app structure, current 
 - `AGENTS.md` (new)
 - `MOBILE_ROADMAP.md` (new)
 - `PROJECT_GUIDELINES.md`
-- `baja411/AGENTS.md`
-- `baja411/README.md`
-- `baja411/REPO_MAP.md`
+- `AGENTS.md`
+- `README.md`
+- `REPO_MAP.md`
 - `updates-and-changes/2026-04-29-docs-sync-agent-and-mobile-roadmap.md` (this log)
 
 ## Behavior changed
 Documentation only. No app behavior changed.
 
 ## Validation
-- `npm run lint` (from `baja411/`) failed: missing local eslint package resolution in current environment (`Cannot find package 'eslint'`).
-- `npm run build` (from `baja411/`) failed: `next` binary not found in current environment.
+- `npm run lint` (from ``) failed: missing local eslint package resolution in current environment (`Cannot find package 'eslint'`).
+- `npm run build` (from ``) failed: `next` binary not found in current environment.
 
 ## Risks / follow-up
 - Next likely safe task is implementing clean React Plan Mode search suggestions in the map system (`MapClientMapLibre` or a proper React child component), without reintroducing DOM enhancer hacks.

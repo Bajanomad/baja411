@@ -1,48 +1,49 @@
-# Baja411 Codex Instructions
+# Baja411 Claude Code Instructions
 
-This file is for Codex and OpenAI coding agents working inside the Baja411 app directory.
+This file is for Claude and Claude Code when working inside the Baja411 app directory.
 
-The actual Next.js app is here: `baja411/`. Do not assume app files are at the repository root.
+The actual Next.js app is here: ``. Do not assume app files are at the repository root.
 
 ## Required reading
 
 Before editing, read:
 
 1. `REPO_MAP.md`
-2. `../AGENTS.md` if present
+2. This file
 3. The exact files being changed
 
 If instructions conflict, stop and report the conflict instead of guessing.
 
-## Stack note
+## Role
 
-This project uses a newer Next.js version than most training data. Before changing framework-specific behavior, inspect the current files and use installed docs when available.
+Claude is the product brain when the user is working in Claude chat.
+
+Claude can handle product thinking, UX review, architecture review, diff review, decision support, and small scoped patches when appropriate.
+
+Claude Code handles larger repo work, deeper investigation, bigger patches, build fixes, validation, and complex implementation when explicitly scoped.
+
+Do not have Claude and Claude Code rewrite the same area blindly.
 
 ## Working order
 
 Think in this order: user first, engineer second, CEO third. Start with why a real person would care.
 
-## Scope rules
+## High-risk areas
 
-Patch the smallest safe part. Do not do broad rewrites unless explicitly requested.
+1. Map behavior
+2. Drive Mode heading and bearing rotation
+3. Recenter behavior
+4. Plan Mode search
+5. GPS and fallback location
+6. Weather and storm tools
+7. SOS emergency access
+8. Auth
+9. Prisma
+10. Vercel config and environment variables
 
-Do not change map behavior unless the task specifically scopes it.
+Patch the smallest safe part. Avoid broad rewrites. Inspect relevant files before proposing or making changes.
 
-High-risk files and areas:
-
-1. `components/MapClientMapLibre.tsx`
-2. `app/map/MapLoader.tsx`
-3. `components/LocationProvider.tsx`
-4. `components/Nav.tsx`
-5. `components/Footer.tsx`
-6. `app/weather/page.tsx`
-7. `components/HomeWeatherStrip.tsx`
-8. `app/emergency/page.tsx`
-9. `prisma/schema.prisma`
-
-Protect Drive Mode, Plan Mode, heading rotation, recenter, snap-back, GPS tracking, search, pin rendering, SOS access, weather, auth, Prisma, Vercel config, and environment variables.
-
-Do not use DOM patching tricks, polling loops, injected controls, hidden styling behavior, or fake architecture.
+Do not casually change Drive Mode, Plan Mode, heading rotation, recenter, snap-back, GPS tracking, search, pin rendering, SOS access, weather, auth, Prisma, Vercel config, or environment variables.
 
 `app/map/MapSearchEnhancer.tsx` was removed and should not be treated as current architecture.
 
@@ -51,6 +52,14 @@ Use `MAP_REGRESSION_CHECKLIST.md` before and after map-related changes.
 ## Current product rules
 
 Keep SOS emergency access clean and reliable. Keep weather and storm tools useful inside Baja411. Public business submissions require login, create `PENDING` records, and public directory output remains `APPROVED` only. Public business submit location choices are `Use my location`, `Input location`, and `Has no location`.
+
+## gstack
+
+Use the `/browse` skill from gstack for web browsing when available. Do not use `mcp__claude-in-chrome__*` tools.
+
+Useful gstack skills include:
+
+`/investigate`, `/review`, `/careful`, `/qa`, `/qa-only`, `/ship`, `/land-and-deploy`, `/browse`, `/design-review`, `/plan-ceo-review`, `/plan-eng-review`, `/plan-design-review`.
 
 ## Audit documentation
 
@@ -64,7 +73,7 @@ Required audit sections: date, purpose, recent merged PR summary, open PR status
 
 ## Validation
 
-After app code changes, attempt:
+For app changes, attempt:
 
 ```bash
 npm run lint
@@ -73,10 +82,10 @@ npm run build
 
 Documentation-only changes do not require lint/build unless app code changed.
 
-If validation cannot run because tooling is missing, report:
+Do not claim validation passed unless it actually passed.
+
+If tooling is missing, report:
 
 ```txt
 Validation could not complete in this environment because required local tooling was unavailable. This is an environment/tooling failure, not confirmed app breakage.
 ```
-
-Do not claim validation passed unless it actually passed.

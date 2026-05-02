@@ -7,12 +7,12 @@ Prepared documentation and intake templates for a broader Baja411 Local Director
 ## Files changed
 
 - `DIRECTORY_INTAKE.md`
-- `baja411/data/directory-intake-template.csv`
-- `baja411/data/DIRECTORY_FIELDS.md`
-- `baja411/data/directory-intake-staging.md`
+- `data/directory-intake-template.csv`
+- `data/DIRECTORY_FIELDS.md`
+- `data/directory-intake-staging.md`
 - `updates-and-changes/PRODUCT_IDEAS.md`
 - `PROJECT_GUIDELINES.md`
-- `baja411/REPO_MAP.md`
+- `REPO_MAP.md`
 - `updates-and-changes/2026-04-29-local-directory-intake-prep.md`
 
 ## Behavior changed

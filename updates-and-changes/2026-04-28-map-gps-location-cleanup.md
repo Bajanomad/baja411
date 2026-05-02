@@ -8,7 +8,7 @@ Document the recent map/GPS-related Codex work so future sessions have one durab
 ### PR #14 — Wire MapLibre center/recenter to LocationProvider
 - **Title:** `Wire MapLibre center/recenter to LocationProvider`
 - **Primary file(s):**
-  - `baja411/components/MapClientMapLibre.tsx`
+  - `components/MapClientMapLibre.tsx`
 - **Behavior changed:**
   - Map center and recenter logic were wired to `LocationProvider` values instead of relying on generic/default map center behavior.
   - This aligned map startup/recenter behavior with app-level location state.
@@ -21,7 +21,7 @@ Document the recent map/GPS-related Codex work so future sessions have one durab
 ### PR #15 — Improve map recenter/tracking/provider sync behavior
 - **Title:** `Wire map to LocationProvider sync` (provider-sync and recenter/tracking behavior improvement)
 - **Primary file(s):**
-  - `baja411/components/MapClientMapLibre.tsx`
+  - `components/MapClientMapLibre.tsx`
 - **Behavior changed:**
   - Tightened synchronization between map behavior and provider state so recenter/tracking flows follow app-level location updates more reliably.
 - **Validation results:**
@@ -33,7 +33,7 @@ Document the recent map/GPS-related Codex work so future sessions have one durab
 ### PR #16 — Remove unused map imports/constants and note local validation dependency failures
 - **Title:** `chore: remove unused maplibre typings constant`
 - **Primary file(s):**
-  - `baja411/components/MapClientMapLibre.tsx`
+  - `components/MapClientMapLibre.tsx`
 - **Behavior changed:**
   - Cleanup-only change removing unused map-related typing constant/import surface.
   - Intended to reduce clutter and keep map component easier to maintain.
@@ -45,9 +45,9 @@ Document the recent map/GPS-related Codex work so future sessions have one durab
 ### PR #19 — Fix Plan Mode GPS drift and remove temporary map guard
 - **Title:** `Fix plan mode GPS behavior at source`
 - **Primary file(s):**
-  - `baja411/app/map/MapLoader.tsx`
-  - `baja411/app/map/MapPlanGpsGuard.tsx`
-  - `baja411/components/MapClientMapLibre.tsx`
+  - `app/map/MapLoader.tsx`
+  - `app/map/MapPlanGpsGuard.tsx`
+  - `components/MapClientMapLibre.tsx`
 - **Behavior changed:**
   - Addressed Plan Mode GPS drift behavior at source.
   - Removed temporary guard-based workaround in favor of source-level correction.
