@@ -2,7 +2,7 @@
 
 Current status:
 Baja411 is currently a mobile-first web app deployed through Vercel.
-The app code lives at repository root.
+The app code lives in baja411/.
 There is no native iOS/Android app yet.
 There is no Capacitor or Expo app yet.
 There is no repo restructure yet.
@@ -37,7 +37,7 @@ apps/web
 apps/mobile
 packages/shared
 
-Repository is already flattened; keep root as app root.
+Do not move baja411/ to repo root as a temporary cleanup.
 If restructuring happens, move intentionally into the multi-app structure, not into a single-app root layout.
 
 Phase 5: Expo/React Native only if needed.
