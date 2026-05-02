@@ -1,51 +1,62 @@
-# Baja411 Root Agent Instructions
+# Baja411 Codex Instructions
 
-The actual app is inside `baja411/`. Do not assume app files are at the repository root.
+This file is for Codex and OpenAI coding agents working inside the Baja411 app directory.
+
+The actual Next.js app is here: `baja411/`. Do not assume app files are at the repository root.
 
 ## Required reading
 
-Before repo advice, prompts, code review, patches, or implementation guidance, read:
+Before editing, read:
 
-1. `baja411/REPO_MAP.md`
-2. `baja411/AGENTS.md` when using Codex or OpenAI coding agents
-3. `baja411/CLAUDE.md` when using Claude Code
-4. The exact files being changed
+1. `REPO_MAP.md`
+2. `../AGENTS.md` if present
+3. The exact files being changed
 
 If instructions conflict, stop and report the conflict instead of guessing.
 
-## Workflow model
+## Stack note
 
-ChatGPT or Claude is the product brain for strategy, UX review, architecture review, prompt writing, diff review, decision support, and small scoped patches when appropriate.
-
-Codex or Claude Code handles larger repo work, bigger patches, build fixes, validation, implementation, and deeper file editing.
-
-Do not have multiple agents rewrite the same area blindly.
+This project uses a newer Next.js version than most training data. Before changing framework-specific behavior, inspect the current files and use installed docs when available.
 
 ## Working order
 
 Think in this order: user first, engineer second, CEO third. Start with why a real person would care.
 
-## Current priorities
+## Scope rules
 
-Keep SOS emergency access clean and reliable; protect map behavior; keep weather and storm tools useful inside Baja411; improve Plan Mode search suggestions only when scoped; preserve Drive Mode heading, bearing, recenter, and snap-back behavior; improve Local Directory usefulness with verified data; keep navigation and footer clean; keep the directory user-facing, not sales-first.
+Patch the smallest safe part. Do not do broad rewrites unless explicitly requested.
 
-## Guardrails
+Do not change map behavior unless the task specifically scopes it.
 
-Patch the smallest safe part. Avoid broad rewrites.
+High-risk files and areas:
 
-Do not casually edit map heading, bearing, recenter, Drive Mode, Plan Mode, search, GPS tracking, pin rendering, SOS access, weather, auth, Prisma, Vercel config, or environment variables.
+1. `components/MapClientMapLibre.tsx`
+2. `app/map/MapLoader.tsx`
+3. `components/LocationProvider.tsx`
+4. `components/Nav.tsx`
+5. `components/Footer.tsx`
+6. `app/weather/page.tsx`
+7. `components/HomeWeatherStrip.tsx`
+8. `app/emergency/page.tsx`
+9. `prisma/schema.prisma`
+
+Protect Drive Mode, Plan Mode, heading rotation, recenter, snap-back, GPS tracking, search, pin rendering, SOS access, weather, auth, Prisma, Vercel config, and environment variables.
 
 Do not use DOM patching tricks, polling loops, injected controls, hidden styling behavior, or fake architecture.
 
-`baja411/app/map/MapSearchEnhancer.tsx` was removed and should not be treated as current architecture.
+`app/map/MapSearchEnhancer.tsx` was removed and should not be treated as current architecture.
 
-Update `baja411/REPO_MAP.md` when architecture changes.
+Use `MAP_REGRESSION_CHECKLIST.md` before and after map-related changes.
+
+## Current product rules
+
+Keep SOS emergency access clean and reliable. Keep weather and storm tools useful inside Baja411. Public business submissions require login, create `PENDING` records, and public directory output remains `APPROVED` only. Public business submit location choices are `Use my location`, `Input location`, and `Has no location`.
 
 ## Audit documentation
 
 For Baja411 morning checklists, night audits, repo audits, daily cleanup, end-of-day reviews, status summaries, or “what did we do today” workflows, require a permanent dated markdown report unless the user explicitly says not to write files.
 
-Default paths: morning audits at `baja411/docs/morning_audits/YYYY_MM_DD_morning_audit.md`; night audits at `baja411/docs/night_audits/YYYY_MM_DD_night_audit.md`.
+Default paths: morning audits at `docs/morning_audits/YYYY_MM_DD_morning_audit.md`; night audits at `docs/night_audits/YYYY_MM_DD_night_audit.md`.
 
 The prompt must require creating the folder if missing, writing completed findings, committing the file, not rerunning the audit if only the file is missing, and final response with file path, commit SHA, docs-only/app-code status, and summary.
 
@@ -53,21 +64,19 @@ Required audit sections: date, purpose, recent merged PR summary, open PR status
 
 ## Validation
 
-For app changes, attempt:
+After app code changes, attempt:
 
 ```bash
-cd baja411 && npm run lint
-cd baja411 && npm run build
+npm run lint
+npm run build
 ```
 
 Documentation-only changes do not require lint/build unless app code changed.
 
-Do not claim validation passed unless it actually passed.
-
-If tooling is missing, report exactly:
+If validation cannot run because tooling is missing, report:
 
 ```txt
 Validation could not complete in this environment because required local tooling was unavailable. This is an environment/tooling failure, not confirmed app breakage.
 ```
 
-GitHub is source of truth. Vercel is the live deployment path.
+Do not claim validation passed unless it actually passed.

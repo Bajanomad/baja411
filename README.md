@@ -1,64 +1,117 @@
-# Baja411
+# Baja411 App
 
-Baja411 is a map-first field utility for Baja California Sur travelers, locals, expats, and overland drivers.
+This folder contains the real Baja411 Next.js app.
 
-It is built for practical use in the field: map access, weather, storms, emergency information, local services, and community-submitted Baja intel.
+Run app commands from this directory:
 
-## Repository structure
+```bash
+cd baja411
+```
 
-This repository is nested:
+## Stack
 
-- Repository root: shared documentation, process notes, audit reports, and planning artifacts.
-- Real app: `baja411/` contains the Next.js app, routes, components, APIs, Prisma schema, and config.
+- Next.js
+- React
+- TypeScript strict mode
+- Tailwind CSS
+- Prisma
+- PostgreSQL
+- MapLibre GL
+- NextAuth vendored under `vendor/`
 
-Do not assume app files are at the repository root. App paths begin under `baja411/`.
+## Scripts
 
-## Source of truth
+```bash
+npm run dev
+npm run lint
+npm run build
+npm run start
+```
 
-- GitHub is the code source of truth.
-- Vercel is the live deployment path.
-- The first technical context file is `baja411/REPO_MAP.md`.
+## Required reading before edits
 
-## Current product priorities
+1. `REPO_MAP.md`
+2. `docs/MASTERPLAN.md` (canonical product build plan)
+3. `AGENTS.md` for Codex or OpenAI coding agents
+4. `CLAUDE.md` for Claude Code
+5. The exact files being changed
 
-1. Keep SOS emergency access clean and reliable.
-2. Protect map behavior.
-3. Keep weather and storm tools useful inside Baja411.
-4. Improve Plan Mode search suggestions only when scoped.
-5. Preserve Drive Mode heading, bearing, recenter, and snap-back behavior.
-6. Improve Local Directory usefulness with verified data.
-7. Keep navigation and footer clean.
-8. Keep the directory user-facing, not sales-first.
+## High-risk app areas
 
-## Architecture notes
+Treat these as high risk:
 
-- Main map ownership lives in `baja411/components/MapClientMapLibre.tsx`.
-- `baja411/app/map/MapSearchEnhancer.tsx` is removed and should not be referenced as current architecture.
-- Weather uses a native Baja411 forecast UI powered by Open-Meteo.
-- Windy remains for visual weather tools such as rain, wind, storms, and satellite layers.
-- Public business submissions create `PENDING` records for admin review.
-- The public directory shows `APPROVED` businesses only.
-- SOS is a global safety layer, not a directory category.
+- `components/MapClientMapLibre.tsx`
+- `app/map/MapLoader.tsx`
+- `components/LocationProvider.tsx`
+- `app/weather/page.tsx`
+- `components/HomeWeatherStrip.tsx`
+- `app/emergency/page.tsx`
+- `prisma/schema.prisma`
 
-## Important documentation
+Do not casually change map behavior, GPS behavior, Drive Mode, Plan Mode, heading rotation, recenter behavior, snap-back behavior, auth, Prisma, Vercel config, or environment variables.
 
-Read before changing app behavior:
+## Map architecture
 
-1. `baja411/REPO_MAP.md`
-2. `baja411/docs/MASTERPLAN.md` (canonical product build plan)
-3. `PROJECT_GUIDELINES.md`
-4. `baja411/AGENTS.md` for Codex or OpenAI coding agents
-5. `baja411/CLAUDE.md` for Claude Code
-6. Exact files being changed
+Primary map ownership lives in:
 
-Audit reports live in:
+```txt
+components/MapClientMapLibre.tsx
+```
 
-- `baja411/docs/morning_audits/`
-- `baja411/docs/night_audits/`
+Map behavior is high risk. Use `MAP_REGRESSION_CHECKLIST.md` before and after map-related changes.
+
+`app/map/MapSearchEnhancer.tsx` has been removed and should not be treated as current architecture.
+
+## Weather architecture
+
+Current weather architecture:
+
+- Native forecast UI: `app/weather/page.tsx`
+- Forecast data source: Open-Meteo
+- Forecast modes: Today, 7 Day, 16 Day
+- Windy remains focused on visual weather tools: rain, wind, storms, and satellite layers
+
+Do not replace the native forecast panel with the old Windy forecast iframe unless explicitly requested and justified.
+
+## Location behavior
+
+`components/LocationProvider.tsx` is the shared location source where practical.
+
+Fallback location:
+
+```txt
+Todos Santos, BCS
+lat: 23.4464
+lon: -110.2265
+```
+
+The app must handle denied, unavailable, stale, and pending GPS gracefully.
+
+## Directory behavior
+
+Public business submissions live at:
+
+```txt
+app/businesses/submit
+```
+
+Submission API:
+
+```txt
+app/api/businesses/route.ts
+```
+
+Rules:
+
+- Public submissions require login.
+- Public submissions create `PENDING` records.
+- Public directory shows `APPROVED` businesses only.
+- Emergency listings should not be accepted through normal public business submissions.
+- The public submit location choices are `Use my location`, `Input location`, and `Has no location`.
 
 ## Validation
 
-For app code changes, run from the nested app directory:
+For app code changes, run:
 
 ```bash
 cd baja411
@@ -69,3 +122,9 @@ npm run build
 Documentation-only changes do not require lint or build unless app code changed.
 
 Do not claim validation passed unless it actually passed.
+
+If local tooling is unavailable, report:
+
+```txt
+Validation could not complete in this environment because required local tooling was unavailable. This is an environment/tooling failure, not confirmed app breakage.
+```
