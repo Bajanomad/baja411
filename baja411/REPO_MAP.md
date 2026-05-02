@@ -22,9 +22,9 @@ Do not look for `app/page.tsx` at the repository root. App paths begin under `ba
 
 Think in this order before changing anything:
 
-1. End user need
-2. CEO and business strategy
-3. Engineering execution
+1. User first
+2. Engineer second
+3. CEO third
 
 ## Verified stack
 
@@ -66,6 +66,14 @@ baja411/CLAUDE.md
 ```
 
 Everyone should read this `REPO_MAP.md` first.
+
+## Canonical product master plan
+
+```txt
+baja411/docs/MASTERPLAN.md
+```
+
+Use it for product direction, phase order, and next feature planning.
 
 ## Current architecture map
 

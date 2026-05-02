@@ -45,10 +45,11 @@ Do not assume app files are at the repository root. App paths begin under `baja4
 Read before changing app behavior:
 
 1. `baja411/REPO_MAP.md`
-2. `PROJECT_GUIDELINES.md`
-3. `baja411/AGENTS.md` for Codex or OpenAI coding agents
-4. `baja411/CLAUDE.md` for Claude Code
-5. Exact files being changed
+2. `baja411/docs/MASTERPLAN.md` (canonical product build plan)
+3. `PROJECT_GUIDELINES.md`
+4. `baja411/AGENTS.md` for Codex or OpenAI coding agents
+5. `baja411/CLAUDE.md` for Claude Code
+6. Exact files being changed
 
 Audit reports live in:
 

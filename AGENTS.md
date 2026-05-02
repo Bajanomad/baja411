@@ -23,7 +23,7 @@ Do not have multiple agents rewrite the same area blindly.
 
 ## Working order
 
-Think in this order: end user need, CEO and business strategy, engineering execution. Start with why a real person would care.
+Think in this order: user first, engineer second, CEO third. Start with why a real person would care.
 
 ## Current priorities
 
