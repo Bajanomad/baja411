@@ -1,0 +1,1 @@
+export function SubmitPage(){return <main><h2>Submit report</h2><p>All submissions go to moderation before publication.</p><form><input placeholder='What are you submitting?' /><button type='button'>Queue for review</button></form></main>}

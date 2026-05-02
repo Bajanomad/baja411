@@ -1,0 +1,1 @@
+export function RulesPage(){return <main><h2>Rules & permits basics</h2><ul><li>FMM tourist permit basics</li><li>Vehicle import (when needed)</li><li>Fishing license basics</li><li>Pet travel basics</li></ul></main>}

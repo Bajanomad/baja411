@@ -1,0 +1,4 @@
+:root{color-scheme:dark;font-family:system-ui;background:#111;color:#eee}
+body{margin:0}.app{padding:8px}.topbar{position:sticky;top:0;background:#191919;padding:8px;border-bottom:1px solid #333}
+nav{display:flex;gap:8px;overflow:auto}a{color:#8ddcff;text-decoration:none}main{padding:12px}input{width:100%;padding:10px;margin:8px 0;background:#222;color:#fff;border:1px solid #444;border-radius:8px}
+ul{padding-left:18px}

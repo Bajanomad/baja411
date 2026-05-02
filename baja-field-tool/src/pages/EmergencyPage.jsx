@@ -1,0 +1,1 @@
+export function EmergencyPage(){return <main><h2>Emergency</h2><p>Get guidance first. No auto-calls.</p><ul><li>Medical urgent steps</li><li>Roadside safety checklist</li><li>Storm prep essentials</li></ul></main>}
