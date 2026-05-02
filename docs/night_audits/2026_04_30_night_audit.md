@@ -39,24 +39,24 @@ Codex also reported that local `gh` CLI was unavailable in its environment, so t
 
 From today's git history, changed files included:
 
-- `baja411/REPO_MAP.md`
-- `baja411/app/admin/BusinessesAdmin.tsx`
-- `baja411/app/admin/page.tsx`
-- `baja411/app/api/admin/businesses/route.ts`
-- `baja411/app/api/businesses/route.ts`
-- `baja411/app/businesses/page.tsx`
-- `baja411/app/businesses/submit/BusinessLocationPicker.tsx` was touched during the earlier location-picker iteration and later removed from current architecture
-- `baja411/app/businesses/submit/BusinessSubmitForm.tsx`
-- `baja411/app/businesses/submit/page.tsx`
-- `baja411/components/Footer.tsx`
-- `baja411/components/FooterAuthControl.tsx`
-- `baja411/components/map/PlanSearchPanel.tsx`
+- `REPO_MAP.md`
+- `app/admin/BusinessesAdmin.tsx`
+- `app/admin/page.tsx`
+- `app/api/admin/businesses/route.ts`
+- `app/api/businesses/route.ts`
+- `app/businesses/page.tsx`
+- `app/businesses/submit/BusinessLocationPicker.tsx` was touched during the earlier location-picker iteration and later removed from current architecture
+- `app/businesses/submit/BusinessSubmitForm.tsx`
+- `app/businesses/submit/page.tsx`
+- `components/Footer.tsx`
+- `components/FooterAuthControl.tsx`
+- `components/map/PlanSearchPanel.tsx`
 
 ## Systems untouched by the night audit patch
 
 The night audit documentation patch did not intentionally change application behavior or touch these protected areas:
 
-- `baja411/components/MapClientMapLibre.tsx`
+- `components/MapClientMapLibre.tsx`
 - Main map behavior
 - Drive Mode
 - Plan Mode internals
@@ -72,8 +72,8 @@ The night audit documentation patch did not intentionally change application beh
 
 Commands attempted by Codex:
 
-- `cd baja411 && npm run lint` failed in the local environment because `eslint` was missing or not resolvable.
-- `cd baja411 && npm run build` failed in the local environment because the `next` binary was missing.
+- `npm run lint` failed in the local environment because `eslint` was missing or not resolvable.
+- `npm run build` failed in the local environment because the `next` binary was missing.
 
 Validation could not complete in this environment because required local tooling was unavailable. This is an environment/tooling failure, not confirmed app breakage.
 

@@ -1,12 +1,6 @@
 # Baja411 App
 
-This folder contains the real Baja411 Next.js app.
-
-Run app commands from this directory:
-
-```bash
-cd baja411
-```
+The repository root is now the Next.js app root.
 
 ## Stack
 
@@ -114,7 +108,6 @@ Rules:
 For app code changes, run:
 
 ```bash
-cd baja411
 npm run lint
 npm run build
 ```

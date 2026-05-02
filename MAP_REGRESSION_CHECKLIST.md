@@ -91,8 +91,8 @@ Test these on real mobile when possible:
 For code changes, attempt:
 
 ```bash
-cd baja411 && npm run lint
-cd baja411 && npm run build
+npm run lint
+npm run build
 ```
 
 Documentation-only changes do not require lint/build unless app code changed.

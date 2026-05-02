@@ -10,13 +10,13 @@ The GitHub repository is:
 Bajanomad/baja411
 ```
 
-The actual Next.js app is nested inside:
+The repository root is now the Next.js app root.
 
-```txt
-baja411/
-```
-
-Do not look for `app/page.tsx` at the repository root. App paths begin under `baja411/`.
+App routes live in `app/`.
+Components live in `components/`.
+Prisma lives in `prisma/`.
+Main map file is `components/MapClientMapLibre.tsx`.
+Validation runs from repo root.
 
 ## Product rule
 
@@ -28,7 +28,7 @@ Think in this order before changing anything:
 
 ## Verified stack
 
-From `baja411/package.json` and `baja411/tsconfig.json`:
+From `package.json` and `tsconfig.json`:
 
 1. Next.js 16.2.4
 2. React 19.2.4
@@ -56,13 +56,12 @@ Codex and OpenAI coding agents:
 
 ```txt
 AGENTS.md
-baja411/AGENTS.md
 ```
 
 Claude and Claude Code:
 
 ```txt
-baja411/CLAUDE.md
+CLAUDE.md
 ```
 
 Everyone should read this `REPO_MAP.md` first.
@@ -70,7 +69,7 @@ Everyone should read this `REPO_MAP.md` first.
 ## Canonical product master plan
 
 ```txt
-baja411/docs/MASTERPLAN.md
+docs/MASTERPLAN.md
 ```
 
 Use it for product direction, phase order, and next feature planning.
@@ -79,8 +78,7 @@ Use it for product direction, phase order, and next feature planning.
 
 ```txt
 Bajanomad/baja411
-└── baja411/
-    ├── app/
+├── app/
     │   ├── admin/
     │   ├── api/
     │   │   ├── satellite/route.ts
@@ -110,7 +108,7 @@ Bajanomad/baja411
     └── tsconfig.json
 ```
 
-`baja411/app/map/MapSearchEnhancer.tsx` was removed and should not be referenced as current architecture. If it reappears, treat it as high risk.
+`app/map/MapSearchEnhancer.tsx` was removed and should not be referenced as current architecture. If it reappears, treat it as high risk.
 
 ## Current product priorities
 
@@ -125,7 +123,7 @@ Bajanomad/baja411
 
 ## Global location system
 
-`baja411/components/LocationProvider.tsx` wraps the app in `baja411/app/layout.tsx`.
+`components/LocationProvider.tsx` wraps the app in `app/layout.tsx`.
 
 Current status:
 
@@ -146,25 +144,25 @@ lon: -110.2265
 Map shell:
 
 ```txt
-baja411/app/map/page.tsx
+app/map/page.tsx
 ```
 
 Map loader:
 
 ```txt
-baja411/app/map/MapLoader.tsx
+app/map/MapLoader.tsx
 ```
 
 Primary map ownership:
 
 ```txt
-baja411/components/MapClientMapLibre.tsx
+components/MapClientMapLibre.tsx
 ```
 
 Map regression checklist:
 
 ```txt
-baja411/MAP_REGRESSION_CHECKLIST.md
+MAP_REGRESSION_CHECKLIST.md
 ```
 
 Use the checklist before and after any map-related change.
@@ -209,7 +207,7 @@ Emergency access is a global safety layer, not a directory category.
 Emergency route:
 
 ```txt
-baja411/app/emergency/page.tsx
+app/emergency/page.tsx
 ```
 
 SOS access should open the emergency page first and should not auto call emergency services.
@@ -221,18 +219,18 @@ Emergency information must be verified before publishing. Do not publish guessed
 Local Directory route:
 
 ```txt
-baja411/app/businesses/page.tsx
+app/businesses/page.tsx
 ```
 
-`baja411/app/directory/page.tsx` redirects to `/businesses`.
+`app/directory/page.tsx` redirects to `/businesses`.
 
 Local Directory intake docs:
 
 ```txt
 DIRECTORY_INTAKE.md
-baja411/data/DIRECTORY_FIELDS.md
-baja411/data/directory-intake-template.csv
-baja411/data/directory-intake-staging.md
+data/DIRECTORY_FIELDS.md
+data/directory-intake-template.csv
+data/directory-intake-staging.md
 ```
 
 Directory rules:
@@ -249,12 +247,12 @@ Directory UX note:
 
 ### Admin moderation system
 
-1. Admin route: `baja411/app/admin/page.tsx`.
-2. Pin moderation uses `baja411/app/admin/PinsAdmin.tsx` and `baja411/app/api/admin/pins/route.ts`.
-3. Business moderation uses `baja411/app/admin/BusinessesAdmin.tsx` and `baja411/app/api/admin/businesses/route.ts`.
+1. Admin route: `app/admin/page.tsx`.
+2. Pin moderation uses `app/admin/PinsAdmin.tsx` and `app/api/admin/pins/route.ts`.
+3. Business moderation uses `app/admin/BusinessesAdmin.tsx` and `app/api/admin/businesses/route.ts`.
 4. Business admin supports pending/approved/rejected review, edit, approve, reject, and delete.
 5. Public business submissions are available at `/businesses/submit` for logged-in users.
-6. Public directory still only shows APPROVED businesses through `getDirectoryBusinesses()` in `baja411/lib/business-directory.ts`.
+6. Public directory still only shows APPROVED businesses through `getDirectoryBusinesses()` in `lib/business-directory.ts`.
 
 7. Public business submissions route: `/businesses/submit`.
 8. Submission API route: `/api/businesses`.
@@ -274,7 +272,7 @@ Directory UX note:
 Weather route:
 
 ```txt
-baja411/app/weather/page.tsx
+app/weather/page.tsx
 ```
 
 Current weather architecture:
@@ -288,9 +286,9 @@ Current weather architecture:
 Weather support:
 
 ```txt
-baja411/components/HomeWeatherStrip.tsx
-baja411/app/api/weather/storm-status/route.ts
-baja411/app/api/satellite/route.ts
+components/HomeWeatherStrip.tsx
+app/api/weather/storm-status/route.ts
+app/api/satellite/route.ts
 ```
 
 Satellite note:
@@ -304,7 +302,7 @@ Weather should stay useful inside Baja411. Prioritize forecast, rain, storms, sa
 Rules route:
 
 ```txt
-baja411/app/rules-permits/page.tsx
+app/rules-permits/page.tsx
 ```
 
 Rules and regulation explanations belong there. Directory should only include actionable places or services, such as license offices or permit locations.
@@ -314,8 +312,8 @@ Rules and regulation explanations belong there. Directory should only include ac
 For app changes, agents should attempt:
 
 ```bash
-cd baja411 && npm run lint
-cd baja411 && npm run build
+npm run lint
+npm run build
 ```
 
 Do not claim validation passed unless it actually passed.
