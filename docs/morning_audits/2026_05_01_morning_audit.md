@@ -37,26 +37,26 @@ Required and architecture context:
 
 - `README.md`
 - `baja411/README.md`
-- `baja411/REPO_MAP.md`
-- `baja411/MAP_REGRESSION_CHECKLIST.md`
+- `REPO_MAP.md`
+- `MAP_REGRESSION_CHECKLIST.md`
 
 Business submission and moderation flow:
 
-- `baja411/app/businesses/submit/page.tsx`
-- `baja411/app/businesses/submit/BusinessSubmitForm.tsx`
-- `baja411/app/api/businesses/route.ts`
-- `baja411/lib/business-directory.ts`
+- `app/businesses/submit/page.tsx`
+- `app/businesses/submit/BusinessSubmitForm.tsx`
+- `app/api/businesses/route.ts`
+- `lib/business-directory.ts`
 
 Footer/nav/weather regression checks:
 
-- `baja411/components/Footer.tsx`
-- `baja411/components/Nav.tsx`
-- `baja411/app/weather/page.tsx`
+- `components/Footer.tsx`
+- `components/Nav.tsx`
+- `app/weather/page.tsx`
 
 Stale-reference checks:
 
-- `baja411/docs/night_audits/2026_04_30_night_audit.md`
-- `baja411/docs/MAP_ARCHITECTURE_AUDIT.md`
+- `docs/night_audits/2026_04_30_night_audit.md`
+- `docs/MAP_ARCHITECTURE_AUDIT.md`
 
 ## Bugs found
 
@@ -68,15 +68,15 @@ No clear dead runtime code was identified in the inspected implementation files.
 
 Documentation staleness noted:
 
-1. `baja411/docs/night_audits/2026_04_30_night_audit.md` still references follow-up verification for `BusinessLocationPicker.tsx`, but that file is already missing now.
+1. `docs/night_audits/2026_04_30_night_audit.md` still references follow-up verification for `BusinessLocationPicker.tsx`, but that file is already missing now.
 2. `MapSearchEnhancer` references remain in architecture documentation as removed/not present; these are documentation references, not runtime imports.
 
 ## Validation results
 
 Validation commands were attempted during the completed audit:
 
-- `cd baja411 && npm run lint` failed in this environment due to missing `eslint` package resolution.
-- `cd baja411 && npm run build` failed in this environment because `next` binary was not found.
+- `npm run lint` failed in this environment due to missing `eslint` package resolution.
+- `npm run build` failed in this environment because `next` binary was not found.
 
 Validation could not complete in this environment because required local tooling was unavailable. This is an environment/tooling failure, not confirmed app breakage.
 
@@ -84,12 +84,12 @@ For this addendum change itself, lint/build were not rerun because this is docum
 
 ## Recommended next task
 
-Create a tiny documentation cleanup PR that updates stale follow-up wording in `baja411/docs/night_audits/2026_04_30_night_audit.md` so it no longer suggests checking for `BusinessLocationPicker.tsx` as if it still exists.
+Create a tiny documentation cleanup PR that updates stale follow-up wording in `docs/night_audits/2026_04_30_night_audit.md` so it no longer suggests checking for `BusinessLocationPicker.tsx` as if it still exists.
 
 Then run full validation in a provisioned environment:
 
 ```bash
-cd baja411
+
 npm ci
 npm run lint
 npm run build
@@ -97,4 +97,4 @@ npm run build
 
 ## Files changed by this addendum
 
-- `baja411/docs/morning_audits/2026_05_01_morning_audit.md` (new file)
+- `docs/morning_audits/2026_05_01_morning_audit.md` (new file)

@@ -1,9 +1,9 @@
 # 2026-04-29 — Global SOS button and emergency contacts page
 
 ## Summary
-- Added a reusable global `SOSButton` component in `baja411/components/SOSButton.tsx`.
-- Mounted the SOS button from `baja411/app/layout.tsx` so it appears across pages.
-- Added `baja411/app/emergency/page.tsx` with verified national emergency contacts and clearly marked placeholder sections for local resources pending verification.
+- Added a reusable global `SOSButton` component in `components/SOSButton.tsx`.
+- Mounted the SOS button from `app/layout.tsx` so it appears across pages.
+- Added `app/emergency/page.tsx` with verified national emergency contacts and clearly marked placeholder sections for local resources pending verification.
 
 ## Guardrails followed
 - Kept patch focused and small.

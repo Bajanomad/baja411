@@ -1,6 +1,6 @@
 # Baja411 Local Directory Intake Fields
 
-This reference explains each field used in `baja411/data/directory-intake-template.csv`.
+This reference explains each field used in `data/directory-intake-template.csv`.
 
 ## Field reference
 

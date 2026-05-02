@@ -4,7 +4,7 @@
 Fix `/signin` mobile layout clipping where the sign in card top is cut off by the fixed nav/header by adjusting page wrapper spacing only.
 
 ## Files changed
-- `baja411/app/signin/page.tsx`
+- `app/signin/page.tsx`
 - `updates-and-changes/2026-04-29-signin-layout-fix.md`
 
 ## Behavior changed

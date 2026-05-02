@@ -4,10 +4,10 @@
 Update user-facing `/businesses` language to present Baja411 as a broader Local Directory (services, offices, resources, and practical help), while keeping route/data/behavior unchanged.
 
 ## Files changed
-- `baja411/app/businesses/page.tsx`
-- `baja411/components/BusinessDirectoryClient.tsx`
-- `baja411/components/Nav.tsx`
-- `baja411/components/Footer.tsx`
+- `app/businesses/page.tsx`
+- `components/BusinessDirectoryClient.tsx`
+- `components/Nav.tsx`
+- `components/Footer.tsx`
 
 ## Behavior changed
 UI copy only. Route and data behavior unchanged.

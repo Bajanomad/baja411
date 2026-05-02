@@ -4,7 +4,7 @@
 Add a short warning modal before users can continue in the existing Add Pin flow. Keep all map behavior, auth behavior, pin submission behavior, and map movement logic unchanged.
 
 ## Files changed
-- `baja411/components/MapClientMapLibre.tsx`
+- `components/MapClientMapLibre.tsx`
 - `updates-and-changes/2026-04-29-map-pin-warning.md`
 
 ## Behavior changed

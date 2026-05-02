@@ -1,14 +1,14 @@
 # Validation documentation audit and stale PR note check
 
 ## Prompt summary
-Audited repository documentation and update logs for incorrect validation instructions or false validation claims, with a specific check that no docs/logs claim `pnpm test`, `npm test`, or automated test passes because `baja411/package.json` has no test script.
+Audited repository documentation and update logs for incorrect validation instructions or false validation claims, with a specific check that no docs/logs claim `pnpm test`, `npm test`, or automated test passes because `package.json` has no test script.
 
 ## Files inspected
-- `baja411/package.json`
+- `package.json`
 - `PROJECT_GUIDELINES.md`
 - `AGENTS.md`
 - `baja411/AGENTS.md`
-- `baja411/REPO_MAP.md`
+- `REPO_MAP.md`
 - `baja411/README.md`
 - `updates-and-changes/README.md`
 - `updates-and-changes/*.md` (validation-related wording scan)
@@ -18,9 +18,9 @@ Audited repository documentation and update logs for incorrect validation instru
 
 ## Validation claims corrected
 - No `pnpm test`, `npm test`, or “automated tests passed” claims were found in the allowed documentation/log files.
-- Confirmed `baja411/package.json` has no `test` script.
+- Confirmed `package.json` has no `test` script.
 - Recording required explicit statement here for future traceability:
-  - “No test script is defined in baja411/package.json, so no automated test command was run.”
+  - “No test script is defined in package.json, so no automated test command was run.”
 
 ## PR #1 status assessment
 PR #1 (“Install and Configure Vercel Speed Insights”) appears **still pending** relative to the current tree:
@@ -28,14 +28,14 @@ PR #1 (“Install and Configure Vercel Speed Insights”) appears **still pendin
 - No modification was made to PR #1.
 
 ## Validation
-- `cd baja411 && npm run lint` → failed in this environment: missing `eslint` package resolution (`ERR_MODULE_NOT_FOUND`).
-- `cd baja411 && npm run build` → failed in this environment: `next` binary not found.
-- “No test script is defined in baja411/package.json, so no automated test command was run.”
+- `npm run lint` → failed in this environment: missing `eslint` package resolution (`ERR_MODULE_NOT_FOUND`).
+- `npm run build` → failed in this environment: `next` binary not found.
+- “No test script is defined in package.json, so no automated test command was run.”
 
 ## Risks / follow-up
 - Existing historical logs use mixed validation phrasing; while no false test claims were found, future logs should continue using the exact command format:
-  - `cd baja411 && npm run lint`
-  - `cd baja411 && npm run build`
+  - `npm run lint`
+  - `npm run build`
 - To fully verify app health, rerun lint/build in a fully provisioned local/CI environment with dependencies installed.
 
 ## Final readout

@@ -4,7 +4,7 @@
 Redesigned `/signin` visually and improved sign-in clarity with mobile-first Baja411 field-tool styling and concise copy, while preserving the existing auth flow and behavior boundaries.
 
 ## Files changed
-- `baja411/app/signin/page.tsx`
+- `app/signin/page.tsx`
 - `updates-and-changes/2026-04-29-signin-redesign.md`
 
 ## Behavior changed

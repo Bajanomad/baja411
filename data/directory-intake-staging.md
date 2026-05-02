@@ -54,7 +54,7 @@
 
 ## Verified listings ready for data entry
 
-Add only verified listings here, then move them into `baja411/data/directory-intake-template.csv` format before any app data update.
+Add only verified listings here, then move them into `data/directory-intake-template.csv` format before any app data update.
 
 ## Questions to ask locals/providers
 

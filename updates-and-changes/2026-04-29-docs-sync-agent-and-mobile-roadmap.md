@@ -9,7 +9,7 @@ Aligned repository documentation with the current nested app structure, current 
 - `PROJECT_GUIDELINES.md`
 - `baja411/AGENTS.md`
 - `baja411/README.md`
-- `baja411/REPO_MAP.md`
+- `REPO_MAP.md`
 - `updates-and-changes/2026-04-29-docs-sync-agent-and-mobile-roadmap.md` (this log)
 
 ## Behavior changed

@@ -4,15 +4,15 @@
 Polish the Add Pin warning modal in `MapClientMapLibre` while keeping warning flow and all map/auth/pin behaviors unchanged. Fix warning body rendering so the warning lines display correctly (not literal `\n\n`) and align visual style with Baja411.
 
 ## Files changed
-- `baja411/components/MapClientMapLibre.tsx`
+- `components/MapClientMapLibre.tsx`
 - `updates-and-changes/2026-04-29-map-pin-warning-polish.md`
 
 ## Behavior changed
 Visual polish only. Warning flow, pin submission, auth, GPS, map movement, Drive Mode, Plan Mode, and search behavior unchanged.
 
 ## Validation
-- `cd baja411 && npm run lint` ❌ failed: `Cannot find package 'eslint' imported from /workspace/The-Baja-Nomad/baja411/eslint.config.mjs`.
-- `cd baja411 && npm run build` ❌ failed: `next: not found`.
+- `npm run lint` ❌ failed: `Cannot find package 'eslint' imported from /workspace/The-Baja-Nomad/baja411/eslint.config.mjs`.
+- `npm run build` ❌ failed: `next: not found`.
 
 ## Risks / follow up
 - Future add pin flow may still need deeper UX polish.
@@ -24,7 +24,7 @@ Visual polish only. Warning flow, pin submission, auth, GPS, map movement, Drive
 
 ## Final readout
 - Changed files:
-  - `baja411/components/MapClientMapLibre.tsx`
+  - `components/MapClientMapLibre.tsx`
   - `updates-and-changes/2026-04-29-map-pin-warning-polish.md`
 - Behavior summary:
   - Replaced literal escaped newlines in modal body with real paragraph elements.

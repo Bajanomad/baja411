@@ -110,7 +110,7 @@ Later task should redesign `/signin` visually without changing auth behavior.
 
 ### Engineering note
 
-Future task should edit only `baja411/app/signin/page.tsx` and related styling if needed. It should not touch NextAuth, Nodemailer, Prisma, database schema, or opt-in behavior unless explicitly requested.
+Future task should edit only `app/signin/page.tsx` and related styling if needed. It should not touch NextAuth, Nodemailer, Prisma, database schema, or opt-in behavior unless explicitly requested.
 
 
 ## Rules & Permits
