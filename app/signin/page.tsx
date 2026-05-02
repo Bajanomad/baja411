@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 
 function SignInForm() {
@@ -13,6 +13,8 @@ function SignInForm() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const cardRef = useRef<HTMLElement | null>(null);
+  const confirmationHeadingRef = useRef<HTMLHeadingElement | null>(null);
 
   useEffect(() => {
     fetch("/api/auth/csrf")
@@ -20,6 +22,17 @@ function SignInForm() {
       .then((d) => setCsrfToken(d.csrfToken ?? ""))
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (!submitted) return;
+
+    const frame = requestAnimationFrame(() => {
+      cardRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
+      confirmationHeadingRef.current?.focus();
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [submitted]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -41,6 +54,9 @@ function SignInForm() {
       });
 
       if (res.ok || res.status === 302 || res.type === "opaqueredirect") {
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur();
+        }
         setSubmitted(true);
       } else {
         setError("Something went wrong. Try again.");
@@ -55,14 +71,19 @@ function SignInForm() {
   return (
     <main className="min-h-[100svh] bg-[#05111d] text-white px-4 pb-10 pt-[calc(var(--nav-height)+1.5rem)] sm:pb-12 sm:pt-[calc(var(--nav-height)+2rem)]">
       <div className="mx-auto w-full max-w-md">
-        <section className="rounded-3xl border border-white/15 bg-[#0a1d2f]/95 p-6 shadow-[0_20px_70px_rgba(0,0,0,0.5)] sm:p-7">
+        <section
+          ref={cardRef}
+          className="rounded-3xl border border-white/15 bg-[#0a1d2f]/95 p-6 shadow-[0_20px_70px_rgba(0,0,0,0.5)] sm:p-7"
+        >
           {submitted ? (
             <div className="space-y-5 text-center">
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-jade/20 text-2xl" aria-hidden>
                 📬
               </div>
               <div className="space-y-2">
-                <h1 className="text-2xl font-extrabold tracking-tight">Check your inbox</h1>
+                <h1 ref={confirmationHeadingRef} tabIndex={-1} className="text-2xl font-extrabold tracking-tight">
+                  Check your inbox
+                </h1>
                 <p className="text-sm leading-relaxed text-white/80">
                   We sent a secure sign in link to the email address you entered.
                 </p>
